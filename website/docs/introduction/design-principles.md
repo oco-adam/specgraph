@@ -61,4 +61,4 @@ The framework strictly distinguishes:
 - **Normative**: `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
 - **Informative**: `metadata.rationale`, `metadata.notes` — context and explanation, never requirements
 
-This prevents "helpful notes" from becoming implicit requirements that break deterministic manifestation.
+This prevents "helpful notes" from becoming implicit requirements that break predictable manifestation.

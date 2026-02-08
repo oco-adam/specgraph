@@ -12,7 +12,7 @@ title: Glossary
 | **Edge** | A typed, directed relationship between two nodes. Stored as outbound links inside the source node. |
 | **Feature** | A non-normative grouping node that organizes related nodes into a namespace. |
 | **Manifestation** | The process of producing a running system from a spec graph. Encompasses planning, coding, building, testing, and deploying. |
-| **Completeness** | The property that manifestation is deterministic across all specified dimensions — any two manifestations from the same graph are equivalent. |
+| **Completeness** | The property that manifestation is predictable across all specified dimensions — any two manifestations from the same graph are equivalent. |
 | **Minimality** | The property that no node can be removed without breaking completeness. Every node is load-bearing. |
 | **Completeness Gap** | The set of decisions left to the implementing agent — decisions the spec graph does not determine. |
 | **Load-bearing** | A node whose removal would create manifestation ambiguity. |

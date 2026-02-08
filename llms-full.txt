@@ -1,6 +1,6 @@
 # Spec Graph — Complete Documentation
 
-> The minimal specification framework for deterministic system manifestation.
+> The minimal specification framework for predictable system manifestation.
 
 > Generated: 2026-02-08
 
@@ -8,7 +8,7 @@
 
 # Spec Graph
 
-The **Spec Graph** is a formal specification framework for deterministic, agent-driven software development. It extends behavior-only specifications into a multi-dimensional graph that captures everything required to predictably manifest a system: behavior, architecture, design, technology choices, domain concepts, and constraints.
+The **Spec Graph** is a formal specification framework for predictable, automated, agent-driven software development. It extends behavior-only specifications into a multi-dimensional graph that captures everything required to predictably manifest a system: behavior, architecture, design, technology choices, domain concepts, and constraints.
 
 ## The Core Idea
 
@@ -42,7 +42,7 @@ Two agents given the same spec graph should produce systems that are indistingui
 
 The Spec Graph framework is a **design specification**, not running code. It produces:
 
-1. **Formal theory** — completeness, minimality, deterministic manifestation
+1. **Formal theory** — completeness, minimality, predictable manifestation
 2. **Data model** — node types, edge types, and their schemas
 3. **JSON Schemas** — for validating spec graph files
 4. **Manifestation process** — how agents traverse and implement the graph
@@ -54,7 +54,7 @@ These artifacts are sufficient for an engineering team to build a Spec Graph-bas
 
 If you want to jump straight in:
 
-1. Read [Motivation](./motivation) to understand the problem
+1. Read [Motivation](/docs/introduction/motivation) to understand the problem
 2. Explore the [Graph Structure](/docs/graph/structure) to see how it works
 3. Check the [Getting Started](/docs/guides/getting-started) guide to write your first spec graph
 
@@ -87,7 +87,7 @@ Consider two agents implementing the same behavioral spec for user authenticatio
 - **Agent A** wraps Clerk behind an abstract `AuthProvider` interface, uses optimistic session caching, and enforces route protection via middleware
 - **Agent B** calls Clerk directly throughout the codebase, checks sessions synchronously on every render, and scatters auth guards across individual components
 
-Both produce correct behavior. But the systems are architecturally different, inconsistently structured, and impossible to maintain as a single codebase. The behavioral spec was _necessary_ but not _sufficient_ for deterministic manifestation.
+Both produce correct behavior. But the systems are architecturally different, inconsistently structured, and impossible to maintain as a single codebase. The behavioral spec was _necessary_ but not _sufficient_ for predictable manifestation.
 
 ## The Shadow Spec
 
@@ -169,13 +169,13 @@ The framework strictly distinguishes:
 - **Normative**: `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
 - **Informative**: `metadata.rationale`, `metadata.notes` — context and explanation, never requirements
 
-This prevents "helpful notes" from becoming implicit requirements that break deterministic manifestation.
+This prevents "helpful notes" from becoming implicit requirements that break predictable manifestation.
 
 ---
 
 # Completeness
 
-Completeness is the central formal property of the Spec Graph. It answers the question: **does this specification contain enough information for deterministic manifestation?**
+Completeness is the central formal property of the Spec Graph. It answers the question: **does this specification contain enough information for predictable manifestation?**
 
 ## Definition
 
@@ -213,17 +213,19 @@ A spec graph is "complete enough" when the implementing agent's remaining choice
 
 ## Completeness and the Agent
 
-Completeness is defined **relative to an implementing agent**. A less capable agent may need more specification to produce deterministic results. A more capable agent (one with better judgment about conventions, patterns, and best practices) may need less.
+Completeness is defined **relative to an implementing agent**. A less capable agent may need more specification to produce predictable results. A more capable agent (one with better judgment about conventions, patterns, and best practices) may need less.
 
 The Spec Graph aims to be complete enough for a **competent implementing agent** — one that understands the target language, frameworks, and common conventions, but has no special knowledge of this particular system's design intent.
 
 ## Relationship to Manifestation
 
-Completeness is the precondition for deterministic manifestation:
+Completeness is the precondition for predictable manifestation. In the ideal case, it yields full determinism:
 
 ```
 Complete(G) ∧ Capable(A) → Deterministic(Manifest(G, A))
 ```
+
+Perfect determinism — where every manifestation is identical — is an idealistic goal. In practice, the Spec Graph targets **predictability**: manifestations are equivalent across all dimensions the designer specified, even if they differ in incidental details. Determinism is the asymptote; predictability is the practical achievement.
 
 Where `Capable(A)` means the agent can parse the graph, resolve dependencies, apply guidance, respect constraints, and verify outcomes. See [Manifestation](/docs/manifestation/overview) for how agents process a complete graph.
 
@@ -243,7 +245,7 @@ A Spec Graph G is **minimal** if removing any node would break completeness — 
     M₁ ≢ M₂
 ```
 
-In plain English: every node in the graph is **load-bearing**. If you can remove a node and still get deterministic manifestation, that node was redundant and shouldn't be there.
+In plain English: every node in the graph is **load-bearing**. If you can remove a node and still get predictable manifestation, that node was redundant and shouldn't be there.
 
 ## The Basis Analogy
 
@@ -388,10 +390,10 @@ A graph with all core node types approaches **total equivalence** — two manife
 
 ## Semantic, Not Byte-Level
 
-The Spec Graph targets **semantic determinism**, not byte-level determinism:
+The Spec Graph targets **semantic predictability**, not byte-level determinism:
 
-- **Byte-level**: identical source code (rarely achievable, rarely necessary)
-- **Semantic**: logically equivalent systems under a declared equivalence contract
+- **Byte-level determinism**: identical source code (rarely achievable, rarely necessary)
+- **Semantic predictability**: logically equivalent systems under a declared equivalence contract
 
 Two manifestations can have different variable names, different file structures, and different whitespace — and still be equivalent, because those differences don't affect any dimension the designer specified.
 
@@ -2073,10 +2075,10 @@ Where:
 When a spec graph is [complete](/docs/theory/completeness) and the implementing agent is capable:
 
 ```
-Complete(G) ∧ Capable(A) → Deterministic(Manifest(G, A))
+Complete(G) ∧ Capable(A) → Predictable(Manifest(G, A))
 ```
 
-This means: the same graph, processed by the same (or equivalent) agent, always produces logically equivalent systems.
+This means: the same graph, processed by the same (or equivalent) agent, always produces logically equivalent systems. Perfect determinism — identical output every time — is the idealistic limit; predictability across all specified dimensions is the practical achievement.
 
 ## What "Capable" Means
 
@@ -2898,10 +2900,10 @@ All Spec Graph files are validated against JSON Schemas using [JSON Schema Draft
 
 | Schema | Validates | Required? |
 |---|---|---|
-| [`graph.schema.json`](/specgraph/schemas/graph.schema.json) | `graph.json` index file | Yes |
-| [`node.schema.json`](/specgraph/schemas/node.schema.json) | Individual node files | Yes |
-| [`graph-index.schema.json`](/specgraph/schemas/graph-index.schema.json) | Generated edge index | Optional |
-| [`manifest-lock.schema.json`](/specgraph/schemas/manifest-lock.schema.json) | Manifestation lockfile | Optional |
+| [`graph.schema.json`](pathname:///specgraph/schemas/graph.schema.json) | `graph.json` index file | Yes |
+| [`node.schema.json`](pathname:///specgraph/schemas/node.schema.json) | Individual node files | Yes |
+| [`graph-index.schema.json`](pathname:///specgraph/schemas/graph-index.schema.json) | Generated edge index | Optional |
+| [`manifest-lock.schema.json`](pathname:///specgraph/schemas/manifest-lock.schema.json) | Manifestation lockfile | Optional |
 
 Schema `$id` base URL: `https://oco-adam.github.io/specgraph/schemas/`
 
@@ -3061,7 +3063,7 @@ Three worked examples are provided, each demonstrating different aspects of the 
 
 **Node types used:** `feature`, `behavior`
 
-**Source:** [`examples/minimal/`](/specgraph/examples/minimal/graph.json)
+**Source:** [`examples/minimal/`](pathname:///specgraph/examples/minimal/graph.json)
 
 ```
 minimal/
@@ -3090,7 +3092,7 @@ graph TD
 
 **Node types used:** `feature`, `behavior`, `decision`, `domain`, `constraint`
 
-**Source:** [`examples/auth/`](/specgraph/examples/auth/graph.json)
+**Source:** [`examples/auth/`](pathname:///specgraph/examples/auth/graph.json)
 
 ```
 auth/
@@ -3143,7 +3145,7 @@ graph TD
 
 **Node types used:** `feature`, `behavior`, `decision`, `domain`, `constraint`, `design_token`
 
-**Source:** [`examples/taskboard/`](/specgraph/examples/taskboard/graph.json)
+**Source:** [`examples/taskboard/`](pathname:///specgraph/examples/taskboard/graph.json)
 
 ```
 taskboard/
@@ -3178,7 +3180,7 @@ taskboard/
 | **Edge** | A typed, directed relationship between two nodes. Stored as outbound links inside the source node. |
 | **Feature** | A non-normative grouping node that organizes related nodes into a namespace. |
 | **Manifestation** | The process of producing a running system from a spec graph. Encompasses planning, coding, building, testing, and deploying. |
-| **Completeness** | The property that manifestation is deterministic across all specified dimensions — any two manifestations from the same graph are equivalent. |
+| **Completeness** | The property that manifestation is predictable across all specified dimensions — any two manifestations from the same graph are equivalent. |
 | **Minimality** | The property that no node can be removed without breaking completeness. Every node is load-bearing. |
 | **Completeness Gap** | The set of decisions left to the implementing agent — decisions the spec graph does not determine. |
 | **Load-bearing** | A node whose removal would create manifestation ambiguity. |
@@ -3272,7 +3274,7 @@ The Spec Graph shares ideas with several existing approaches. This page clarifie
 | Output | Running infrastructure | Running system (via manifestation) |
 | Abstraction | Resource-level | Intent-level |
 
-**Similarity:** Both aim for deterministic creation from declarative specifications.
+**Similarity:** Both aim for predictable creation from declarative specifications.
 
 **Difference:** IaC specifies infrastructure resources at a concrete level. The Spec Graph specifies system intent at a higher level — including behavior, architecture, domain, and constraints — leaving the agent to determine the concrete implementation.
 
@@ -3311,6 +3313,6 @@ The Spec Graph shares ideas with several existing approaches. This page clarifie
 
 **Similarity:** Both capture observable system behavior.
 
-**Difference:** BDD scenarios focus on user stories. Spec Graph behaviors are part of a larger graph that also captures the non-behavioral dimensions needed for deterministic manifestation.
+**Difference:** BDD scenarios focus on user stories. Spec Graph behaviors are part of a larger graph that also captures the non-behavioral dimensions needed for predictable manifestation.
 
 ---

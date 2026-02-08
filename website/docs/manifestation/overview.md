@@ -22,10 +22,10 @@ Where:
 When a spec graph is [complete](/docs/theory/completeness) and the implementing agent is capable:
 
 ```
-Complete(G) ∧ Capable(A) → Deterministic(Manifest(G, A))
+Complete(G) ∧ Capable(A) → Predictable(Manifest(G, A))
 ```
 
-This means: the same graph, processed by the same (or equivalent) agent, always produces logically equivalent systems.
+This means: the same graph, processed by the same (or equivalent) agent, always produces logically equivalent systems. Perfect determinism — identical output every time — is the idealistic limit; predictability across all specified dimensions is the practical achievement.
 
 ## What "Capable" Means
 

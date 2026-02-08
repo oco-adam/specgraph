@@ -6,7 +6,7 @@ slug: /introduction
 
 # Spec Graph
 
-The **Spec Graph** is a formal specification framework for deterministic, agent-driven software development. It extends behavior-only specifications into a multi-dimensional graph that captures everything required to predictably manifest a system: behavior, architecture, design, technology choices, domain concepts, and constraints.
+The **Spec Graph** is a formal specification framework for predictable, automated, agent-driven software development. It extends behavior-only specifications into a multi-dimensional graph that captures everything required to predictably manifest a system: behavior, architecture, design, technology choices, domain concepts, and constraints.
 
 ## The Core Idea
 
@@ -40,7 +40,7 @@ Two agents given the same spec graph should produce systems that are indistingui
 
 The Spec Graph framework is a **design specification**, not running code. It produces:
 
-1. **Formal theory** — completeness, minimality, deterministic manifestation
+1. **Formal theory** — completeness, minimality, predictable manifestation
 2. **Data model** — node types, edge types, and their schemas
 3. **JSON Schemas** — for validating spec graph files
 4. **Manifestation process** — how agents traverse and implement the graph

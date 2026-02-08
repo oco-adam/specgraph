@@ -4,7 +4,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Spec Graph',
-  tagline: 'The minimal specification framework for deterministic system manifestation',
+  tagline: 'The minimal specification framework for predictable system manifestation',
   favicon: 'img/favicon.ico',
 
   future: {

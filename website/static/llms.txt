@@ -1,6 +1,6 @@
 # Spec Graph — LLM Summary
 
-> The minimal specification framework for deterministic system manifestation.
+> The minimal specification framework for predictable system manifestation.
 
 Spec Graph is a formal framework for declarative, multi-dimensional software specifications. It extends behavior-only specs into a typed graph that captures everything required to predictably manifest a system: behavior, architecture, design, technology, domain concepts, and constraints.
 
