@@ -1,7 +1,8 @@
 # Preflight Checks & Quality Gates in Spec Graph
 
-> **Status:** Discussion / Under Consideration
-> **Date:** 2025-02-08
+> **Status:** Decided
+> **Analysis Date:** 2025-02-08
+> **Decision Date:** 2026-02-08
 > **Context:** Analysis of legacy DLOOP concepts and whether they fit the Spec Graph framework
 
 ## Background
@@ -195,4 +196,79 @@ This would only be worth adding if practice demonstrates the need.
 
 ## Decision
 
-**To be determined.** This document captures the analysis for future reference. A decision on whether to incorporate any of these concepts into the framework will be made after further consideration.
+### Decision (TRU-DE / DLOOP v2)
+
+**Preflight checks and quality-gate orchestration are not modeled as normative Spec Graph content.** They live in the TRU-DE (DLOOP v2) agent/tooling layer.
+
+### What *is* modeled in the Spec Graph
+
+- **Quality standards** are modeled as `constraint` nodes (`severity: hard|soft`) with explicit `verification` entries.
+- **System-level “definition of done”** lives in an `equivalence_contract` node (or as a small set of global hard constraints) so “passes gates” is a property of the system spec, not an implicit agent habit.
+
+### What stays in TRU-DE tooling
+
+- **Preflight**: environment readiness before writing (deps, buildability, git cleanliness, services running).
+- **Gate strategy**: fast/slow ordering, fail-fast behavior, retries, timeouts defaults, parallelism, and stack-specific command selection.
+
+### Practical Mapping (Recommended)
+
+1. **Hard quality gate** = `constraint(severity=hard)` with `verification.kind=command` (or referenced by an `equivalence_contract`).
+2. **Optional gate** = `constraint(severity=soft)` with verification.
+3. **Fast vs slow** = `metadata.tags` on constraint nodes (informative); TRU-DE uses tags to order execution.
+4. **Preflight** = TRU-DE “execution profile” selected from graph `decision(category=stack)` nodes plus per-project overrides.
+
+### Why This Split
+
+- Keeps the Spec Graph declarative and about **system properties** (what must be true).
+- Keeps TRU-DE responsible for **operational procedure** (how/when to run checks).
+- Still yields reproducible manifestation via:
+  - Explicit `verification` commands in nodes
+  - `manifest.lock.json` recording check execution + toolchain versions
+
+### Notes From DLOOP v1 Implementation (selfimloop)
+
+The current DLOOP v1 codebase implements these concepts as **agent tooling**, not as spec content:
+
+- Preflight is implemented as the MCP tool `run_preflight_checks` and a shell script `scripts/dloop-preflight.sh`.
+- The orchestrator/runner can execute preflight before invoking the main agent, and can optionally spawn a bounded “preflight auto-fix” sub-run when a *required* check fails (then re-run the check).
+- Quality gates are implemented as the MCP tool `run_quality_gates`, with `category: fast|slow`, `required` flags, and `failFast` behavior.
+- Both are configured via a **tech stack profile** `toolConfig` object (e.g. `toolConfig.preflight.additionalChecks`, `toolConfig.qualityGates.gates`), with “no defaults” to avoid stack-specific commands leaking into other stacks.
+
+This is consistent with keeping preflight and orchestration in TRU-DE tooling while making the *normative* quality bar explicit in the spec graph.
+
+### Guidance For Agent/Tooling Designers (TRU-DE)
+
+Use three distinct stages with distinct semantics:
+
+1. **Preflight (environment readiness, before writing)**
+   - Goal: avoid wasting implementation time/tokens in a broken workspace.
+   - Inputs: “execution profile” (stack-specific checks) + project overrides.
+   - Outputs: structured per-check results (name, passed, required, duration, output).
+   - Failure policy: if any *required* check fails, abort before any implementation.
+   - Optional: allow a bounded “auto-fix” mode that ONLY addresses the failing check, then re-runs it.
+   - Avoid duplication: run preflight once (ideally in the orchestrator) and have any in-agent `run_preflight_checks` return cached results unless explicitly forced.
+
+2. **Quality gates (code quality, after changes, before PR)**
+   - Goal: enforce the project’s quality bar (format/lint/typecheck/tests/bundle-size/security/etc).
+   - Source of truth for *what must pass* should be Spec Graph nodes:
+     - Prefer `constraint` nodes with `severity: hard|soft` and explicit `verification` commands.
+     - Optionally aggregate these into an `equivalence_contract` node that defines “definition of done”.
+   - Orchestration stays in tooling:
+     - Run `fast` gates early and often; run `slow` gates before PR (and again in CI).
+     - Use fail-fast for required gates for feedback speed.
+     - Treat `soft` constraints as non-blocking but visible.
+   - Avoid drift: reviewers/CI should run the same gate set (or a superset) as implementors.
+
+3. **Verification (spec compliance)**
+   - Goal: prove the change satisfies the behavior/decision/domain/constraint nodes it touched.
+   - Policy: retries are acceptable for flaky external dependencies, but cap attempts and record outcomes in the lockfile.
+
+#### Recommended Contract Between Spec Graph and Tooling
+
+- **Spec Graph (normative):**
+  - `constraint` nodes encode the required quality properties and their verifications.
+  - `equivalence_contract` encodes system-level equivalence / “done”.
+- **TRU-DE tooling (operational):**
+  - Selects a stack execution profile from `decision(category=stack)` nodes (plus overrides).
+  - Maps constraint verifications into runnable commands, applies timeouts, parallelism, and ordering.
+  - Writes a `manifest.lock.json` entry recording which checks were executed and their status.

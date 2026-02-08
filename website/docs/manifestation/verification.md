@@ -49,6 +49,42 @@ After all nodes are manifested, the full graph is verified:
 3. All decision node verifications pass
 4. If an `equivalence_contract` exists, its criteria are met
 
+## Preflight and Quality Gates
+
+Verification answers: "Does the manifested system satisfy the spec graph?"
+
+In practice, manifestation pipelines often include two additional operational stages that are adjacent to verification but conceptually distinct:
+
+### Preflight Checks (Environment Readiness)
+
+Preflight checks answer: "Is this workspace/toolchain healthy enough to start work?"
+
+Examples:
+- Dependencies installed
+- Project builds
+- Required services reachable
+- Working directory is in a safe state
+
+These are **agent/tooling concerns**, not properties of the manifested system, so they typically live outside the spec graph.
+
+### Quality Gates (Project Quality Bar)
+
+Quality gates answer: "Does the code meet the project's quality standard before we ship/review it?"
+
+In Spec Graph terms, the **normative** quality bar should be expressed as:
+- `constraint` nodes (with `severity: hard|soft` and explicit `verification` commands), and/or
+- an `equivalence_contract` node that aggregates the definition of "done".
+
+The **execution strategy** (fast vs slow ordering, fail-fast behavior, retries, timeouts, parallelism) belongs to the agent/tooling layer.
+
+### Typical Flow
+
+1. Run preflight checks (tooling)
+2. Implement changes
+3. Run fast quality gates (lint/typecheck/format)
+4. Run node + constraint verification
+5. Run slow gates / equivalence contract (tests/build/perf/security)
+
 ## Verification Types
 
 The schema supports several verification formats:
