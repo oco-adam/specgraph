@@ -229,6 +229,14 @@ Perfect determinism — where every manifestation is identical — is an idealis
 
 Where `Capable(A)` means the agent can parse the graph, resolve dependencies, apply guidance, respect constraints, and verify outcomes. See [Manifestation](/docs/manifestation/overview) for how agents process a complete graph.
 
+## Model-Theoretic Roots
+
+The notion of completeness in the Spec Graph is inspired by two related concepts from mathematical logic. In model theory, a [complete theory](https://en.wikipedia.org/wiki/Complete_theory) is one that decides every sentence in its language — for any statement φ, the theory either proves φ or proves ¬φ. The consequence is that all models of a complete theory are *elementarily equivalent*: they satisfy exactly the same sentences. A stronger property, [categoricity](https://en.wikipedia.org/wiki/Categorical_theory), requires that a theory has essentially one model up to isomorphism — all realizations are structurally identical, not merely equivalent in what they satisfy.
+
+The Spec Graph draws on both notions. Like a complete theory, a complete spec graph leaves no *relevant* question undecided — every decision the designer cares about is determined. Like a categorical theory, the goal is that all manifestations are the "same system" across specified dimensions, not merely that they agree on observable properties. The parameterized equivalence relation — where adding node types progressively tightens equivalence from behavioral to structural to total — mirrors the relationship between these concepts: completeness guarantees agreement on sentences, while categoricity guarantees structural identity.
+
+We use the term "completeness" rather than "categoricity" for two reasons: it is far more intuitive for a non-mathematical audience, and the correspondence is deliberately loose. The Spec Graph departs from both model-theoretic notions in important ways — completeness is relative to the implementing agent rather than absolute, equivalence is parameterized by dimension rather than fixed, and an acceptable residual gap of benign decisions is by design rather than a failure of the theory. These are engineering adaptations, not formal instantiations of the mathematical concepts.
+
 ---
 
 # Minimality
