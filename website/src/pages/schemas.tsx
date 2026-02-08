@@ -28,25 +28,25 @@ const schemas = [
 export default function Schemas(): React.JSX.Element {
   return (
     <Layout title="JSON Schemas" description="Spec Graph JSON Schema definitions">
-      <main className="container" style={{padding: '2rem 0'}}>
-        <h1>JSON Schemas</h1>
-        <p>
-          All schemas use <a href="https://json-schema.org/specification">JSON Schema Draft 2020-12</a>.
-          See the <Link to="/docs/reference/json-schemas">schema reference docs</Link> for details.
-        </p>
-        <div className="row">
+      <main className="container sg-schemas">
+        <div className="sg-section-header" style={{textAlign: 'left'}}>
+          <span className="sg-section-header__label">Reference</span>
+          <h1 className="sg-section-header__title">JSON Schemas</h1>
+          <p className="sg-section-header__subtitle" style={{margin: 0}}>
+            All schemas use{' '}
+            <a href="https://json-schema.org/specification">JSON Schema Draft 2020-12</a>.
+            See the <Link to="/docs/reference/json-schemas">schema reference docs</Link> for details.
+          </p>
+        </div>
+        <div className="sg-schemas__grid">
           {schemas.map((schema) => (
-            <div key={schema.name} className="col col--6" style={{marginBottom: '1.5rem'}}>
-              <div className="card">
-                <div className="card__header">
-                  <h3>
-                    <a href={schema.href}><code>{schema.name}</code></a>
-                  </h3>
-                </div>
-                <div className="card__body">
-                  <p>{schema.description}</p>
-                </div>
+            <div key={schema.name} className="sg-schema-card">
+              <div className="sg-schema-card__name">
+                <a href={schema.href}>
+                  <code>{schema.name}</code>
+                </a>
               </div>
+              <p className="sg-schema-card__desc">{schema.description}</p>
             </div>
           ))}
         </div>
