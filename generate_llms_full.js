@@ -63,7 +63,7 @@ function main() {
   const parts = [
     '# Spec Graph — Complete Documentation',
     '',
-    '> The minimal specification framework for deterministic system manifestation.',
+    '> The minimal specification framework for predictable system manifestation.',
     '',
     `> Generated: ${new Date().toISOString().split('T')[0]}`,
     '',

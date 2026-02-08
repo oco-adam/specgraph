@@ -17,7 +17,7 @@ A Spec Graph G is **minimal** if removing any node would break completeness — 
     M₁ ≢ M₂
 ```
 
-In plain English: every node in the graph is **load-bearing**. If you can remove a node and still get deterministic manifestation, that node was redundant and shouldn't be there.
+In plain English: every node in the graph is **load-bearing**. If you can remove a node and still get predictable manifestation, that node was redundant and shouldn't be there.
 
 ## The Basis Analogy
 

@@ -34,7 +34,7 @@ const features = [
       'Every node is load-bearing. If removing it wouldn\'t cause manifestation ambiguity, it doesn\'t belong in the graph.',
   },
   {
-    title: 'Deterministic',
+    title: 'Predictable',
     description:
       'Two agents given the same spec graph produce logically equivalent systems. The completeness gap is closed.',
   },
@@ -42,7 +42,7 @@ const features = [
 
 export default function Home(): React.JSX.Element {
   return (
-    <Layout description="The minimal specification framework for deterministic system manifestation">
+    <Layout description="The minimal specification framework for predictable system manifestation">
       <HomepageHeader />
       <main>
         <section style={{padding: '2rem 0'}}>

@@ -21,10 +21,10 @@ A graph with all core node types approaches **total equivalence** — two manife
 
 ## Semantic, Not Byte-Level
 
-The Spec Graph targets **semantic determinism**, not byte-level determinism:
+The Spec Graph targets **semantic predictability**, not byte-level determinism:
 
-- **Byte-level**: identical source code (rarely achievable, rarely necessary)
-- **Semantic**: logically equivalent systems under a declared equivalence contract
+- **Byte-level determinism**: identical source code (rarely achievable, rarely necessary)
+- **Semantic predictability**: logically equivalent systems under a declared equivalence contract
 
 Two manifestations can have different variable names, different file structures, and different whitespace — and still be equivalent, because those differences don't affect any dimension the designer specified.
 

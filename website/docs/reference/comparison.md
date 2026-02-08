@@ -66,7 +66,7 @@ The Spec Graph shares ideas with several existing approaches. This page clarifie
 | Output | Running infrastructure | Running system (via manifestation) |
 | Abstraction | Resource-level | Intent-level |
 
-**Similarity:** Both aim for deterministic creation from declarative specifications.
+**Similarity:** Both aim for predictable creation from declarative specifications.
 
 **Difference:** IaC specifies infrastructure resources at a concrete level. The Spec Graph specifies system intent at a higher level — including behavior, architecture, domain, and constraints — leaving the agent to determine the concrete implementation.
 
@@ -105,4 +105,4 @@ The Spec Graph shares ideas with several existing approaches. This page clarifie
 
 **Similarity:** Both capture observable system behavior.
 
-**Difference:** BDD scenarios focus on user stories. Spec Graph behaviors are part of a larger graph that also captures the non-behavioral dimensions needed for deterministic manifestation.
+**Difference:** BDD scenarios focus on user stories. Spec Graph behaviors are part of a larger graph that also captures the non-behavioral dimensions needed for predictable manifestation.

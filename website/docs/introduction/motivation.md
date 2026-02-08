@@ -26,7 +26,7 @@ Consider two agents implementing the same behavioral spec for user authenticatio
 - **Agent A** wraps Clerk behind an abstract `AuthProvider` interface, uses optimistic session caching, and enforces route protection via middleware
 - **Agent B** calls Clerk directly throughout the codebase, checks sessions synchronously on every render, and scatters auth guards across individual components
 
-Both produce correct behavior. But the systems are architecturally different, inconsistently structured, and impossible to maintain as a single codebase. The behavioral spec was _necessary_ but not _sufficient_ for deterministic manifestation.
+Both produce correct behavior. But the systems are architecturally different, inconsistently structured, and impossible to maintain as a single codebase. The behavioral spec was _necessary_ but not _sufficient_ for predictable manifestation.
 
 ## The Shadow Spec
 

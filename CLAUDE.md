@@ -1,6 +1,6 @@
 # Spec Graph Framework
 
-A formal specification framework for deterministic, agent-driven software development. The Spec Graph extends behavior-only specifications into a multi-dimensional graph that captures everything required to predictably manifest a system.
+A formal specification framework for predictable, automated, agent-driven software development. The Spec Graph extends behavior-only specifications into a multi-dimensional graph that captures everything required to predictably manifest a system.
 
 ## Repository Structure
 

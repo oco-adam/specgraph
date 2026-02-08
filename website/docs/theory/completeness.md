@@ -5,7 +5,7 @@ title: Completeness
 
 # Completeness
 
-Completeness is the central formal property of the Spec Graph. It answers the question: **does this specification contain enough information for deterministic manifestation?**
+Completeness is the central formal property of the Spec Graph. It answers the question: **does this specification contain enough information for predictable manifestation?**
 
 ## Definition
 
@@ -43,16 +43,18 @@ A spec graph is "complete enough" when the implementing agent's remaining choice
 
 ## Completeness and the Agent
 
-Completeness is defined **relative to an implementing agent**. A less capable agent may need more specification to produce deterministic results. A more capable agent (one with better judgment about conventions, patterns, and best practices) may need less.
+Completeness is defined **relative to an implementing agent**. A less capable agent may need more specification to produce predictable results. A more capable agent (one with better judgment about conventions, patterns, and best practices) may need less.
 
 The Spec Graph aims to be complete enough for a **competent implementing agent** — one that understands the target language, frameworks, and common conventions, but has no special knowledge of this particular system's design intent.
 
 ## Relationship to Manifestation
 
-Completeness is the precondition for deterministic manifestation:
+Completeness is the precondition for predictable manifestation. In the ideal case, it yields full determinism:
 
 ```
 Complete(G) ∧ Capable(A) → Deterministic(Manifest(G, A))
 ```
+
+Perfect determinism — where every manifestation is identical — is an idealistic goal. In practice, the Spec Graph targets **predictability**: manifestations are equivalent across all dimensions the designer specified, even if they differ in incidental details. Determinism is the asymptote; predictability is the practical achievement.
 
 Where `Capable(A)` means the agent can parse the graph, resolve dependencies, apply guidance, respect constraints, and verify outcomes. See [Manifestation](/docs/manifestation/overview) for how agents process a complete graph.
