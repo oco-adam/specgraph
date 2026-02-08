@@ -1,0 +1,21 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "DEC-TB-02",
+  "type": "decision",
+  "category": "pattern",
+  "title": "Real-Time Sync via Reactive Queries",
+  "statement": "Board state is powered by reactive database subscriptions, not periodic polling. Changes by other users appear in real-time without page refresh.",
+  "constraints": [
+    "Board state must reflect backend state within 1 second of any change"
+  ],
+  "verification": [
+    "Open two browser tabs; move a task in one; verify it appears in the other within 1s"
+  ],
+  "status": "approved",
+  "links": {
+    "constrains": ["TASKBOARD-01", "TASKBOARD-02"]
+  },
+  "metadata": {
+    "rationale": "Multi-user collaboration requires real-time state synchronization."
+  }
+}

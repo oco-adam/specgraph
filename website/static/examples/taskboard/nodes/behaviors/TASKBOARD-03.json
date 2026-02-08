@@ -1,0 +1,14 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "TASKBOARD-03",
+  "type": "behavior",
+  "title": "Drag Task Between Columns",
+  "expectation": "Users can drag a task card from one column to another to change its status with immediate visual feedback",
+  "invariant": "Status transitions must follow the allowed sequence",
+  "verification": "npm test -- --grep TASKBOARD-03",
+  "status": "approved",
+  "links": {
+    "depends_on": ["TASKBOARD-02", "DEC-TB-01"],
+    "implements": ["DOM-TASK-01"]
+  }
+}

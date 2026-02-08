@@ -1,0 +1,22 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "DEC-TB-01",
+  "type": "decision",
+  "category": "pattern",
+  "title": "Optimistic Status Updates",
+  "statement": "Task status changes use optimistic updates. On drag-end, immediately update local state. Send mutation in background. On failure, revert and show error toast.",
+  "constraints": [
+    "Failed mutations must revert the optimistic update within 3 seconds"
+  ],
+  "verification": [
+    "Simulate network failure during drag; card reverts to original column"
+  ],
+  "status": "approved",
+  "links": {
+    "constrains": ["TASKBOARD-03"],
+    "depends_on": ["DEC-TB-03"]
+  },
+  "metadata": {
+    "rationale": "Kanban boards feel sluggish without optimistic updates. Users expect instant visual feedback."
+  }
+}

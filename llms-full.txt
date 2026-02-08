@@ -1,0 +1,3316 @@
+# Spec Graph — Complete Documentation
+
+> The minimal specification framework for deterministic system manifestation.
+
+> Generated: 2026-02-08
+
+---
+
+# Spec Graph
+
+The **Spec Graph** is a formal specification framework for deterministic, agent-driven software development. It extends behavior-only specifications into a multi-dimensional graph that captures everything required to predictably manifest a system: behavior, architecture, design, technology choices, domain concepts, and constraints.
+
+## The Core Idea
+
+A Spec Graph is a directed, typed graph where:
+
+- **Nodes** are atomic specification entries — each one captures a single decision, behavior, concept, or constraint
+- **Edges** express typed relationships between nodes — dependency, constraint, implementation, containment
+- **Features** are namespaces that group related nodes across types
+
+```mermaid
+graph TD
+    F[AUTH Feature] --> B1[AUTH-01: Login Form]
+    F --> B2[AUTH-02: Email Validation]
+    F --> D1[DEC-AUTH-01: Auth Provider Interface]
+    F --> DOM1[DOM-USER-01: User Account]
+    F --> C1[CON-PERF-01: Page Load Budget]
+
+    B1 -->|implements| DOM1
+    B1 -->|depends_on| D1
+    D1 -->|constrains| B1
+    C1 -->|constrains| B1
+```
+
+## The Defining Property
+
+> **The Spec Graph is the minimal structure that, when processed by a capable implementing agent, will always produce logically equivalent manifestations of the designer's intended system.**
+
+Two agents given the same spec graph should produce systems that are indistinguishable across every dimension the designer specified — same behaviors, same architecture, same visual presentation, same domain semantics.
+
+## What This Framework Produces
+
+The Spec Graph framework is a **design specification**, not running code. It produces:
+
+1. **Formal theory** — completeness, minimality, deterministic manifestation
+2. **Data model** — node types, edge types, and their schemas
+3. **JSON Schemas** — for validating spec graph files
+4. **Manifestation process** — how agents traverse and implement the graph
+5. **Worked examples** — realistic spec graphs demonstrating the framework
+
+These artifacts are sufficient for an engineering team to build a Spec Graph-based agentic development platform without further design decisions about the specification format.
+
+## Quick Start
+
+If you want to jump straight in:
+
+1. Read [Motivation](./motivation) to understand the problem
+2. Explore the [Graph Structure](/docs/graph/structure) to see how it works
+3. Check the [Getting Started](/docs/guides/getting-started) guide to write your first spec graph
+
+## Background
+
+The Spec Graph builds on lessons from [DLOOP v1](https://github.com/omnifiedLtd/selfimloop), a declarative agentic development framework that used behavior-only specifications. DLOOP v1 demonstrated the value of atomic, declarative specs driving automated development — but limiting specs to behavior alone left too many decisions unspecified. The Spec Graph is a clean-sheet redesign that addresses this completeness gap.
+
+---
+
+# Motivation
+
+## The Problem with Behavior-Only Specs
+
+Declarative behavioral specifications — where each entry describes WHAT the system does from the user's perspective — are powerful. They are atomic, testable, and reviewable. But they leave critical information stranded in implicit side-channels:
+
+| What's Missing | Where It Lives Today | Why It Matters |
+|---|---|---|
+| Architectural patterns | Agent instructions, tech stack profiles | Two agents given the same behavioral spec may produce architecturally incompatible implementations |
+| Design system | Scattered docs, component libraries, agent prompts | Visual consistency requires shared design knowledge that behaviors don't capture |
+| Technology choices | Tech stack profiles, CLAUDE.md, package.json | "Build a login form" manifests very differently in Next.js vs. Phoenix LiveView |
+| Domain model | Implicit in code, sometimes in docs | Business concepts and their relationships constrain valid implementations |
+| Non-functional requirements | Constraint nodes in agent instructions | Performance and security budgets shape every implementation decision |
+
+## The Consequence
+
+When you re-manifest a system from its behavioral spec alone, you get a system that **does the right things** but may do them in incompatible, inconsistent, or suboptimal ways.
+
+Consider two agents implementing the same behavioral spec for user authentication:
+
+- **Agent A** wraps Clerk behind an abstract `AuthProvider` interface, uses optimistic session caching, and enforces route protection via middleware
+- **Agent B** calls Clerk directly throughout the codebase, checks sessions synchronously on every render, and scatters auth guards across individual components
+
+Both produce correct behavior. But the systems are architecturally different, inconsistently structured, and impossible to maintain as a single codebase. The behavioral spec was _necessary_ but not _sufficient_ for deterministic manifestation.
+
+## The Shadow Spec
+
+In practice, teams compensate by creating a **shadow spec** — a mishmash of documents, agent instructions, tech stack profiles, PR review comments, and senior engineer guidance that fills the gaps the behavioral spec leaves. This shadow spec:
+
+- Is **scattered** across multiple locations and formats
+- Is **mutable** and often unversioned
+- Is **implicit** — different team members carry different pieces
+- **Drifts** from the actual system over time
+- Cannot be **validated** or **verified** programmatically
+
+The shadow spec is the gap between what the behavioral spec says and what you actually need to know to build the system right.
+
+## The Goal
+
+The Spec Graph eliminates the shadow spec by making every load-bearing decision explicit, reviewable, and verifiable:
+
+> **Define a specification framework where the spec determines all decisions the designer cares about, across every dimension — not just behavior.**
+
+This is the Spec Graph: a multi-dimensional specification that captures behavior alongside the architecture, design, technology, domain, and constraints that together determine the intended system.
+
+---
+
+# Design Principles
+
+The Spec Graph framework is guided by six principles. These are not aspirational — they are load-bearing constraints that shape every design decision in the framework.
+
+## 1. Atomicity Everywhere
+
+DLOOP v1's ONE rule — ONE trigger, ONE behavior, ONE outcome — was a good idea. The Spec Graph generalises it:
+
+> **Every node expresses one decision, one contract, or one constraint.**
+
+If a node contains "and" across multiple decisions, split it. This applies to all node types, not just behaviors. A decision node captures one architectural decision. A domain node defines one business concept. A constraint node specifies one measurable requirement.
+
+Atomicity creates **review pressure** (each node is small enough to reason about), **composability** (nodes combine without hidden coupling), and **testability** (each node has a clear verification criterion).
+
+## 2. Every Normative Node Must Be Verifiable
+
+If it cannot be verified, it is not a complete spec.
+
+Every node that makes a normative claim — a behavior, a constraint, a decision — must include verification criteria that produce a pass/fail result. Verification can be:
+
+- **Executable**: test commands, linters, policy checks
+- **Static**: type checking, AST rules, dependency constraints
+- **Observable**: manual inspection with unambiguous criteria
+
+Unverifiable nodes are informational at best, misleading at worst.
+
+## 3. The Graph Should Be Minimal
+
+> **Only include what reduces manifestation ambiguity.**
+
+Redundant or derived information belongs in generated artifacts, not the graph. The **minimality test** for any proposed node: "If I removed this, could a competent implementing agent make a choice I wouldn't want?" If yes, keep it. If no, remove it.
+
+This is analogous to a basis in linear algebra — the minimal set of vectors that spans the space. The Spec Graph is the minimal set of specifications that spans the designer's intent space.
+
+## 4. Progressive Adoption
+
+A behavior-only graph is valid. You don't need to start with all node types.
+
+Additional node types are added when the minimality test demands it — when manifestation ambiguity on a dimension the designer cares about requires explicit specification. A typical project grows its spec graph over time:
+
+1. Start with behavior nodes (captures what the system does)
+2. Add decision nodes (locks in architecture and tech stack)
+3. Add domain nodes (establishes shared vocabulary)
+4. Add constraint nodes (sets non-functional boundaries)
+
+## 5. Declarative Truth, Not Narrative Docs
+
+Every decision that matters becomes a verifiable node in the graph, not prose in a document. The graph is the **constitution** — the single source of truth that agents and humans reference.
+
+Narrative documentation is valuable for explanation, but it is not authoritative. If the docs disagree with the graph, the graph wins.
+
+## 6. Normative vs. Informative Content
+
+The framework strictly distinguishes:
+
+- **Normative**: `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
+- **Informative**: `metadata.rationale`, `metadata.notes` — context and explanation, never requirements
+
+This prevents "helpful notes" from becoming implicit requirements that break deterministic manifestation.
+
+---
+
+# Completeness
+
+Completeness is the central formal property of the Spec Graph. It answers the question: **does this specification contain enough information for deterministic manifestation?**
+
+## Definition
+
+A Spec Graph G is **complete** with respect to implementing agent A if, for any two manifestations M₁ and M₂ that A could produce from G:
+
+```
+∀ M₁, M₂ ∈ Manifest(G, A):  M₁ ≡ M₂
+```
+
+Intuitively: no matter how many times you manifest from the same spec, you get the "same" system. The agent has no ambiguous decisions left to make on dimensions the designer cares about.
+
+## What "Equivalent" Means
+
+Equivalence is **parameterized by the node types present in the graph**:
+
+| Nodes Present | Equivalence Includes |
+|---|---|
+| behavior only | Same observable behavior |
+| + decision | Same architectural structure and technology choices |
+| + domain | Same data model and business rules |
+| + constraint | Same non-functional characteristics |
+| All core types | Approaches total equivalence |
+
+A graph with only behavior nodes guarantees behavioral equivalence — two manifestations do the same things, but may be structured completely differently. Adding decision nodes narrows the architecture. Adding domain nodes aligns the data model. Each additional dimension tightens the equivalence relation.
+
+## Practical Implications
+
+Perfect completeness requires that the spec determines **every** decision. In practice, this is neither achievable nor desirable — some decisions (variable names, exact file structure, import ordering) don't affect the designer's intent.
+
+The practical goal is:
+
+> **The remaining unspecified decisions do not violate the designer's intent.**
+
+A spec graph is "complete enough" when the implementing agent's remaining choices are all in the category of irrelevant implementation details — things the designer genuinely doesn't care about.
+
+## Completeness and the Agent
+
+Completeness is defined **relative to an implementing agent**. A less capable agent may need more specification to produce deterministic results. A more capable agent (one with better judgment about conventions, patterns, and best practices) may need less.
+
+The Spec Graph aims to be complete enough for a **competent implementing agent** — one that understands the target language, frameworks, and common conventions, but has no special knowledge of this particular system's design intent.
+
+## Relationship to Manifestation
+
+Completeness is the precondition for deterministic manifestation:
+
+```
+Complete(G) ∧ Capable(A) → Deterministic(Manifest(G, A))
+```
+
+Where `Capable(A)` means the agent can parse the graph, resolve dependencies, apply guidance, respect constraints, and verify outcomes. See [Manifestation](/docs/manifestation/overview) for how agents process a complete graph.
+
+---
+
+# Minimality
+
+Minimality is the counterpart to completeness. Where completeness asks "is there enough?", minimality asks "is there too much?"
+
+## Definition
+
+A Spec Graph G is **minimal** if removing any node would break completeness — that is, would allow the implementing agent to make a choice the designer wouldn't want:
+
+```
+∀ node n ∈ G:
+  ∃ M₁, M₂ ∈ Manifest(G \ {n}, A):
+    M₁ ≢ M₂
+```
+
+In plain English: every node in the graph is **load-bearing**. If you can remove a node and still get deterministic manifestation, that node was redundant and shouldn't be there.
+
+## The Basis Analogy
+
+Minimality is analogous to a **basis** in linear algebra — the minimal set of vectors that spans the space. The Spec Graph is the minimal set of specifications that spans the designer's "intent space."
+
+Just as a redundant vector in a basis can be expressed as a combination of the others, a redundant node in the graph can be derived from the remaining nodes (or simply doesn't affect manifestation).
+
+## The Minimality Test
+
+For any proposed spec node, ask:
+
+> "If I removed this, could a competent implementing agent make a choice I wouldn't want?"
+
+- **If yes** → the node is load-bearing, keep it
+- **If no** → the node is redundant, remove it
+
+This test should be applied regularly during spec authoring to keep the graph lean.
+
+## Why Minimality Matters
+
+### Cognitive Load
+
+Every node in the graph is something an implementing agent (or human reviewer) must read, understand, and respect. Redundant nodes waste attention and create opportunities for contradiction.
+
+### Contradiction Risk
+
+Redundant nodes can drift out of sync with the nodes they duplicate. When two nodes say the same thing in different words, they will eventually disagree — and the agent must decide which one to follow.
+
+### Signal-to-Noise Ratio
+
+A minimal graph has maximum signal. Every node you read changes your understanding of the system. In a non-minimal graph, many nodes are noise — they don't tell you anything you couldn't derive from other nodes.
+
+## What Minimality Is Not
+
+Minimality does **not** mean brevity. A 200-node graph can be minimal if every node is load-bearing. A 5-node graph can be non-minimal if one node is redundant.
+
+Minimality also does not mean "omit things the agent can figure out." It means "omit things where the agent's guess would always match the designer's intent." If there's any risk of divergence, the node is load-bearing.
+
+## Relationship to Progressive Adoption
+
+Minimality supports [progressive adoption](/docs/guides/progressive-adoption). You start with a small graph (behavior nodes only) and add nodes only when the minimality test demands it. This means the graph grows organically in response to actual manifestation ambiguity, not speculatively.
+
+---
+
+# The Completeness Gap
+
+In practice, no spec graph is perfectly complete. There will always be some ambient knowledge the agent brings — language semantics, framework conventions, common sense. The **completeness gap** measures what's left unspecified.
+
+## Definition
+
+```
+Completeness Gap = {decisions the agent must make} − {decisions the spec determines}
+```
+
+A behavior-only spec has a **large** completeness gap: the agent must decide architecture, technology, design, domain model, and constraints entirely on its own. Each additional node type in the graph **shrinks** the gap.
+
+## Visualizing the Gap
+
+```mermaid
+graph LR
+    subgraph "Behavior-Only Spec"
+        B1[Behavior] --> GAP1[Large Gap:<br/>Architecture, Design,<br/>Tech, Domain, Constraints]
+    end
+
+    subgraph "Full Spec Graph"
+        B2[Behavior] --> GAP2[Small Gap:<br/>Variable names,<br/>file structure]
+        D[Decisions] --> GAP2
+        DOM[Domain] --> GAP2
+        C[Constraints] --> GAP2
+    end
+```
+
+## What Lives in the Gap
+
+The completeness gap contains every decision the agent makes that isn't determined by the spec. These fall into categories:
+
+### Benign Decisions (Acceptable Gap)
+
+Decisions where any reasonable choice produces an equivalent system:
+
+- Variable and function naming conventions
+- File and directory organization (within a framework's conventions)
+- Import ordering
+- Comment placement
+- Test organization details
+
+These are part of the "acceptable residual" — the gap that remains even in a complete-enough graph.
+
+### Dangerous Decisions (Unacceptable Gap)
+
+Decisions where different choices produce materially different systems:
+
+- Whether to use an abstraction layer or call a service directly
+- Which state management pattern to use
+- How to handle error recovery
+- What the color palette is
+- Whether a business rule is enforced in the UI, API, or database
+
+If these decisions are in the gap, the spec is not complete enough.
+
+## Shrinking the Gap
+
+The practical question is always:
+
+> **Is the remaining gap small enough that the agent's choices won't violate the designer's intent?**
+
+Each node type addresses a specific category of decisions:
+
+| Node Type | Gap It Closes |
+|---|---|
+| `behavior` | What the system does |
+| `decision` | How it's structured and what it's built with |
+| `domain` | What business concepts mean |
+| `constraint` | What non-functional boundaries must hold |
+| `feature` | How specs are organized and grouped |
+
+Extension types (`design_token`, `api_contract`, etc.) close additional specialized gaps as needed.
+
+## The Gap Is Relative
+
+The completeness gap depends on the **implementing agent's capabilities**. A more capable agent (with better defaults, stronger conventions, deeper framework knowledge) has a smaller effective gap — it fills in reasonable choices where a less capable agent might diverge.
+
+The Spec Graph targets a **competent but uninformed** agent: one that knows how to code well but has no special knowledge of this system's design intent. Everything the designer cares about must be in the graph.
+
+---
+
+# Equivalence
+
+Equivalence defines what it means for two manifestations to be "the same system." This is not a simple question — it depends on what dimensions the designer cares about.
+
+## Parameterized Equivalence
+
+Two manifestations M₁ and M₂ are **equivalent** (M₁ ≡ M₂) if they are indistinguishable across every dimension specified in the graph. The equivalence relation is parameterized by the node types present:
+
+- **Behavioral equivalence**: Same observable behavior from the user's perspective
+- **Structural equivalence**: Same architectural patterns and module boundaries
+- **Technological equivalence**: Same technology stack and usage patterns
+- **Domain equivalence**: Same data model, business rules, and vocabulary
+- **Constraint equivalence**: Same non-functional characteristics (performance, security, accessibility)
+
+A graph with all core node types approaches **total equivalence** — two manifestations would be indistinguishable in every dimension the designer specified.
+
+## Semantic, Not Byte-Level
+
+The Spec Graph targets **semantic determinism**, not byte-level determinism:
+
+- **Byte-level**: identical source code (rarely achievable, rarely necessary)
+- **Semantic**: logically equivalent systems under a declared equivalence contract
+
+Two manifestations can have different variable names, different file structures, and different whitespace — and still be equivalent, because those differences don't affect any dimension the designer specified.
+
+## The Equivalence Contract
+
+For formal use, a Spec Graph can include an `equivalence_contract` extension node that explicitly declares what "same system" means:
+
+- Which tests must pass
+- Which invariants must hold
+- Which performance budgets must be met
+- Which structural properties must be preserved
+
+This makes equivalence **testable** — you can verify whether two manifestations satisfy the contract.
+
+## Levels of Equivalence
+
+In practice, teams operate at different levels of equivalence strictness:
+
+### Level 1: Behavioral Equivalence
+
+The weakest useful level. Two systems do the same things from the user's perspective. Architecture, technology, and design may differ completely.
+
+*Achieved by: behavior nodes only.*
+
+### Level 2: Structural Equivalence
+
+Systems share the same architectural patterns and boundaries. You could swap one implementation for the other without changing the system's module graph.
+
+*Achieved by: behavior + decision nodes.*
+
+### Level 3: Full Dimensional Equivalence
+
+Systems are indistinguishable across all specified dimensions. Same behavior, same structure, same domain model, same constraints satisfied.
+
+*Achieved by: all core node types.*
+
+## Equivalence and Verification
+
+Equivalence is verified through the **verification criteria** on each node. If every node's verification passes for both M₁ and M₂, the systems are equivalent under the graph's implied equivalence relation.
+
+This means verification is not just about testing — it's the mechanism by which equivalence is established. See [Verification](/docs/manifestation/verification) for details.
+
+---
+
+# Graph Structure
+
+The Spec Graph is a **directed, typed graph** where nodes are specification entries and edges are relationships between them.
+
+## Components
+
+A Spec Graph consists of three elements:
+
+1. **Nodes** — individual specification entries, each with a type that determines its schema
+2. **Edges** — typed, directed relationships between nodes (stored inside nodes as outbound links)
+3. **Features** — namespace nodes that group related nodes across types
+
+## Storage Model
+
+The graph is stored as a directory of JSON files:
+
+```
+specgraph/
+  graph.json                    # Index: version, node references
+  nodes/
+    features/AUTH.json          # Feature grouping node
+    behaviors/AUTH-01.json      # Behavior node
+    decisions/DEC-AUTH-01.json  # Decision node
+    domains/DOM-USER-01.json   # Domain node
+    constraints/CON-PERF-01.json  # Constraint node
+```
+
+### The Index File
+
+`graph.json` is the entry point. It lists every node in the graph with its file path:
+
+```json
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/graph.schema.json",
+  "specgraphVersion": "1.0.0",
+  "nodes": [
+    { "id": "AUTH", "path": "nodes/features/AUTH.json" },
+    { "id": "AUTH-01", "path": "nodes/behaviors/AUTH-01.json" },
+    { "id": "DEC-AUTH-01", "path": "nodes/decisions/DEC-AUTH-01.json" },
+    { "id": "DOM-USER-01", "path": "nodes/domains/DOM-USER-01.json" },
+    { "id": "CON-PERF-01", "path": "nodes/constraints/CON-PERF-01.json" }
+  ]
+}
+```
+
+### Node Files
+
+Each node is a self-contained JSON file. Edges are expressed as outbound links inside the node:
+
+```json
+{
+  "id": "AUTH-01",
+  "type": "behavior",
+  "title": "Login Form Display",
+  "expectation": "Login page renders email and password input fields with a submit button",
+  "invariant": "Password field must mask input characters",
+  "verification": "npm test -- --grep AUTH-01",
+  "status": "approved",
+  "links": {
+    "implements": ["DOM-USER-01"],
+    "depends_on": ["DEC-AUTH-01"]
+  }
+}
+```
+
+## Node-Local Edges
+
+Edges live inside the node that owns them. This is a deliberate design choice:
+
+- **Atomic PRs**: changing a node and its relationships happens in one file
+- **Local reasoning**: when reviewing a node, you see exactly what it depends on and constrains
+- **No duplication**: outbound edges are canonical; reverse edges are computed by tooling
+
+Only **forward edges** are stored. If `AUTH-01` depends on `DEC-AUTH-01`, the `depends_on` link is stored in `AUTH-01.json`. The inverse ("`DEC-AUTH-01` is depended on by `AUTH-01`") is computed at query time.
+
+## The Graph as a Whole
+
+```mermaid
+graph TD
+    AUTH[AUTH<br/>feature] -->|contains| AUTH01[AUTH-01<br/>behavior]
+    AUTH -->|contains| AUTH02[AUTH-02<br/>behavior]
+    AUTH -->|contains| DEC[DEC-AUTH-01<br/>decision]
+    AUTH -->|contains| DOM[DOM-USER-01<br/>domain]
+    AUTH -->|contains| CON[CON-PERF-01<br/>constraint]
+
+    AUTH01 -->|implements| DOM
+    AUTH01 -->|depends_on| DEC
+    AUTH02 -->|depends_on| AUTH01
+    DEC -->|constrains| AUTH01
+    CON -->|constrains| AUTH01
+```
+
+At manifestation time, tooling loads all node files and constructs the full in-memory graph. The file-per-node layout is a storage concern — at runtime, it's one unified graph.
+
+## Validation
+
+The graph is validated at two levels:
+
+| Level | What's Checked | Tool |
+|---|---|---|
+| **Schema** | Each node file matches `node.schema.json`; `graph.json` matches `graph.schema.json` | JSON Schema validator (e.g., `ajv`) |
+| **Graph integrity** | Referential integrity (all edge targets exist), no self-references, `depends_on` is acyclic | Graph validator tooling |
+
+Schema validation and graph integrity validation are independent — you can validate node content without checking structural integrity, and vice versa.
+
+---
+
+# Node Types Overview
+
+The Spec Graph uses a **tiered type system**: five core types that every graph can use, plus extension types for richer modelling.
+
+## Core Types
+
+These five types are sufficient for most spec graphs:
+
+| Type | Purpose | Key Question |
+|---|---|---|
+| **`feature`** | Grouping and namespace | How are specs organized? |
+| **`behavior`** | Observable system behavior | What does the user see and do? |
+| **`decision`** | Architectural, technical, or stack decision | How should it be built, and with what? |
+| **`domain`** | Business concept, term, or rule | What do the domain terms mean? |
+| **`constraint`** | Non-functional requirement | What limits must be met? |
+
+### Node Shapes
+
+The core types use two distinct shapes:
+
+**Behavior nodes** carry `expectation` and `invariant` as their primary fields — these are the canonical fields for describing observable behavior:
+
+```json
+{
+  "id": "AUTH-01",
+  "type": "behavior",
+  "title": "Login Form Display",
+  "expectation": "Login page renders email and password input fields with a submit button",
+  "invariant": "Password field must mask input characters",
+  "verification": "npm test -- --grep AUTH-01",
+  "status": "approved"
+}
+```
+
+**All other non-feature types** (decision, domain, constraint, and extensions) share a uniform **contract shape**:
+
+```json
+{
+  "id": "DEC-AUTH-01",
+  "type": "decision",
+  "category": "architecture",
+  "title": "Abstract Auth Provider Interface",
+  "statement": "All auth operations go through an AuthProvider interface.",
+  "constraints": ["Interface must define authenticate(), validateSession(), revokeSession()"],
+  "verification": ["npx tsc --noEmit", "npm test -- --grep DEC-AUTH-01"],
+  "status": "approved"
+}
+```
+
+**Feature nodes** are the simplest — they have `title`, `description`, and `status`, plus `links` to group their children.
+
+## Extension Types
+
+For graphs that need finer-grained modelling, extension types are available:
+
+| Extension Type | Purpose |
+|---|---|
+| `design_token` | Visual tokens: colors, typography, spacing |
+| `ui_contract` | UI component props, states, variants |
+| `api_contract` | REST, GraphQL, or event contracts |
+| `data_model` | Database schemas, migrations, invariants |
+| `artifact` | Content-addressed external artifact |
+| `equivalence_contract` | Formal definition of "same system" |
+| `pipeline` | Manifestation pipeline steps and gates |
+
+Extension types use the same contract shape as decision/domain/constraint nodes. They add no new fields — the `type` value is what distinguishes them.
+
+## The Decision Type
+
+The `decision` type deserves special attention because it **merges** what earlier research called "technical" and "stack" into a single type with a `category` field:
+
+| Category | What It Captures | Example |
+|---|---|---|
+| `architecture` | Structural patterns, module boundaries | "All auth goes through an AuthProvider interface" |
+| `stack` | Technology choices and usage constraints | "Use Clerk for authentication" |
+| `pattern` | Implementation patterns | "Use optimistic updates for drag-and-drop" |
+| `interface` | Public API contracts between modules | "Auth module exports authenticate() and revokeSession()" |
+
+This merging reflects the reality that architectural decisions and technology choices exist on a continuum — the distinction was blurry in practice.
+
+## Type Summary
+
+```
+┌──────────────┬─────────────────────┬──────────────────────────────────┐
+│ Type         │ Key Field           │ Answers                          │
+├──────────────┼─────────────────────┼──────────────────────────────────┤
+│ feature      │ description         │ How are specs grouped?           │
+│ behavior     │ expectation         │ What does the user see/do?       │
+│ decision     │ statement + category│ How should it be built?          │
+│ domain       │ statement           │ What do domain concepts mean?    │
+│ constraint   │ statement + severity│ What limits must be met?         │
+└──────────────┴─────────────────────┴──────────────────────────────────┘
+```
+
+For detailed documentation on each type, see the [Node Types](/docs/node-types/behavior) section.
+
+---
+
+# Edge Types
+
+Edges encode the relationships between nodes. They are the connective tissue that makes the graph more than a collection of lists.
+
+## The Seven Edge Types
+
+The Spec Graph defines seven forward-only edge types:
+
+| Edge Type | Meaning | Example |
+|---|---|---|
+| `contains` | Grouping/namespace relationship | Feature contains its child nodes |
+| `depends_on` | Must be satisfied before this node | A behavior depends on a decision being in place |
+| `constrains` | Narrows implementation choices for the target | A constraint limits how a behavior can be implemented |
+| `implements` | This node realizes part of the target | A behavior implements a domain concept |
+| `derived_from` | Generated or imported from target (pinned hash) | A design token derived from an artifact |
+| `verified_by` | Points to verification checks | A behavior verified by a test strategy node |
+| `supersedes` | Replaces the target node | A new decision supersedes an old one |
+
+## Edge Direction
+
+Edges are **forward-only** and stored in the source node's `links` field:
+
+```json
+{
+  "id": "AUTH-01",
+  "type": "behavior",
+  "links": {
+    "implements": ["DOM-USER-01"],
+    "depends_on": ["DEC-AUTH-01"]
+  }
+}
+```
+
+This means: "AUTH-01 implements DOM-USER-01" and "AUTH-01 depends on DEC-AUTH-01."
+
+**Inverse edges are computed by tooling, never stored.** If `AUTH-01` depends on `DEC-AUTH-01`, tooling derives that `DEC-AUTH-01` is depended on by `AUTH-01`. This keeps the graph DRY — each relationship is declared once, on the node where it's most natural to author.
+
+## Edge Semantics
+
+### `contains`
+
+Used by feature nodes to group their children. This is the primary organizational edge.
+
+```json
+// In AUTH.json (feature)
+"links": {
+  "contains": ["AUTH-01", "AUTH-02", "DEC-AUTH-01", "DOM-USER-01"]
+}
+```
+
+### `depends_on`
+
+Establishes ordering requirements. If A depends on B, then B must be manifested (or at least understood) before A.
+
+**Critical rule: `depends_on` must be acyclic.** Cycles in dependency edges are a validation error.
+
+### `constrains`
+
+Narrows the implementation space of the target. A constraint node might constrain a behavior node, meaning the behavior must be implemented within the constraint's boundaries.
+
+```json
+// In CON-PERF-01.json (constraint)
+"links": {
+  "constrains": ["AUTH-01", "AUTH-04"]
+}
+```
+
+### `implements`
+
+Links a concrete node to the abstract concept it realizes. Typically used by behavior nodes pointing to domain nodes:
+
+```json
+// In AUTH-01.json (behavior)
+"links": {
+  "implements": ["DOM-USER-01"]
+}
+```
+
+### `derived_from`
+
+Indicates that this node was generated from or imported from another node, typically an artifact. The implication is that changes to the source should trigger re-derivation.
+
+### `verified_by`
+
+Points from a node to the node(s) that verify it. Useful when verification logic is complex enough to warrant its own node (e.g., an `equivalence_contract` or `pipeline` node).
+
+### `supersedes`
+
+Marks a node as replacing another. The superseded node should typically have `deprecated` or `rejected` status. This supports evolution without losing history.
+
+## Validation Rules
+
+1. **Referential integrity**: every edge target must exist as a node in the graph
+2. **No self-references**: a node cannot have an edge to itself
+3. **Acyclicity for `depends_on`**: dependency chains must not form cycles
+4. **Non-decorative**: edges must affect planning, implementation, or verification — purely decorative edges are discouraged
+
+## Common Edge Patterns
+
+### Behavior → Decision → Stack
+
+```mermaid
+graph LR
+    B[AUTH-01<br/>behavior] -->|depends_on| D[DEC-AUTH-01<br/>decision/architecture]
+    D -->|depends_on| S[DEC-AUTH-02<br/>decision/stack]
+```
+
+A behavior depends on an architectural decision, which in turn depends on a technology choice.
+
+### Constraint → Multiple Behaviors
+
+```mermaid
+graph TD
+    C[CON-PERF-01<br/>constraint] -->|constrains| B1[AUTH-01]
+    C -->|constrains| B2[AUTH-04]
+    C -->|constrains| B3[DASH-01]
+```
+
+A performance constraint applies to multiple behaviors across features.
+
+### Feature → Children
+
+```mermaid
+graph TD
+    F[AUTH<br/>feature] -->|contains| B1[AUTH-01]
+    F -->|contains| B2[AUTH-02]
+    F -->|contains| D[DEC-AUTH-01]
+    F -->|contains| DOM[DOM-USER-01]
+```
+
+A feature groups all related nodes regardless of type.
+
+---
+
+# Features & Namespaces
+
+Features are the organizational layer of the Spec Graph. They group related nodes across all types into coherent namespaces.
+
+## What Features Are
+
+A feature node is a **non-normative grouping** — it organizes nodes but does not itself make any claim about the system. Features answer the question: "What logical area of the system does this spec belong to?"
+
+```json
+{
+  "id": "AUTH",
+  "type": "feature",
+  "title": "User Authentication",
+  "description": "Login, session management, and logout flows",
+  "status": "approved",
+  "links": {
+    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "CON-PERF-01"]
+  }
+}
+```
+
+## Features Group Across Types
+
+Unlike DLOOP v1 where features contained only behaviors, Spec Graph features contain **all node types** that belong to that area of the system:
+
+```mermaid
+graph TD
+    AUTH[AUTH Feature] -->|contains| B1[AUTH-01<br/>behavior]
+    AUTH -->|contains| B2[AUTH-02<br/>behavior]
+    AUTH -->|contains| D1[DEC-AUTH-01<br/>decision]
+    AUTH -->|contains| D2[DEC-AUTH-02<br/>decision]
+    AUTH -->|contains| DOM[DOM-USER-01<br/>domain]
+    AUTH -->|contains| CON[CON-PERF-01<br/>constraint]
+```
+
+This means when you look at the AUTH feature, you see **everything** related to authentication: what the user does, how it's built, what "user" means, and what performance limits apply.
+
+## Cross-Cutting Nodes
+
+Some nodes naturally belong to multiple features or to no feature in particular. For example:
+
+- A performance constraint that applies to all pages
+- A domain concept used by multiple features
+- A technology decision that affects the entire system
+
+These cross-cutting nodes can be organized in a few ways:
+
+### Shared Feature
+
+Create a feature for cross-cutting concerns:
+
+```json
+{
+  "id": "PLATFORM",
+  "type": "feature",
+  "title": "Platform",
+  "description": "Cross-cutting infrastructure, constraints, and decisions",
+  "status": "approved",
+  "links": {
+    "contains": ["CON-PERF-01", "DEC-PLATFORM-01", "DOM-TENANT-01"]
+  }
+}
+```
+
+### Multiple Containment
+
+A node can appear in multiple features' `contains` lists. This is valid — it means the node is relevant to both features:
+
+```json
+// In AUTH feature
+"links": { "contains": ["DOM-USER-01", ...] }
+
+// In BILLING feature
+"links": { "contains": ["DOM-USER-01", ...] }
+```
+
+## Feature ID Conventions
+
+Feature IDs use short, uppercase names:
+
+| Feature | ID |
+|---|---|
+| User Authentication | `AUTH` |
+| Task Board | `TASKBOARD` |
+| Billing & Payments | `BILLING` |
+| Design System | `DESIGNSYSTEM` |
+| Platform/Infrastructure | `PLATFORM` |
+
+## Features and the Directory Layout
+
+Features map naturally to the file system. Node files are organized by type, and the feature relationship is expressed through edges:
+
+```
+specgraph/
+  nodes/
+    features/
+      AUTH.json
+      TASKBOARD.json
+    behaviors/
+      AUTH-01.json       # belongs to AUTH
+      TASKBOARD-01.json  # belongs to TASKBOARD
+    decisions/
+      DEC-AUTH-01.json   # belongs to AUTH
+```
+
+The `contains` edge in the feature node is what defines membership — the file location is a convention, not a constraint.
+
+---
+
+# Behavior Nodes
+
+Behavior nodes are the foundation of the Spec Graph. They capture **observable system behavior** from the user's perspective — what the system does, not how it does it.
+
+## Schema
+
+```json
+{
+  "id": "AUTH-01",
+  "type": "behavior",
+  "title": "Login Form Display",
+  "expectation": "Login page renders email and password input fields with a submit button",
+  "invariant": "Password field must mask input characters",
+  "verification": "npm test -- --grep AUTH-01",
+  "status": "approved",
+  "links": {
+    "implements": ["DOM-USER-01"],
+    "depends_on": ["DEC-AUTH-01"]
+  }
+}
+```
+
+## Fields
+
+| Field | Required | Description |
+|---|---|---|
+| `id` | Yes | Unique identifier (e.g., `AUTH-01`, `TASKBOARD-03`) |
+| `type` | Yes | Must be `"behavior"` |
+| `title` | Yes | Short human-readable name (3–100 chars) |
+| `expectation` | Yes | WHAT the system does (min 10 chars) |
+| `invariant` | Yes | Hard constraint that must always hold, or `"None"` |
+| `verification` | Yes | Single pass/fail check (min 5 chars) |
+| `status` | Yes | Lifecycle status: draft, proposed, approved, deprecated, rejected |
+| `links` | No | Outbound edges to other nodes |
+| `metadata` | No | Non-normative context (rationale, notes, tags) |
+
+## The ONE Rule
+
+Behavior nodes follow the **ONE rule** from DLOOP v1:
+
+> **ONE trigger → ONE behavior → ONE outcome**
+
+A behavior node describes exactly one observable thing the system does. If the expectation contains "and" connecting two distinct behaviors, split it into two nodes.
+
+**Good:**
+```
+"expectation": "Login page renders email and password input fields with a submit button"
+```
+This is one observable state — the login form.
+
+**Bad:**
+```
+"expectation": "Login page renders a form and validates email on submit and redirects on success"
+```
+This is three behaviors. Split into: form display, email validation, and redirect.
+
+## Expectation vs. Invariant
+
+- **Expectation**: describes WHAT happens — the observable behavior
+- **Invariant**: describes a constraint that must ALWAYS hold during this behavior, or `"None"`
+
+The invariant is not a second behavior — it's a guard rail. "Password field must mask input characters" constrains how the login form is displayed, not what happens when you submit it.
+
+## Verification
+
+Each behavior has a single verification string — typically an executable test command:
+
+```json
+"verification": "npm test -- --grep AUTH-01"
+```
+
+For behaviors that are harder to test programmatically, the verification can be a description of a manual check:
+
+```json
+"verification": "Visual inspection: login form matches wireframe layout"
+```
+
+Prefer executable verification wherever possible.
+
+## Common Edge Patterns
+
+| Edge | Direction | Meaning |
+|---|---|---|
+| `implements` | behavior → domain | This behavior realizes a domain concept |
+| `depends_on` | behavior → behavior | Must be implemented after the dependency |
+| `depends_on` | behavior → decision | Requires this architectural decision |
+
+Behaviors are typically the **most connected** nodes in the graph — they reference the decisions that guide their implementation, the domain concepts they realize, and the constraints that limit them.
+
+## ID Conventions
+
+Behavior IDs follow the pattern `FEATURE-##`:
+
+| Feature | Behavior IDs |
+|---|---|
+| AUTH | `AUTH-01`, `AUTH-02`, `AUTH-03` |
+| TASKBOARD | `TASKBOARD-01`, `TASKBOARD-02` |
+| BILLING | `BILLING-01`, `BILLING-02` |
+
+---
+
+# Decision Nodes
+
+Decision nodes capture **any architectural, technical, or stack decision that narrows the solution space**. They represent the "how" and "with what" that a senior engineer would communicate to a team.
+
+## Schema
+
+```json
+{
+  "id": "DEC-AUTH-01",
+  "type": "decision",
+  "category": "architecture",
+  "title": "Abstract Auth Provider Interface",
+  "statement": "All authentication operations must go through an abstract AuthProvider interface. Concrete implementations include a production provider and a DeterministicProvider for testing.",
+  "constraints": [
+    "Interface must define: authenticate(), validateSession(), revokeSession()",
+    "No authentication call may bypass the AuthProvider interface"
+  ],
+  "verification": [
+    "npx tsc --noEmit",
+    "npm test -- --grep DEC-AUTH-01"
+  ],
+  "status": "approved",
+  "links": {
+    "constrains": ["AUTH-01", "AUTH-04", "AUTH-05"]
+  },
+  "metadata": {
+    "rationale": "Enables deterministic testing of auth flows without hitting external services."
+  }
+}
+```
+
+## Fields
+
+| Field | Required | Description |
+|---|---|---|
+| `id` | Yes | Unique identifier (e.g., `DEC-AUTH-01`) |
+| `type` | Yes | Must be `"decision"` |
+| `category` | No | One of: `architecture`, `stack`, `pattern`, `interface` |
+| `title` | Yes | Short name (3–140 chars) |
+| `statement` | Yes | The declarative truth that must hold |
+| `constraints` | No | Array of normative invariants |
+| `verification` | Yes | Array of pass/fail checks (min 1) |
+| `status` | Yes | Lifecycle status |
+| `links` | No | Outbound edges |
+| `metadata` | No | Non-normative context |
+
+## Categories
+
+The `category` field distinguishes sub-types of decisions:
+
+### `architecture`
+
+Structural patterns, module boundaries, abstraction layers.
+
+```json
+{
+  "category": "architecture",
+  "statement": "All auth operations go through an AuthProvider interface."
+}
+```
+
+**When to use:** The decision affects the system's structure or module boundaries.
+
+### `stack`
+
+Technology choices, frameworks, libraries, and their usage constraints.
+
+```json
+{
+  "category": "stack",
+  "statement": "Use Clerk as the production authentication provider.",
+  "constraints": ["Use Clerk's middleware for route protection"]
+}
+```
+
+**When to use:** The decision is about which technology to use and how.
+
+### `pattern`
+
+Implementation patterns that guide how behaviors are built.
+
+```json
+{
+  "category": "pattern",
+  "statement": "Task status changes use optimistic updates with revert on failure."
+}
+```
+
+**When to use:** The decision prescribes a specific coding pattern.
+
+### `interface`
+
+Public API contracts between modules or services.
+
+```json
+{
+  "category": "interface",
+  "statement": "The auth module exports authenticate() and revokeSession() functions."
+}
+```
+
+**When to use:** The decision defines a boundary contract.
+
+## Why One Type with Categories?
+
+Earlier research separated "technical" and "stack" into distinct node types. In practice, the boundary was blurry — "Use Next.js App Router" is both a technology choice and an architectural decision. The single `decision` type with a `category` field reflects this reality.
+
+## The Statement Field
+
+The `statement` is the **declarative truth** that must hold. It should be:
+
+- **Specific**: "Use Clerk for authentication" not "Use a managed auth provider"
+- **Actionable**: an implementing agent can determine exactly what to do
+- **Verifiable**: there's a way to check whether it's been followed
+
+## When to Create Decision Nodes
+
+Apply the [minimality test](/docs/theory/minimality):
+
+> "If I removed this, could a competent implementing agent make a choice I wouldn't want?"
+
+Common triggers:
+
+| Scenario | Decision Category |
+|---|---|
+| Two implementations could use incompatible architectures | `architecture` |
+| Technology choice affects how behaviors are implemented | `stack` |
+| A specific coding pattern is required for quality/testability | `pattern` |
+| Modules need a stable interface contract | `interface` |
+
+## ID Conventions
+
+Decision IDs follow the pattern `DEC-FEATURE-##`:
+
+- `DEC-AUTH-01` — first decision in the AUTH feature
+- `DEC-TB-03` — third decision in the TASKBOARD feature
+- `DEC-PLATFORM-01` — platform-wide decision
+
+---
+
+# Domain Nodes
+
+Domain nodes capture **business concepts, terms, and rules** — the ubiquitous language of the system. They establish shared vocabulary so that when a behavioral spec says "user," both the spec author and the implementing agent agree on exactly what "user" means.
+
+## Schema
+
+```json
+{
+  "id": "DOM-USER-01",
+  "type": "domain",
+  "title": "User Account",
+  "statement": "A registered entity that can authenticate, own resources, and have role-based permissions within a project.",
+  "constraints": [
+    "A user must have exactly one role per project (owner, admin, or member)",
+    "Email uniqueness is enforced at the database level",
+    "Every user must have a verified email before accessing any resource"
+  ],
+  "verification": [
+    "Database schema enforces email uniqueness",
+    "npm test -- --grep DOM-USER-01"
+  ],
+  "status": "approved",
+  "metadata": {
+    "rationale": "Establishes shared vocabulary for 'user' across the system."
+  }
+}
+```
+
+## Fields
+
+| Field | Required | Description |
+|---|---|---|
+| `id` | Yes | Unique identifier (e.g., `DOM-USER-01`) |
+| `type` | Yes | Must be `"domain"` |
+| `title` | Yes | The concept name (3–140 chars) |
+| `statement` | Yes | What this concept IS — its definition |
+| `constraints` | No | Business rules governing this concept |
+| `verification` | Yes | How to verify the domain model is correct (min 1) |
+| `status` | Yes | Lifecycle status |
+| `links` | No | Outbound edges |
+| `metadata` | No | Non-normative context |
+
+## The Statement Field
+
+For domain nodes, the `statement` is a **definition**: what the concept IS in the business domain.
+
+**Good:**
+```
+"statement": "A registered entity that can authenticate, own resources, and have role-based permissions within a project."
+```
+
+**Bad:**
+```
+"statement": "Users can log in and manage their projects."
+```
+The bad example describes behaviors, not the concept itself. Behaviors belong in behavior nodes.
+
+## Constraints as Business Rules
+
+The `constraints` array captures the business rules governing this concept:
+
+```json
+"constraints": [
+  "A user must have exactly one role per project",
+  "Email uniqueness is enforced at the database level",
+  "Tasks are created in 'backlog' status by default",
+  "Status transitions follow: backlog → in-progress → review → done"
+]
+```
+
+Each constraint is a normative rule that implementations must respect.
+
+## When to Create Domain Nodes
+
+Apply the minimality test:
+
+> "If I removed this definition, could the implementing agent misunderstand what this business term means?"
+
+Common triggers:
+
+| Scenario | Example |
+|---|---|
+| A business term is ambiguous | "User" could mean account, profile, or person |
+| A concept has non-obvious rules | Tasks have a specific status transition order |
+| Multiple behaviors reference the same concept | Several behaviors deal with "projects" |
+| Domain rules constrain implementation | "Email must be unique" affects database design |
+
+## Relationship to Behaviors
+
+Domain nodes are often **implemented by** behavior nodes:
+
+```mermaid
+graph LR
+    B1[AUTH-01: Login Form] -->|implements| DOM[DOM-USER-01: User Account]
+    B2[AUTH-04: Login Redirect] -->|implements| DOM
+    B3[AUTH-05: Session Persistence] -->|implements| DOM
+```
+
+This means these behaviors collectively realize the "User Account" concept.
+
+## ID Conventions
+
+Domain IDs follow the pattern `DOM-CONCEPT-##`:
+
+- `DOM-USER-01` — User Account
+- `DOM-TASK-01` — Task (in a task management system)
+- `DOM-PROJECT-01` — Project
+- `DOM-TENANT-01` — Tenant (in a multi-tenant system)
+
+---
+
+# Constraint Nodes
+
+Constraint nodes capture **non-functional requirements** that cut across features — performance budgets, security policies, accessibility standards, cost limits.
+
+## Schema
+
+```json
+{
+  "id": "CON-PERF-01",
+  "type": "constraint",
+  "severity": "hard",
+  "title": "Page Load Performance Budget",
+  "statement": "All pages must reach First Contentful Paint within 1.5 seconds on a 4G connection.",
+  "constraints": [
+    "FCP must be measured under simulated 4G conditions",
+    "Budget applies to all routes including the login page"
+  ],
+  "verification": [
+    {
+      "kind": "command",
+      "command": "npx lighthouse --preset=perf --assert-fcp=1500 http://localhost:3000"
+    }
+  ],
+  "status": "approved",
+  "links": {
+    "constrains": ["AUTH-01", "AUTH-04"]
+  },
+  "metadata": {
+    "rationale": "Core Web Vitals compliance for SEO and user experience."
+  }
+}
+```
+
+## Fields
+
+| Field | Required | Description |
+|---|---|---|
+| `id` | Yes | Unique identifier (e.g., `CON-PERF-01`) |
+| `type` | Yes | Must be `"constraint"` |
+| `severity` | No | `"hard"` (blocks manifestation) or `"soft"` (quality target) |
+| `title` | Yes | Short name (3–140 chars) |
+| `statement` | Yes | What must be true, with measurable criteria |
+| `constraints` | No | Additional invariants |
+| `verification` | Yes | How to measure compliance (min 1) |
+| `status` | Yes | Lifecycle status |
+| `links` | No | Outbound edges (typically `constrains`) |
+| `metadata` | No | Non-normative context |
+
+## Severity
+
+The `severity` field distinguishes between requirements that block manifestation and those that are quality targets:
+
+### `hard`
+
+A hard constraint **must** be satisfied. If verification fails, manifestation is blocked.
+
+```json
+{
+  "severity": "hard",
+  "statement": "All pages must reach FCP within 1.5s on 4G."
+}
+```
+
+### `soft`
+
+A soft constraint is a **quality target**. Failing it produces a warning, not a blocker.
+
+```json
+{
+  "severity": "soft",
+  "statement": "API response times should be under 200ms at p50."
+}
+```
+
+If `severity` is omitted, tooling should treat the constraint as `hard` by default.
+
+## Constraint Categories
+
+Constraint nodes cover a wide range of non-functional requirements:
+
+| Category | Examples |
+|---|---|
+| **Performance** | Latency budgets, throughput minimums, bundle size limits |
+| **Security** | Authentication requirements, data encryption, input validation |
+| **Accessibility** | WCAG compliance level, keyboard navigation, screen reader support |
+| **Reliability** | Uptime targets, error rate limits, recovery time |
+| **Cost** | Cloud spend ceilings, API call budgets |
+
+## The `constrains` Edge
+
+Constraint nodes typically use the `constrains` edge to declare which nodes they apply to:
+
+```mermaid
+graph TD
+    C[CON-PERF-01<br/>Performance Budget] -->|constrains| B1[AUTH-01<br/>Login Form]
+    C -->|constrains| B2[AUTH-04<br/>Login Redirect]
+    C -->|constrains| B3[DASH-01<br/>Dashboard Load]
+```
+
+A single constraint can apply to many behaviors across multiple features.
+
+## When to Create Constraint Nodes
+
+Apply the minimality test:
+
+> "If I removed this, could the implementing agent produce a system that violates a non-functional requirement I care about?"
+
+Common triggers:
+
+| Scenario | Constraint Type |
+|---|---|
+| Pages must load within a time budget | Performance |
+| All user data must be encrypted at rest | Security |
+| The app must meet WCAG 2.1 AA | Accessibility |
+| Monthly cloud costs must stay under $500 | Cost |
+| Board must render 200 cards at 60fps | Performance |
+
+## ID Conventions
+
+Constraint IDs follow the pattern `CON-CATEGORY-##` or `CON-FEATURE-CATEGORY-##`:
+
+- `CON-PERF-01` — global performance constraint
+- `CON-SEC-01` — global security constraint
+- `CON-TB-PERF-01` — taskboard-specific performance constraint
+
+---
+
+# Feature Nodes
+
+Feature nodes are **non-normative grouping nodes** that organize the graph into logical areas. They are the simplest node type — they have no `statement`, `verification`, or `constraints`.
+
+## Schema
+
+```json
+{
+  "id": "AUTH",
+  "type": "feature",
+  "title": "User Authentication",
+  "description": "Login, session management, and logout flows",
+  "status": "approved",
+  "links": {
+    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "CON-PERF-01"]
+  }
+}
+```
+
+## Fields
+
+| Field | Required | Description |
+|---|---|---|
+| `id` | Yes | Short uppercase identifier (e.g., `AUTH`, `TASKBOARD`) |
+| `type` | Yes | Must be `"feature"` |
+| `title` | Yes | Human-readable name (3–100 chars) |
+| `description` | Yes | What this feature area covers |
+| `status` | Yes | Lifecycle status |
+| `links` | No | Outbound edges (typically `contains`) |
+| `metadata` | No | Non-normative context |
+
+## Non-Normative
+
+Feature nodes make **no claims about the system**. They don't have expectations, statements, or verification criteria. They exist purely to organize.
+
+This means:
+
+- Removing a feature node doesn't change what gets implemented
+- Feature nodes don't participate in the minimality test
+- They are organizational sugar, not load-bearing specification
+
+## The `contains` Edge
+
+Features use the `contains` edge to declare their children:
+
+```json
+"links": {
+  "contains": ["AUTH-01", "AUTH-02", "DEC-AUTH-01", "DOM-USER-01"]
+}
+```
+
+A feature can contain nodes of **any type**: behaviors, decisions, domains, constraints, and extensions.
+
+## ID Conventions
+
+Feature IDs are short uppercase identifiers:
+
+| Feature | ID |
+|---|---|
+| User Authentication | `AUTH` |
+| Task Board | `TASKBOARD` |
+| Billing & Payments | `BILLING` |
+| Design System | `DESIGNSYSTEM` |
+| Platform | `PLATFORM` |
+
+Feature IDs should be recognizable and concise — they serve as the namespace prefix for child node IDs.
+
+---
+
+# Extension Types
+
+Extension types provide finer-grained modelling for graphs that need it. They use the same **contract shape** as decision, domain, and constraint nodes — the `type` value is what distinguishes them.
+
+## Available Extensions
+
+| Type | Purpose | When to Use |
+|---|---|---|
+| `design_token` | Visual tokens: colors, typography, spacing, shadows | When visual consistency matters and design decisions are load-bearing |
+| `ui_contract` | UI component contracts: props, states, variants | When component interfaces need to be specified |
+| `api_contract` | REST, GraphQL, or event contracts | When API boundaries need formal specification |
+| `data_model` | Database schemas, migrations, invariants | When data structure decisions are load-bearing |
+| `artifact` | Content-addressed external artifact | When external assets (Figma tokens, config files) must be pinned |
+| `equivalence_contract` | Formal definition of "same system" | When you need an explicit equivalence definition |
+| `pipeline` | Manifestation pipeline steps and gates | When the build/deploy process must be specified |
+
+## Schema
+
+All extension types use the same contract shape:
+
+```json
+{
+  "id": "DT-TASKCARD-01",
+  "type": "design_token",
+  "title": "Task Card Design Token",
+  "statement": "Visual specification for task cards on the board.",
+  "constraints": [
+    "Card: white background, 1px border-muted, 8px radius, 12px padding",
+    "Title: 14px semibold",
+    "Priority badge: top-right, colored dot (critical=red, high=orange, medium=blue, low=gray)"
+  ],
+  "verification": [
+    {
+      "kind": "observation",
+      "description": "Visual inspection: task cards match spec in all four columns"
+    }
+  ],
+  "status": "approved",
+  "links": {
+    "constrains": ["TASKBOARD-02"]
+  }
+}
+```
+
+## Design Tokens
+
+Design tokens capture the visual language of the system — colors, typography, spacing, shadows, radii.
+
+```json
+{
+  "type": "design_token",
+  "title": "Primary Color Palette",
+  "statement": "Primary interactive color is oklch(59.59% 0.24 275.75).",
+  "constraints": [
+    "All interactive elements use the primary palette",
+    "Primary-hover is oklch(52.85% 0.24 275.75)"
+  ],
+  "verification": ["CSS audit: no hardcoded colors outside the token system"]
+}
+```
+
+**Use when:** visual consistency matters and the design system is a load-bearing part of the spec.
+
+## API Contracts
+
+API contracts specify the interface between services or modules.
+
+```json
+{
+  "type": "api_contract",
+  "title": "Auth API Contract",
+  "statement": "POST /api/auth/login accepts {email, password} and returns {token, user}.",
+  "constraints": [
+    "Returns 401 on invalid credentials",
+    "Returns 429 after 5 failed attempts in 15 minutes"
+  ],
+  "verification": [
+    {
+      "kind": "http",
+      "method": "POST",
+      "url": "http://localhost:3000/api/auth/login",
+      "expectStatus": 200
+    }
+  ]
+}
+```
+
+## Equivalence Contracts
+
+An equivalence contract formally declares what "same system" means for this graph.
+
+```json
+{
+  "type": "equivalence_contract",
+  "title": "System Equivalence Definition",
+  "statement": "Two manifestations are equivalent if all unit tests pass, all integration tests pass, Lighthouse performance scores exceed thresholds, and all constraint nodes are satisfied.",
+  "constraints": [
+    "Unit test suite must achieve 100% pass rate",
+    "Integration tests must cover all behavior nodes",
+    "Lighthouse FCP < 1.5s, LCP < 2.5s"
+  ],
+  "verification": [
+    { "kind": "command", "command": "npm test" },
+    { "kind": "command", "command": "npm run test:integration" },
+    { "kind": "command", "command": "npx lighthouse --preset=perf http://localhost:3000" }
+  ]
+}
+```
+
+## When to Use Extensions
+
+Extensions follow the same minimality test as core types:
+
+> "If I removed this, could a competent implementing agent make a choice I wouldn't want?"
+
+Start with core types. Add extensions when you discover that core types don't provide enough precision for a specific dimension. For most projects, the five core types are sufficient.
+
+### Progressive Addition
+
+A typical extension adoption path:
+
+1. **Start** with core types only (behavior, decision, domain, constraint, feature)
+2. **Add `design_token`** when visual inconsistency between features becomes a problem
+3. **Add `api_contract`** when service boundaries need formal specification
+4. **Add `data_model`** when database schema decisions are load-bearing
+5. **Add `equivalence_contract`** when you need reproducible re-manifestation
+
+---
+
+# Writing Nodes
+
+This guide covers the practical mechanics of writing good spec graph nodes.
+
+## The Universal Structure
+
+All normative nodes (everything except features) follow a pattern:
+
+1. **Declare** what must be true (`statement` or `expectation`)
+2. **Constrain** what limits apply (`constraints` or `invariant`)
+3. **Verify** how to check it (`verification`)
+
+This maps to the question: "What is true? What must hold? How do we know?"
+
+## Writing Good Statements
+
+The `statement` field (or `expectation` for behaviors) is the core of every node. It should be:
+
+### Specific
+
+```
+✅ "Use Clerk as the production authentication provider for OAuth and session management."
+❌ "Use a managed authentication service."
+```
+
+### Actionable
+
+An implementing agent should be able to determine exactly what to do.
+
+```
+✅ "All auth operations go through an AuthProvider interface with authenticate(), validateSession(), revokeSession()."
+❌ "Auth should be abstracted properly."
+```
+
+### Declarative
+
+State what must be true, not the steps to get there.
+
+```
+✅ "Task status transitions follow: backlog → in-progress → review → done."
+❌ "First create a status enum, then add a transition validator..."
+```
+
+## Writing Good Constraints
+
+Constraints are normative invariants — conditions that must always hold.
+
+### Each Constraint is Independent
+
+```json
+"constraints": [
+  "Interface must define authenticate()",
+  "Interface must define validateSession()",
+  "No auth call may bypass the interface"
+]
+```
+
+Not:
+```json
+"constraints": [
+  "Interface must define authenticate() and validateSession() and no call may bypass it"
+]
+```
+
+### Constraints Are Testable
+
+Each constraint should map to a verifiable condition:
+
+```json
+"constraints": ["Email uniqueness is enforced at the database level"]
+// → Verifiable by checking the schema has a unique constraint on email
+```
+
+## Writing Good Verification
+
+Verification criteria produce **pass/fail** results. Prefer executable checks:
+
+### Executable (Best)
+
+```json
+"verification": ["npm test -- --grep AUTH-01"]
+```
+
+```json
+"verification": [
+  { "kind": "command", "command": "npx tsc --noEmit" },
+  { "kind": "command", "command": "npm test -- --grep DEC-AUTH-01" }
+]
+```
+
+### Observable (Acceptable)
+
+```json
+"verification": [
+  {
+    "kind": "observation",
+    "description": "Visual inspection: task cards match spec in all four columns"
+  }
+]
+```
+
+### Manual (Last Resort)
+
+```json
+"verification": [
+  {
+    "kind": "manual",
+    "steps": [
+      "Open the login page in Chrome",
+      "Submit invalid email format",
+      "Verify error appears below email field"
+    ],
+    "expected": "Inline error message visible without page reload"
+  }
+]
+```
+
+## Using Metadata
+
+The `metadata` field is for **non-normative context** — information that helps humans understand the node but is never a requirement:
+
+```json
+"metadata": {
+  "rationale": "Enables deterministic testing of auth flows.",
+  "notes": "Consider adding a MockProvider for unit tests.",
+  "owner": "auth-team",
+  "tags": ["auth", "architecture"]
+}
+```
+
+**Key rule:** if something in metadata would change implementation if removed, it belongs in `statement` or `constraints`, not metadata.
+
+## Status Lifecycle
+
+All nodes go through a status lifecycle:
+
+```
+draft → proposed → approved → deprecated → rejected
+```
+
+| Status | Meaning |
+|---|---|
+| `draft` | Work in progress, not yet ready for review |
+| `proposed` | Ready for review, not yet binding |
+| `approved` | Binding — must be implemented and verified |
+| `deprecated` | Was approved, now being phased out |
+| `rejected` | Reviewed and explicitly not adopted |
+
+Only `approved` nodes are binding during manifestation. Tooling should skip `draft`, `proposed`, `deprecated`, and `rejected` nodes when assembling context for implementation.
+
+---
+
+# Atomicity Rules
+
+Every node in the Spec Graph must be **atomic** — expressing exactly one decision, one behavior, one concept, or one constraint.
+
+## The General Rule
+
+> **Each node MUST express ONE decision / ONE contract / ONE constraint, with ONE verification intent.**
+
+If it contains "and" across multiple decisions, split it.
+
+## Type-Specific Atomicity
+
+### Behavior Nodes
+
+The **ONE Rule** from DLOOP v1:
+
+> ONE trigger → ONE behavior → ONE outcome
+
+```
+✅ "Login page renders email and password input fields with a submit button"
+   (One observable state)
+
+❌ "Login page renders a form and validates input and redirects on success"
+   (Three behaviors — split into form display, validation, redirect)
+```
+
+### Decision Nodes
+
+**ONE decision per node:**
+
+```
+✅ "Use Clerk for authentication" (one technology choice)
+✅ "All auth goes through an AuthProvider interface" (one pattern)
+
+❌ "Use Clerk for auth, Next.js for frontend, and Convex for backend"
+   (Three decisions — split into three nodes)
+```
+
+### Domain Nodes
+
+**ONE concept per node:**
+
+```
+✅ "User Account: A registered entity that can authenticate and own resources"
+✅ "Task: A unit of work that moves through a Kanban workflow"
+
+❌ "Users and Projects: Users belong to projects and have roles"
+   (Two concepts — split into User and Project nodes)
+```
+
+### Constraint Nodes
+
+**ONE measurable requirement per node:**
+
+```
+✅ "All pages must reach FCP within 1.5s on 4G"
+✅ "All user data must be encrypted at rest with AES-256"
+
+❌ "Pages must load fast and data must be encrypted"
+   (Two requirements — split into performance and security nodes)
+```
+
+## Size Guidelines
+
+Atomicity is enforced partly through size limits. These are guidelines, not hard limits:
+
+| Field | Target Maximum |
+|---|---|
+| `statement` / `expectation` | 240 characters |
+| Each `constraint` entry | 140 characters |
+| Each `verification` entry (string) | 180 characters |
+| `metadata.rationale` | No limit (but keep concise) |
+
+If you're hitting these limits, the node is probably trying to say too much. Split it.
+
+## The Split Test
+
+When in doubt about whether to split:
+
+1. **Can you write one verification for it?** If you need two unrelated checks, split.
+2. **Could you change one half without changing the other?** If yes, they're independent — split.
+3. **Does the title need "and"?** If the title is "X and Y," it's probably two nodes.
+
+## Why Atomicity Matters
+
+### Reviewability
+
+Small nodes are easy to review. A reviewer can assess a single decision in seconds. A compound node requires understanding multiple decisions and their interactions.
+
+### Composability
+
+Atomic nodes combine without hidden coupling. If "Use Clerk" and "Abstract auth provider" are separate nodes, you can change the Clerk decision without touching the abstraction pattern.
+
+### Traceability
+
+When a verification fails, an atomic node points to exactly one thing that's wrong. A compound node requires investigation to determine which part failed.
+
+### Edge Precision
+
+Edges between atomic nodes are precise. "`AUTH-01` depends on `DEC-AUTH-01`" is clear. "`AUTH-01` depends on `DEC-EVERYTHING-01`" (which contains five decisions) is ambiguous about which decision matters.
+
+---
+
+# When to Add Nodes
+
+Not every system needs all node types. The Spec Graph grows organically in response to manifestation ambiguity — you add nodes when the [minimality test](/docs/theory/minimality) demands it.
+
+## The Minimality Test
+
+For any proposed node:
+
+> "If I removed this, could a competent implementing agent make a choice I wouldn't want?"
+
+- **If yes** → the node is load-bearing, add it
+- **If no** → the node is redundant, don't add it
+
+## Triggers by Node Type
+
+### Add Behavior Nodes When...
+
+- There's an observable user-facing action to specify
+- A feature needs testable acceptance criteria
+- The system must respond to a specific trigger
+
+**Always start here.** Behaviors are the foundation of every spec graph.
+
+### Add Decision Nodes When...
+
+| Scenario | Category |
+|---|---|
+| Two implementations could use incompatible architectures | `architecture` |
+| A technology choice affects how behaviors are implemented | `stack` |
+| A specific coding pattern is required for testability or quality | `pattern` |
+| Modules need a stable interface contract | `interface` |
+
+**Key signal:** you find yourself writing the same guidance in multiple PR reviews, agent instructions, or CLAUDE.md files. If you're repeating it, it should be a node.
+
+### Add Domain Nodes When...
+
+- A business term is ambiguous without explicit definition
+- Multiple behaviors reference the same concept differently
+- Domain rules constrain valid implementations
+- The implementing agent might confuse two similar concepts
+
+**Key signal:** you say "by 'user' I mean..." more than once.
+
+### Add Constraint Nodes When...
+
+- Performance, security, or accessibility must be measured
+- A non-functional requirement cuts across multiple features
+- Cost budgets must be enforced
+- Reliability targets need explicit verification
+
+**Key signal:** the quality attribute matters enough that you'd reject an implementation that ignores it.
+
+### Add Extension Types When...
+
+Core types don't provide enough precision:
+
+| Extension | Trigger |
+|---|---|
+| `design_token` | Visual inconsistency between features is unacceptable |
+| `api_contract` | Service boundaries need formal specification |
+| `data_model` | Database schema decisions are load-bearing |
+| `equivalence_contract` | You need reproducible re-manifestation |
+| `pipeline` | Build/deploy process must be explicitly specified |
+
+## The Growth Pattern
+
+A typical project's spec graph grows in this order:
+
+```
+1. Early stage:     behavior nodes only
+2. Tech decisions:  + decision nodes (stack category)
+3. Architecture:    + decision nodes (architecture/pattern categories)
+4. Domain model:    + domain nodes
+5. Quality gates:   + constraint nodes
+6. Refinement:      + extension types as needed
+```
+
+## Don't Pre-Populate
+
+A common mistake is trying to fill in every node type from the start. This leads to non-minimal graphs with speculative nodes that don't reduce actual ambiguity.
+
+Instead:
+
+1. Start with behaviors
+2. Try to manifest (or mentally simulate manifestation)
+3. When the agent would make a wrong choice → add the node that prevents it
+4. Repeat
+
+This keeps the graph minimal and every node justified.
+
+## Removing Nodes
+
+Nodes should also be removed when they stop being load-bearing. Common reasons:
+
+- The decision became so standard it's a framework convention (no ambiguity)
+- The constraint was temporary (e.g., a cost limit during a promotional period)
+- A domain concept was consolidated with another
+- A node was superseded by a new node
+
+Set the status to `deprecated` or `rejected`, and add a `supersedes` edge from the replacement if applicable.
+
+---
+
+# Directory Layout
+
+The Spec Graph uses a file-per-node storage model. Each node is a self-contained JSON file, organized by type.
+
+## Recommended Layout
+
+```
+specgraph/
+  graph.json                          # Index: version, node list
+  nodes/
+    features/
+      AUTH.json
+      TASKBOARD.json
+      PLATFORM.json
+    behaviors/
+      AUTH-01.json
+      AUTH-02.json
+      TASKBOARD-01.json
+    decisions/
+      DEC-AUTH-01.json
+      DEC-AUTH-02.json
+      DEC-TB-01.json
+    domains/
+      DOM-USER-01.json
+      DOM-TASK-01.json
+    constraints/
+      CON-PERF-01.json
+      CON-TB-PERF-01.json
+```
+
+## Conventions
+
+### File Naming
+
+Node files are named after their ID:
+
+| Node ID | File Path |
+|---|---|
+| `AUTH` | `nodes/features/AUTH.json` |
+| `AUTH-01` | `nodes/behaviors/AUTH-01.json` |
+| `DEC-AUTH-01` | `nodes/decisions/DEC-AUTH-01.json` |
+| `DOM-USER-01` | `nodes/domains/DOM-USER-01.json` |
+| `CON-PERF-01` | `nodes/constraints/CON-PERF-01.json` |
+
+### Extension Type Directories
+
+Extension types get their own directories:
+
+```
+nodes/
+  design_tokens/
+    DT-TASKCARD-01.json
+  api_contracts/
+    API-AUTH-01.json
+  data_models/
+    DM-USER-01.json
+```
+
+### The Index File
+
+`graph.json` must reference every node and its path:
+
+```json
+{
+  "specgraphVersion": "1.0.0",
+  "nodes": [
+    { "id": "AUTH", "path": "nodes/features/AUTH.json" },
+    { "id": "AUTH-01", "path": "nodes/behaviors/AUTH-01.json" },
+    { "id": "DEC-AUTH-01", "path": "nodes/decisions/DEC-AUTH-01.json" }
+  ]
+}
+```
+
+Paths are relative to `graph.json`. The path in the index is the **canonical** location — tooling uses this to find node files.
+
+## Why File-Per-Node?
+
+### Atomic PRs
+
+Changing a node and its relationships happens in one file. A PR that adds `DEC-AUTH-01.json` is self-contained and easy to review.
+
+### Reduced Merge Conflicts
+
+In a single-file spec, two people editing different nodes create conflicts. With file-per-node, changes to different nodes never conflict.
+
+### Local Reasoning
+
+When reviewing a node file, you see everything about that node: its statement, constraints, verification, and edges. No need to cross-reference a separate file.
+
+### Tooling Simplicity
+
+Tooling can load, validate, and process individual nodes without parsing the entire graph.
+
+## Optional Files
+
+### `graph.index.json`
+
+A generated flattened edge list for fast traversal. This is a **derived artifact** — the source of truth is always the `links` field in each node file.
+
+```json
+{
+  "specgraphVersion": "1.0.0",
+  "generatedFrom": { "graphPath": "graph.json" },
+  "edges": [
+    { "from": "AUTH-01", "type": "implements", "to": "DOM-USER-01" },
+    { "from": "AUTH-01", "type": "depends_on", "to": "DEC-AUTH-01" }
+  ]
+}
+```
+
+### `manifest.lock.json`
+
+A lockfile capturing the exact graph, artifacts, and toolchain used for a manifestation. Enables reproducible re-manifestation.
+
+## Scaling
+
+For large graphs (100+ nodes), consider organizing by feature:
+
+```
+specgraph/
+  graph.json
+  nodes/
+    auth/
+      features/AUTH.json
+      behaviors/AUTH-01.json
+      decisions/DEC-AUTH-01.json
+    taskboard/
+      features/TASKBOARD.json
+      behaviors/TASKBOARD-01.json
+```
+
+The index file still lists all nodes — the directory structure is a convention, not a constraint.
+
+---
+
+# Manifestation
+
+**Manifestation** is the process of going from specification to running system. It encompasses all intermediate steps: planning, designing, coding, building, testing, and deploying.
+
+```
+Spec Graph  →  [Manifest]  →  Running System
+     G              A               M
+```
+
+Where:
+- **G** = the spec graph
+- **A** = the implementing agent (or team of agents)
+- **M** = the manifested system
+
+## The Manifestation Property
+
+When a spec graph is [complete](/docs/theory/completeness) and the implementing agent is capable:
+
+```
+Complete(G) ∧ Capable(A) → Deterministic(Manifest(G, A))
+```
+
+This means: the same graph, processed by the same (or equivalent) agent, always produces logically equivalent systems.
+
+## What "Capable" Means
+
+A capable implementing agent can:
+
+1. **Parse** the spec graph — load `graph.json`, resolve all node references
+2. **Traverse** the graph — follow edges, resolve dependencies
+3. **Apply guidance** — implement according to decision nodes
+4. **Respect constraints** — verify non-functional requirements
+5. **Verify outcomes** — run each node's verification criteria
+
+## Conceptual Phases
+
+The manifestation process has three conceptual phases:
+
+| Phase | Input | Output | Activity |
+|---|---|---|---|
+| **Orient** | All nodes | System understanding | Read and comprehend the full graph |
+| **Scaffold** | Decision + domain nodes | Infrastructure | Create architecture, abstractions, shared code |
+| **Implement** | Behavior nodes + context | Working features | Build each behavior with full graph context |
+
+These phases are described in detail in [Orient, Scaffold, Implement](/docs/manifestation/orient-scaffold-implement).
+
+## Not a Rigid Pipeline
+
+The three phases are conceptual, not prescriptive steps. A capable agent might:
+
+- Process phases iteratively rather than sequentially
+- Interleave scaffold and implement work
+- Revisit earlier phases when new information emerges
+
+What matters is the **outcome**: the manifested system satisfies all nodes in the graph. The phases describe the natural ordering of information, not a mandatory workflow.
+
+## Manifestation vs. Task Derivation
+
+The spec graph is a specification, not a task list. The mapping from graph to tasks is determined by the agent's planning phase:
+
+- Each approved behavior node typically yields one implementation task
+- Decision nodes may yield infrastructure/setup tasks
+- Constraint nodes yield verification tasks
+- Domain nodes inform all tasks but may not generate their own
+
+The specific task derivation strategy is an agent concern, not a spec graph concern. Different agents may derive different task orderings while producing equivalent results.
+
+---
+
+# Orient, Scaffold, Implement
+
+The manifestation process follows three conceptual phases, each consuming a different slice of the graph.
+
+## Phase 1: Orient
+
+**Purpose:** Build a complete understanding of the system before writing any code.
+
+**Reads:** All node types — domain, decision, constraint, behavior, feature
+
+**Produces:** Mental model of the system
+
+During orientation, the implementing agent:
+
+1. Reads all **domain** nodes to understand the business vocabulary
+2. Reads all **decision** nodes to understand architectural and technology choices
+3. Reads all **constraint** nodes to understand non-functional boundaries
+4. Reads all **behavior** nodes to understand what the system does
+5. Traverses edges to understand how everything relates
+
+This phase is **read-only** — no code is written. The goal is to understand the full system before making any implementation decisions.
+
+### Why Orient First?
+
+Without orientation, the agent makes early implementation choices that may conflict with nodes it hasn't read yet. For example:
+
+- Building a component before knowing the design token it should use
+- Choosing a data structure before reading the domain model
+- Implementing a feature without knowing the performance constraint
+
+Orientation prevents these "premature implementation" errors.
+
+## Phase 2: Scaffold
+
+**Purpose:** Create the architectural infrastructure that behaviors depend on.
+
+**Reads:** Decision nodes (architecture, stack, pattern, interface), domain nodes
+
+**Produces:** Abstractions, interfaces, shared infrastructure, configuration
+
+During scaffolding, the agent:
+
+1. Processes decision nodes in dependency order (topological sort on `depends_on` edges)
+2. Creates abstract interfaces from `architecture` decisions
+3. Configures technology choices from `stack` decisions
+4. Sets up implementation patterns from `pattern` decisions
+5. Creates shared types and models from domain nodes
+
+```mermaid
+graph TD
+    D1[DEC-AUTH-02<br/>Clerk Provider<br/>stack] --> D2[DEC-AUTH-01<br/>Auth Provider Interface<br/>architecture]
+    D2 --> S[Scaffold:<br/>AuthProvider interface,<br/>ClerkProvider,<br/>DeterministicProvider]
+```
+
+### Dependency Order
+
+Scaffolding respects the `depends_on` graph:
+
+1. Technology choices first (they determine what's available)
+2. Architectural patterns next (they define structure)
+3. Implementation patterns last (they guide coding style)
+
+If `DEC-AUTH-01` (AuthProvider interface) depends on `DEC-AUTH-02` (Clerk), then Clerk must be configured before the interface is created.
+
+## Phase 3: Implement
+
+**Purpose:** Build each behavior using the full context assembled from the graph.
+
+**Reads:** Behavior nodes + all related nodes via edges
+
+**Produces:** Working, verified features
+
+For each behavior node:
+
+1. **Resolve edges** — what decisions guide it, what constraints limit it, what domain concepts it implements
+2. **Assemble context** — gather all related nodes into a unified context
+3. **Implement** — build the behavior following all guidance
+4. **Verify** — run the behavior's verification criteria
+5. **Check constraints** — verify related constraint nodes are satisfied
+
+### Processing Order
+
+Behaviors are processed in dependency order:
+
+```mermaid
+graph LR
+    B1[AUTH-01<br/>Login Form] --> B2[AUTH-02<br/>Email Validation]
+    B1 --> B3[AUTH-03<br/>Password Validation]
+    B1 --> B4[AUTH-04<br/>Login Redirect]
+    B4 --> B5[AUTH-05<br/>Session Persistence]
+```
+
+`AUTH-01` is implemented first because `AUTH-02`, `AUTH-03`, and `AUTH-04` depend on it.
+
+## The Full Picture
+
+```
+Phase 1: ORIENT
+  Read all nodes → Build system understanding
+  (No code written)
+
+Phase 2: SCAFFOLD
+  Process decision + domain nodes → Create infrastructure
+  (Abstractions, interfaces, config, shared code)
+
+Phase 3: IMPLEMENT
+  For each behavior (in dependency order):
+    1. Assemble context from edges
+    2. Implement with full guidance
+    3. Verify behavior
+    4. Check constraints
+```
+
+---
+
+# Context Assembly
+
+When manifesting a single behavior, the agent assembles its full **context** from the graph. Context assembly is the mechanism that makes the spec graph more than a collection of independent nodes.
+
+## How It Works
+
+Starting from a behavior node, the agent follows all outbound edges to gather related nodes:
+
+```
+Behavior: AUTH-01 "Login Form Display"
+  │
+  ├─ depends_on: DEC-AUTH-01 "Abstract Auth Provider Interface"
+  │     → "All auth goes through AuthProvider interface..."
+  │     └─ depends_on: DEC-AUTH-02 "Clerk Authentication Provider"
+  │           → "Use Clerk for OAuth and session management..."
+  │
+  ├─ implements: DOM-USER-01 "User Account"
+  │     → "A registered entity that can authenticate..."
+  │     → constraints: "Email unique, verified before access"
+  │
+  └─ (via inverse) CON-PERF-01 "Page Load Budget"
+       → "FCP within 1.5s on 4G..."
+```
+
+The assembled context gives the agent **everything it needs** to implement this behavior correctly — without searching through external documents, agent instructions, or tech stack profiles.
+
+## Context Depth
+
+Context assembly follows edges to a configurable depth:
+
+- **Depth 1**: Direct edges from the behavior node
+- **Depth 2**: Edges from depth-1 nodes (e.g., the tech stack that an architectural decision depends on)
+- **Full**: Transitive closure of all reachable nodes
+
+In practice, depth 2 is usually sufficient. Going deeper can include nodes that are contextually relevant but not directly actionable for this behavior.
+
+## Inverse Edges
+
+Some context comes from **inverse edges** — nodes that point TO this behavior:
+
+- A constraint node with `"constrains": ["AUTH-01"]` is relevant context for AUTH-01, even though AUTH-01 doesn't link to it
+- A feature node with `"contains": ["AUTH-01"]` provides namespace context
+
+Tooling computes inverse edges from the stored forward edges and includes them in context assembly.
+
+## Context as a Document
+
+The assembled context for a behavior can be rendered as a structured document:
+
+```markdown
+# Context for AUTH-01: Login Form Display
+
+## Behavior
+Login page renders email and password input fields with a submit button.
+Invariant: Password field must mask input characters.
+
+## Architectural Decisions
+- DEC-AUTH-01: All auth operations go through an AuthProvider interface.
+  Constraints: Interface must define authenticate(), validateSession(), revokeSession().
+
+## Technology Decisions
+- DEC-AUTH-02: Use Clerk as the production authentication provider.
+  Constraints: Use Clerk's middleware for route protection.
+
+## Domain Concepts
+- DOM-USER-01: User Account — a registered entity that can authenticate,
+  own resources, and have role-based permissions.
+
+## Constraints
+- CON-PERF-01: All pages must reach FCP within 1.5s on 4G. (severity: hard)
+
+## Verification
+npm test -- --grep AUTH-01
+```
+
+This document is what the implementing agent "sees" when building AUTH-01. Everything is reachable from the behavior node via edges.
+
+## Why Context Assembly Matters
+
+Without context assembly, the agent must independently discover that:
+
+- Auth should go through an abstract interface (from a decision node)
+- Clerk is the auth provider (from another decision node)
+- "User" means a registered entity with specific properties (from a domain node)
+- The page must load in under 1.5s (from a constraint node)
+
+If any of these are missed, the implementation may diverge from the designer's intent. Context assembly ensures completeness at the per-behavior level.
+
+---
+
+# Verification
+
+Verification is the **spine of predictability**. Every normative node must be verifiable, and verification is what makes [equivalence](/docs/theory/equivalence) testable.
+
+## Verification at Every Level
+
+Verification happens at three levels during manifestation:
+
+### Node-Level Verification
+
+Each node has its own verification criteria. After implementing a behavior or scaffolding a decision, the agent runs the node's verification:
+
+```json
+// Behavior node
+"verification": "npm test -- --grep AUTH-01"
+
+// Decision node
+"verification": [
+  "npx tsc --noEmit",
+  "npm test -- --grep DEC-AUTH-01"
+]
+```
+
+### Constraint-Level Verification
+
+After implementing behaviors, constraint nodes that `constrain` those behaviors are verified:
+
+```json
+// Constraint node
+"verification": [
+  {
+    "kind": "command",
+    "command": "npx lighthouse --preset=perf --assert-fcp=1500 http://localhost:3000/login"
+  }
+]
+```
+
+### Graph-Level Verification
+
+After all nodes are manifested, the full graph is verified:
+
+1. All behavior node verifications pass
+2. All constraint node verifications pass
+3. All decision node verifications pass
+4. If an `equivalence_contract` exists, its criteria are met
+
+## Verification Types
+
+The schema supports several verification formats:
+
+### Command
+
+The most common type — a shell command that returns exit code 0 on success:
+
+```json
+{
+  "kind": "command",
+  "command": "npm test -- --grep AUTH-01",
+  "timeoutSeconds": 60
+}
+```
+
+### HTTP
+
+For API-level verification:
+
+```json
+{
+  "kind": "http",
+  "method": "POST",
+  "url": "http://localhost:3000/api/auth/login",
+  "expectStatus": 200
+}
+```
+
+### Manual
+
+When automated verification isn't practical:
+
+```json
+{
+  "kind": "manual",
+  "steps": [
+    "Open Chrome DevTools Performance tab",
+    "Record while scrolling through all columns",
+    "Verify no frames exceed 16ms"
+  ],
+  "expected": "All frames render within 16ms budget"
+}
+```
+
+### Observation
+
+A simpler manual check — visual inspection or qualitative assessment:
+
+```json
+{
+  "kind": "observation",
+  "description": "Visual inspection: task cards match spec in all four columns"
+}
+```
+
+### Policy
+
+Reference to an external policy or rule:
+
+```json
+{
+  "kind": "policy",
+  "ruleId": "WCAG-2.1-AA",
+  "description": "All interactive elements are keyboard accessible"
+}
+```
+
+## Verification and Status Gates
+
+Verification results gate node status transitions:
+
+| Verification Result | Status Transition |
+|---|---|
+| All pass | Node can move to `approved` status |
+| Any fail | Node stays in current status; failure logged |
+| Not run | Node status unchanged; warning raised |
+
+During manifestation, only `approved` nodes generate implementation tasks. A node whose verification fails cannot be approved.
+
+## Verification and Determinism
+
+Verification is the mechanism by which equivalence is established. If every node's verification passes for both manifestation M₁ and M₂, the systems are equivalent under the graph's equivalence relation.
+
+This means good verification criteria are crucial:
+
+- **Specific**: test exactly what the node specifies
+- **Deterministic**: produce the same result for the same system state
+- **Independent**: don't depend on execution order or external services (where possible)
+- **Fast**: encourage frequent re-verification
+
+## The Verification Chain
+
+Verification flows through the graph:
+
+```mermaid
+graph TD
+    B[AUTH-01<br/>npm test -- --grep AUTH-01] --> N[Node-level: ✓]
+    C[CON-PERF-01<br/>lighthouse --assert-fcp=1500] --> CL[Constraint-level: ✓]
+    D[DEC-AUTH-01<br/>npx tsc --noEmit] --> DL[Decision-level: ✓]
+    N --> G[Graph-level: All pass]
+    CL --> G
+    DL --> G
+```
+
+When all three levels pass, the manifestation is verified.
+
+---
+
+# Getting Started
+
+This guide walks you through creating your first spec graph from scratch.
+
+## Prerequisites
+
+- A directory for your project's spec graph
+- A text editor with JSON support
+- (Optional) `ajv` or another JSON Schema validator
+
+## Step 1: Create the Directory Structure
+
+```bash
+mkdir -p specgraph/nodes/features specgraph/nodes/behaviors
+```
+
+## Step 2: Create Your First Feature
+
+Create `specgraph/nodes/features/TODO.json`:
+
+```json
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "TODO",
+  "type": "feature",
+  "title": "Todo List",
+  "description": "A simple todo list with add, complete, and delete operations",
+  "status": "approved",
+  "links": {
+    "contains": ["TODO-01", "TODO-02", "TODO-03"]
+  }
+}
+```
+
+## Step 3: Add Behavior Nodes
+
+Create `specgraph/nodes/behaviors/TODO-01.json`:
+
+```json
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "TODO-01",
+  "type": "behavior",
+  "title": "Add Todo Item",
+  "expectation": "When user types text into the input field and presses Enter, a new todo item appears in the list",
+  "invariant": "Input field is cleared after adding",
+  "verification": "npm test -- --grep TODO-01",
+  "status": "approved"
+}
+```
+
+Create `specgraph/nodes/behaviors/TODO-02.json`:
+
+```json
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "TODO-02",
+  "type": "behavior",
+  "title": "Complete Todo Item",
+  "expectation": "When user clicks the checkbox next to a todo item, it is marked as complete with a strikethrough style",
+  "invariant": "Completed items remain in the list",
+  "verification": "npm test -- --grep TODO-02",
+  "status": "approved",
+  "links": {
+    "depends_on": ["TODO-01"]
+  }
+}
+```
+
+Create `specgraph/nodes/behaviors/TODO-03.json`:
+
+```json
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "TODO-03",
+  "type": "behavior",
+  "title": "Delete Todo Item",
+  "expectation": "When user clicks the delete button on a todo item, it is removed from the list",
+  "invariant": "Deletion is immediate with no confirmation dialog",
+  "verification": "npm test -- --grep TODO-03",
+  "status": "approved",
+  "links": {
+    "depends_on": ["TODO-01"]
+  }
+}
+```
+
+## Step 4: Create the Graph Index
+
+Create `specgraph/graph.json`:
+
+```json
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/graph.schema.json",
+  "specgraphVersion": "1.0.0",
+  "nodes": [
+    { "id": "TODO", "path": "nodes/features/TODO.json" },
+    { "id": "TODO-01", "path": "nodes/behaviors/TODO-01.json" },
+    { "id": "TODO-02", "path": "nodes/behaviors/TODO-02.json" },
+    { "id": "TODO-03", "path": "nodes/behaviors/TODO-03.json" }
+  ]
+}
+```
+
+## Step 5: Validate
+
+If you have the Spec Graph validator:
+
+```bash
+node validate.js
+```
+
+Or validate manually with `ajv`:
+
+```bash
+npx ajv validate -s graph.schema.json -d specgraph/graph.json
+npx ajv validate -s node.schema.json -d specgraph/nodes/behaviors/TODO-01.json
+```
+
+## Your Spec Graph
+
+You now have a minimal spec graph:
+
+```mermaid
+graph TD
+    TODO[TODO<br/>feature] -->|contains| T1[TODO-01<br/>Add Item]
+    TODO -->|contains| T2[TODO-02<br/>Complete Item]
+    TODO -->|contains| T3[TODO-03<br/>Delete Item]
+    T2 -->|depends_on| T1
+    T3 -->|depends_on| T1
+```
+
+This is a **behavior-only** graph — the simplest valid spec graph. It specifies what the system does but leaves architecture, technology, and design to the implementing agent.
+
+## What's Next?
+
+- **Add decision nodes** when you want to constrain how the system is built. See [Decision Nodes](/docs/node-types/decision).
+- **Add domain nodes** when business terms need explicit definition. See [Domain Nodes](/docs/node-types/domain).
+- **Add constraint nodes** when non-functional requirements must be measured. See [Constraint Nodes](/docs/node-types/constraint).
+- Read [When to Add Nodes](/docs/authoring/when-to-add-nodes) for guidance on growing your graph.
+- See the [auth example](/docs/reference/examples) for a full-featured spec graph.
+
+---
+
+# Progressive Adoption
+
+The Spec Graph is designed for incremental adoption. You don't need every node type from day one — start with behaviors and add dimensions as the [minimality test](/docs/theory/minimality) demands.
+
+## The Adoption Path
+
+### Level 1: Behavior-Only
+
+Start here. A behavior-only spec graph is valid and useful. It captures what the system does and provides testable acceptance criteria.
+
+```
+specgraph/
+  graph.json
+  nodes/
+    features/AUTH.json
+    behaviors/AUTH-01.json
+    behaviors/AUTH-02.json
+```
+
+**What you get:** behavioral equivalence. Two agents produce systems that do the same things.
+
+**What you don't get:** architectural, technological, or visual consistency.
+
+### Level 2: + Decision Nodes
+
+When you discover that different implementations make incompatible architecture or technology choices, add decision nodes.
+
+```
+specgraph/
+  graph.json
+  nodes/
+    features/AUTH.json
+    behaviors/AUTH-01.json
+    behaviors/AUTH-02.json
+    decisions/DEC-AUTH-01.json    ← NEW
+    decisions/DEC-AUTH-02.json    ← NEW
+```
+
+**Trigger:** "The last two manifestations used different auth libraries" or "Agent keeps putting auth logic in the wrong place."
+
+**What you get:** structural and technological equivalence added to behavioral equivalence.
+
+### Level 3: + Domain Nodes
+
+When business terms are ambiguous or domain rules are being violated, add domain nodes.
+
+```
+  nodes/
+    ...
+    domains/DOM-USER-01.json     ← NEW
+```
+
+**Trigger:** "The agent interpreted 'user' as a profile, but we mean an account" or "Status transitions are wrong."
+
+**What you get:** domain equivalence — same data model and business rules.
+
+### Level 4: + Constraint Nodes
+
+When non-functional requirements need measurement, add constraint nodes.
+
+```
+  nodes/
+    ...
+    constraints/CON-PERF-01.json  ← NEW
+```
+
+**Trigger:** "The page is too slow" or "We need WCAG compliance."
+
+**What you get:** constraint equivalence — same non-functional characteristics.
+
+### Level 5: + Extension Types
+
+When core types don't provide enough precision for a specific dimension:
+
+```
+  nodes/
+    ...
+    design_tokens/DT-COLOR-01.json   ← NEW
+    api_contracts/API-AUTH-01.json    ← NEW
+```
+
+**Trigger:** "Visual inconsistency between features" or "API contract keeps changing."
+
+## When to Move to the Next Level
+
+Each level is triggered by a **manifestation failure** — a case where the current graph doesn't prevent an undesirable outcome:
+
+| Failure | Add |
+|---|---|
+| Two implementations have incompatible architectures | Decision nodes (architecture) |
+| Wrong technology or library was used | Decision nodes (stack) |
+| Agent misunderstood a business term | Domain nodes |
+| Performance or security requirement was violated | Constraint nodes |
+| Visual design is inconsistent | Design token extensions |
+
+## You Don't Need Every Level
+
+Many projects will never reach Level 5. A behavior + decision graph (Level 2) may be sufficient for most internal tools. The key insight is:
+
+> **Only add nodes that prevent actual manifestation problems.**
+
+Speculative nodes — added "just in case" — violate minimality and add noise.
+
+## Migrating from No Spec
+
+If your project has no formal spec at all:
+
+1. **Audit existing behavior** — what does the system currently do?
+2. **Write behavior nodes** — one per observable action
+3. **Group into features** — create feature nodes
+4. **Build the index** — create `graph.json`
+5. **Validate** — run the schema validator
+6. **Iterate** — add decision/domain/constraint nodes as needed
+
+The initial behavior audit is the most time-consuming step. Once you have behaviors, the graph grows incrementally.
+
+---
+
+# Migrating from DLOOP v1
+
+If you have an existing DLOOP v1 project with a `SPEC.json`, this guide explains how to migrate to the Spec Graph format.
+
+## What Changes
+
+| Aspect | DLOOP v1 | Spec Graph |
+|---|---|---|
+| Node types | `behavior` only | 5 core + extensions |
+| Structure | Flat array nested under features | Graph with typed edges |
+| Storage | Single `SPEC.json` file | File-per-node directory |
+| Relationships | Implicit (via feature grouping) | Explicit (typed edges) |
+| Tech guidance | External (agent instructions, profiles) | Inline (decision nodes) |
+| Domain model | Implicit (in code) | Explicit (domain nodes) |
+| Constraints | External (agent instructions) | Inline (constraint nodes) |
+| Edge storage | N/A (no edges) | Node-local (`links` field) |
+
+## What Stays the Same
+
+- **Atomicity**: the ONE rule for behaviors carries forward unchanged
+- **Declarative**: specs describe WHAT, not HOW (behaviors) or declare truths (decisions)
+- **Verifiable**: every node has verification criteria
+- **Repo-first**: the spec graph lives in git as the source of truth
+
+## Migration Steps
+
+### Step 1: Extract Behaviors
+
+Convert each v1 behavior into a standalone node file:
+
+**Before (SPEC.json v1):**
+```json
+{
+  "features": [{
+    "id": "AUTH",
+    "name": "Authentication",
+    "behaviors": [{
+      "id": "AUTH-01",
+      "name": "Login Form Display",
+      "expectation": "Login page renders email and password fields",
+      "invariant": "Password field must mask input",
+      "verification": "npm test -- --grep AUTH-01"
+    }]
+  }]
+}
+```
+
+**After (nodes/behaviors/AUTH-01.json):**
+```json
+{
+  "id": "AUTH-01",
+  "type": "behavior",
+  "title": "Login Form Display",
+  "expectation": "Login page renders email and password fields",
+  "invariant": "Password field must mask input",
+  "verification": "npm test -- --grep AUTH-01",
+  "status": "approved"
+}
+```
+
+Changes:
+- `name` → `title`
+- Added `type: "behavior"` and `status`
+- Each behavior is now its own file
+
+### Step 2: Create Feature Nodes
+
+Convert each v1 feature into a feature node:
+
+```json
+{
+  "id": "AUTH",
+  "type": "feature",
+  "title": "User Authentication",
+  "description": "Login, session management, and logout flows",
+  "status": "approved",
+  "links": {
+    "contains": ["AUTH-01", "AUTH-02", "AUTH-03"]
+  }
+}
+```
+
+### Step 3: Create the Graph Index
+
+```json
+{
+  "specgraphVersion": "1.0.0",
+  "nodes": [
+    { "id": "AUTH", "path": "nodes/features/AUTH.json" },
+    { "id": "AUTH-01", "path": "nodes/behaviors/AUTH-01.json" },
+    { "id": "AUTH-02", "path": "nodes/behaviors/AUTH-02.json" }
+  ]
+}
+```
+
+### Step 4: Extract Tech Stack (Optional)
+
+What's currently in tech stack profiles, agent instructions, or CLAUDE.md becomes decision nodes:
+
+```
+techStackProfile["nextjs-convex-v1"]  →  DEC-PLATFORM-01 (stack: Next.js)
+                                      →  DEC-PLATFORM-02 (stack: Convex)
+agent instructions "use AuthProvider"  →  DEC-AUTH-01 (architecture)
+```
+
+### Step 5: Add Edges
+
+Connect behaviors to the decision nodes that guide them:
+
+```json
+// In AUTH-01.json
+"links": {
+  "depends_on": ["DEC-AUTH-01"],
+  "implements": ["DOM-USER-01"]
+}
+```
+
+### Step 6: Add Domain and Constraint Nodes
+
+Based on the minimality test — add them when actual manifestation ambiguity requires it.
+
+## Coexistence
+
+During migration, the original `SPEC.json` can coexist with the new spec graph directory. You can generate a v1-compatible `SPEC.json` from behavior nodes as a **projection** — a derived artifact.
+
+This allows teams to migrate incrementally without breaking existing tooling that consumes `SPEC.json`.
+
+## Key Differences to Watch
+
+### Edges Replace Feature Nesting
+
+In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is expressed via the `contains` edge in the feature node. A node could conceptually belong to multiple features.
+
+### Status Is Explicit
+
+V1 didn't have an explicit status field. In the Spec Graph, every node has a status. During migration, set all existing behaviors to `approved`.
+
+### Verification Is Richer
+
+V1 behavior verification was a single string. Spec Graph contract nodes (decision, domain, constraint) support arrays of verification entries, including structured formats (command, http, manual).
+
+Behavior nodes keep the single-string verification for simplicity.
+
+---
+
+# JSON Schemas
+
+All Spec Graph files are validated against JSON Schemas using [JSON Schema Draft 2020-12](https://json-schema.org/specification).
+
+## Schema Files
+
+| Schema | Validates | Required? |
+|---|---|---|
+| [`graph.schema.json`](/specgraph/schemas/graph.schema.json) | `graph.json` index file | Yes |
+| [`node.schema.json`](/specgraph/schemas/node.schema.json) | Individual node files | Yes |
+| [`graph-index.schema.json`](/specgraph/schemas/graph-index.schema.json) | Generated edge index | Optional |
+| [`manifest-lock.schema.json`](/specgraph/schemas/manifest-lock.schema.json) | Manifestation lockfile | Optional |
+
+Schema `$id` base URL: `https://oco-adam.github.io/specgraph/schemas/`
+
+## graph.schema.json
+
+Validates the `graph.json` entry point file. Required fields:
+
+- `specgraphVersion` — semver string (e.g., `"1.0.0"`)
+- `nodes` — array of node references with `id` and `path`
+
+Optional fields:
+
+- `root` — root node ID
+- `nodeSearchPaths` — additional directories to scan
+- `defaults` — default values for tooling (e.g., default node status)
+
+### Node References
+
+Each entry in `nodes` has:
+
+```json
+{
+  "id": "AUTH-01",
+  "path": "nodes/behaviors/AUTH-01.json",
+  "sha256": "...",          // optional: content hash
+  "expectedType": "behavior" // optional: quick type check
+}
+```
+
+## node.schema.json
+
+Validates individual node files. Uses `oneOf` to distinguish three shapes:
+
+### Feature Nodes
+
+Required: `id`, `type` (= `"feature"`), `title`, `description`, `status`
+
+### Behavior Nodes
+
+Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `invariant`, `verification`, `status`
+
+### Contract Nodes
+
+All other types (decision, domain, constraint, and extensions).
+
+Required: `id`, `type`, `title`, `statement`, `verification` (array), `status`
+
+Optional: `category` (for decisions), `severity` (for constraints), `constraints` (array), `links`, `metadata`
+
+### The `links` Field
+
+Available on all node types. Supports seven edge types:
+
+```json
+"links": {
+  "contains": ["..."],
+  "depends_on": ["..."],
+  "constrains": ["..."],
+  "implements": ["..."],
+  "derived_from": ["..."],
+  "verified_by": ["..."],
+  "supersedes": ["..."]
+}
+```
+
+### Verification Entries
+
+Contract nodes use an array of verification entries. Each entry is either a string or a structured object:
+
+```json
+"verification": [
+  "npm test -- --grep DEC-AUTH-01",
+  {
+    "kind": "command",
+    "command": "npx tsc --noEmit",
+    "timeoutSeconds": 120
+  },
+  {
+    "kind": "http",
+    "method": "GET",
+    "url": "http://localhost:3000/api/health",
+    "expectStatus": 200
+  }
+]
+```
+
+Supported `kind` values: `command`, `http`, `manual`, `observation`, `policy`.
+
+### Node ID Format
+
+Node IDs must match: `^[A-Z][A-Za-z0-9_-]{0,79}$`
+
+Feature IDs must match: `^[A-Z][A-Z0-9_-]{0,19}$`
+
+### Status Values
+
+`draft`, `proposed`, `approved`, `deprecated`, `rejected`
+
+### Node Types
+
+Core: `feature`, `behavior`, `decision`, `domain`, `constraint`
+
+Extensions: `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`
+
+## graph-index.schema.json
+
+Validates the optional generated edge index. Required fields:
+
+- `specgraphVersion`
+- `generatedFrom` — path (and optional hash) of the source `graph.json`
+- `edges` — array of `{ from, type, to }` triples
+
+This file is a **derived artifact**. It should be regenerated from node files and never hand-edited.
+
+## manifest-lock.schema.json
+
+Validates the optional manifestation lockfile. Required fields:
+
+- `specgraphVersion`
+- `graph` — path and SHA-256 hash of the manifested graph
+- `manifestedAt` — ISO 8601 timestamp
+
+Optional fields:
+
+- `equivalenceContractId` — node ID of the equivalence contract used
+- `toolchain` — pinned tool versions
+- `artifacts` — resolved artifact hashes
+- `checks` — verification results from manifestation
+
+## Validation
+
+Use `ajv` or any JSON Schema Draft 2020-12 compatible validator:
+
+```bash
+# Validate a graph index
+npx ajv validate -s schemas/graph.schema.json -d specgraph/graph.json
+
+# Validate a node file
+npx ajv validate -s schemas/node.schema.json -d specgraph/nodes/behaviors/AUTH-01.json
+```
+
+Or use the provided validation script:
+
+```bash
+node validate.js
+```
+
+---
+
+# Examples
+
+Three worked examples are provided, each demonstrating different aspects of the Spec Graph.
+
+## Minimal: Todo List
+
+**Purpose:** The simplest valid spec graph — behavior nodes only.
+
+**Node types used:** `feature`, `behavior`
+
+**Source:** [`examples/minimal/`](/specgraph/examples/minimal/graph.json)
+
+```
+minimal/
+  graph.json
+  nodes/
+    features/TODO.json
+    behaviors/TODO-01.json    # Add todo item
+    behaviors/TODO-02.json    # Complete todo item
+    behaviors/TODO-03.json    # Delete todo item
+```
+
+This example demonstrates [progressive adoption](/docs/guides/progressive-adoption) at Level 1 — a behavior-only graph. It's the starting point for any project.
+
+```mermaid
+graph TD
+    TODO[TODO<br/>feature] -->|contains| T1[TODO-01<br/>Add Item]
+    TODO -->|contains| T2[TODO-02<br/>Complete Item]
+    TODO -->|contains| T3[TODO-03<br/>Delete Item]
+    T2 -->|depends_on| T1
+    T3 -->|depends_on| T1
+```
+
+## Auth: User Authentication
+
+**Purpose:** The primary example used throughout the documentation. Demonstrates all five core node types.
+
+**Node types used:** `feature`, `behavior`, `decision`, `domain`, `constraint`
+
+**Source:** [`examples/auth/`](/specgraph/examples/auth/graph.json)
+
+```
+auth/
+  graph.json
+  nodes/
+    features/AUTH.json
+    behaviors/AUTH-01.json through AUTH-05.json
+    decisions/DEC-AUTH-01.json    # Auth provider abstraction (architecture)
+    decisions/DEC-AUTH-02.json    # Clerk provider (stack)
+    domains/DOM-USER-01.json     # User Account concept
+    constraints/CON-PERF-01.json # Page load budget
+```
+
+```mermaid
+graph TD
+    AUTH[AUTH<br/>feature] -->|contains| B1[AUTH-01]
+    AUTH -->|contains| B2[AUTH-02]
+    AUTH -->|contains| B3[AUTH-03]
+    AUTH -->|contains| B4[AUTH-04]
+    AUTH -->|contains| B5[AUTH-05]
+    AUTH -->|contains| D1[DEC-AUTH-01]
+    AUTH -->|contains| D2[DEC-AUTH-02]
+    AUTH -->|contains| DOM[DOM-USER-01]
+    AUTH -->|contains| CON[CON-PERF-01]
+
+    B1 -->|implements| DOM
+    B1 -->|depends_on| D1
+    B4 -->|implements| DOM
+    B5 -->|implements| DOM
+    D1 -->|depends_on| D2
+    D1 -->|constrains| B1
+    CON -->|constrains| B1
+    B2 -->|depends_on| B1
+    B3 -->|depends_on| B1
+    B4 -->|depends_on| B1
+    B5 -->|depends_on| B4
+```
+
+### What This Demonstrates
+
+- **Decision nodes** with different categories (architecture vs. stack)
+- **Domain nodes** defining shared vocabulary
+- **Constraint nodes** with severity and structured verification
+- **Edge patterns**: `implements`, `depends_on`, `constrains`
+- **Dependency chain**: behavior → decision → decision
+
+## Taskboard: Kanban Task Board
+
+**Purpose:** A richer example showing extension types alongside core types.
+
+**Node types used:** `feature`, `behavior`, `decision`, `domain`, `constraint`, `design_token`
+
+**Source:** [`examples/taskboard/`](/specgraph/examples/taskboard/graph.json)
+
+```
+taskboard/
+  graph.json
+  nodes/
+    features/TASKBOARD.json
+    behaviors/TASKBOARD-01.json through TASKBOARD-03.json
+    decisions/DEC-TB-01.json     # Optimistic updates (pattern)
+    decisions/DEC-TB-02.json     # Real-time sync (pattern)
+    decisions/DEC-TB-03.json     # DnD Kit (stack)
+    domains/DOM-TASK-01.json     # Task concept with status transitions
+    constraints/CON-TB-PERF-01.json  # 60fps render performance
+    design_tokens/DT-TASKCARD-01.json # Task card visual spec
+```
+
+### What This Demonstrates
+
+- **Extension type** (`design_token`) used alongside core types
+- **Multiple decision categories**: pattern and stack
+- **Rich domain model** with status transitions and business rules
+- **Performance constraint** with manual verification steps
+- **Visual specification** through design tokens
+
+---
+
+# Glossary
+
+| Term | Definition |
+|---|---|
+| **Spec Graph** | A directed, typed graph of specification nodes that completely describes a software system across multiple dimensions. |
+| **Node** | A single specification entry with a type, ID, and content. The atomic unit of the spec graph. |
+| **Edge** | A typed, directed relationship between two nodes. Stored as outbound links inside the source node. |
+| **Feature** | A non-normative grouping node that organizes related nodes into a namespace. |
+| **Manifestation** | The process of producing a running system from a spec graph. Encompasses planning, coding, building, testing, and deploying. |
+| **Completeness** | The property that manifestation is deterministic across all specified dimensions — any two manifestations from the same graph are equivalent. |
+| **Minimality** | The property that no node can be removed without breaking completeness. Every node is load-bearing. |
+| **Completeness Gap** | The set of decisions left to the implementing agent — decisions the spec graph does not determine. |
+| **Load-bearing** | A node whose removal would create manifestation ambiguity. |
+| **Equivalence** | The relation between two manifestations that makes them "the same system" across all dimensions specified in the graph. |
+| **Equivalence Contract** | An optional extension node that formally declares what "same system" means for this graph. |
+| **Implementing Agent** | The agent (human or AI) that processes the spec graph to produce a running system. |
+| **Capable Agent** | An implementing agent that can parse, traverse, apply, respect, and verify the spec graph. |
+| **Contract Node** | The unified shape shared by all non-feature, non-behavior node types (decision, domain, constraint, extensions). |
+| **Decision Node** | A node capturing an architectural, technical, or stack decision that narrows the solution space. |
+| **Domain Node** | A node defining a business concept, term, or rule — the ubiquitous language of the system. |
+| **Constraint Node** | A node specifying a non-functional requirement (performance, security, accessibility, cost). |
+| **Extension Type** | An optional node type for finer-grained modelling (design_token, api_contract, data_model, etc.). |
+| **Verification** | Pass/fail criteria attached to a node. The mechanism by which equivalence is established. |
+| **Normative** | Content that MUST be true, MUST be implemented, MUST pass verification (statement, constraints, verification). |
+| **Informative** | Content that provides context but is not a requirement (metadata.rationale, metadata.notes). |
+| **Orient** | The first manifestation phase: read all nodes to build system understanding. |
+| **Scaffold** | The second manifestation phase: create architectural infrastructure from decision and domain nodes. |
+| **Implement** | The third manifestation phase: build each behavior with full graph context. |
+| **Context Assembly** | The process of gathering all related nodes for a behavior by following edges. |
+| **Forward Edge** | An edge stored in the source node's links field. The canonical representation. |
+| **Inverse Edge** | An edge computed by tooling from forward edges. Never stored. |
+| **Progressive Adoption** | The practice of starting with behavior nodes and adding other types as needed. |
+| **The ONE Rule** | Atomicity rule for behaviors: ONE trigger, ONE behavior, ONE outcome. |
+| **Minimality Test** | "If I removed this node, could a competent agent make a choice I wouldn't want?" |
+| **Shadow Spec** | The scattered, mutable, implicit collection of documents and knowledge that fills gaps left by a behavior-only spec. |
+| **Severity** | For constraint nodes: `hard` (blocks manifestation) or `soft` (quality target). |
+| **Status** | Lifecycle state of a node: draft, proposed, approved, deprecated, rejected. |
+
+---
+
+# Comparison with Adjacent Concepts
+
+The Spec Graph shares ideas with several existing approaches. This page clarifies the similarities and differences.
+
+## vs. Product Requirements Documents (PRDs)
+
+| Aspect | PRD | Spec Graph |
+|---|---|---|
+| Format | Prose document | Structured, typed graph |
+| Actionability | Requires interpretation | Machine-parseable |
+| Verification | Manual review | Every node has pass/fail criteria |
+| Granularity | Section-level | Atomic nodes |
+| Relationships | Implicit in text | Explicit typed edges |
+
+**Similarity:** Both describe what to build.
+
+**Difference:** PRDs are narrative documents that require human interpretation. The Spec Graph is a structured, machine-actionable specification where every claim is verifiable.
+
+## vs. Architecture Decision Records (ADRs)
+
+| Aspect | ADRs | Spec Graph Decision Nodes |
+|---|---|---|
+| Purpose | Historical narrative of decisions | Prescriptive, living specification |
+| Status | Usually immutable once accepted | Can evolve (draft → approved → deprecated) |
+| Verification | None | Required for every decision |
+| Relationships | Cross-references in text | Typed edges (depends_on, constrains) |
+
+**Similarity:** Both capture architectural and technical decisions.
+
+**Difference:** ADRs are retrospective records ("We decided X because Y"). Decision nodes are prescriptive specifications ("X must be true, verified by Z").
+
+## vs. Design Tokens
+
+| Aspect | Design Token Systems | Spec Graph Design Token Nodes |
+|---|---|---|
+| Content | Values (colors, spacing, fonts) | Values + usage rules + relationships |
+| Verification | Build-time token validation | Node-level verification criteria |
+| Context | Standalone token system | Edges connect tokens to behaviors and constraints |
+
+**Similarity:** Both specify visual properties.
+
+**Difference:** Standard design tokens are values in isolation. Spec Graph design token nodes include usage rules, verification, and edges to the behaviors they constrain.
+
+## vs. Domain-Driven Design (DDD)
+
+| Aspect | DDD | Spec Graph Domain Nodes |
+|---|---|---|
+| Format | Books, workshops, modeling sessions | Declarative JSON specifications |
+| Scope | Methodology and philosophy | Specific data model |
+| Output | Mental models, code patterns | Verifiable, machine-readable nodes |
+
+**Similarity:** Both model business concepts and establish ubiquitous language.
+
+**Difference:** DDD is a methodology — a way of thinking about software. Domain nodes are concrete, verifiable specifications that capture the outcomes of domain modeling.
+
+## vs. Infrastructure as Code (IaC)
+
+| Aspect | IaC (Terraform, Pulumi) | Spec Graph |
+|---|---|---|
+| Scope | Infrastructure resources | Entire system intent |
+| Output | Running infrastructure | Running system (via manifestation) |
+| Abstraction | Resource-level | Intent-level |
+
+**Similarity:** Both aim for deterministic creation from declarative specifications.
+
+**Difference:** IaC specifies infrastructure resources at a concrete level. The Spec Graph specifies system intent at a higher level — including behavior, architecture, domain, and constraints — leaving the agent to determine the concrete implementation.
+
+## vs. UML / System Modeling
+
+| Aspect | UML | Spec Graph |
+|---|---|---|
+| Purpose | System documentation and visualization | System specification for manifestation |
+| Diagrams | Class, sequence, state, etc. | Node graph with typed edges |
+| Verification | None (descriptive) | Every node verifiable |
+| Actionability | Reference for humans | Input for implementing agents |
+
+**Similarity:** Both model system structure and relationships.
+
+**Difference:** UML diagrams describe systems for human understanding. Spec Graph nodes prescribe system properties for agent implementation, with mandatory verification.
+
+## vs. OpenAPI / API Specifications
+
+| Aspect | OpenAPI | Spec Graph API Contract Nodes |
+|---|---|---|
+| Scope | HTTP API surface | Full system specification |
+| Detail | Endpoint-level (paths, schemas) | Intent-level (what the API must do) |
+| Generation | Code from spec or spec from code | System manifestation from graph |
+
+**Similarity:** Both formally specify API contracts.
+
+**Difference:** OpenAPI is a complete API surface description. Spec Graph API contract nodes capture intent and constraints, leaving implementation details to the agent. The two can complement each other — an API contract node might reference an OpenAPI spec as an artifact.
+
+## vs. BDD / Gherkin
+
+| Aspect | BDD (Given/When/Then) | Spec Graph Behavior Nodes |
+|---|---|---|
+| Format | Natural language scenarios | Structured JSON with expectation + invariant |
+| Scope | User-facing behavior | Multi-dimensional (behavior + architecture + ...) |
+| Verification | Scenario runner (Cucumber) | Flexible (commands, HTTP, manual) |
+
+**Similarity:** Both capture observable system behavior.
+
+**Difference:** BDD scenarios focus on user stories. Spec Graph behaviors are part of a larger graph that also captures the non-behavioral dimensions needed for deterministic manifestation.
+
+---

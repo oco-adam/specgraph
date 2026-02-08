@@ -1,0 +1,20 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "DOM-USER-01",
+  "type": "domain",
+  "title": "User Account",
+  "statement": "A registered entity that can authenticate, own resources, and have role-based permissions within a project.",
+  "constraints": [
+    "A user must have exactly one role per project (owner, admin, or member)",
+    "Email uniqueness is enforced at the database level",
+    "Every user must have a verified email before accessing any resource"
+  ],
+  "verification": [
+    "Database schema enforces email uniqueness",
+    "npm test -- --grep DOM-USER-01"
+  ],
+  "status": "approved",
+  "metadata": {
+    "rationale": "Establishes shared vocabulary for 'user' across the system."
+  }
+}

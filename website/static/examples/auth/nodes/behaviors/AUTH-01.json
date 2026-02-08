@@ -1,0 +1,14 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "AUTH-01",
+  "type": "behavior",
+  "title": "Login Form Display",
+  "expectation": "Login page renders email and password input fields with a submit button",
+  "invariant": "Password field must mask input characters",
+  "verification": "npm test -- --grep AUTH-01",
+  "status": "approved",
+  "links": {
+    "implements": ["DOM-USER-01"],
+    "depends_on": ["DEC-AUTH-01"]
+  }
+}
