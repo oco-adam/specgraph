@@ -1,0 +1,24 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "DT-TASKCARD-01",
+  "type": "design_token",
+  "title": "Task Card Design Token",
+  "statement": "Visual specification for task cards on the board.",
+  "constraints": [
+    "Card: white background, 1px border-muted, 8px radius, 12px padding",
+    "Title: 14px semibold",
+    "Priority badge: top-right, colored dot (critical=red, high=orange, medium=blue, low=gray)",
+    "Assignee: 24px avatar circle, bottom-right",
+    "Drag shadow: 4px blur, 8px offset, 0.15 opacity"
+  ],
+  "verification": [
+    {
+      "kind": "observation",
+      "description": "Visual inspection: task cards match spec in all four columns"
+    }
+  ],
+  "status": "approved",
+  "links": {
+    "constrains": ["TASKBOARD-02"]
+  }
+}

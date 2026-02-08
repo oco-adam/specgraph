@@ -1,0 +1,22 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "DOM-TASK-01",
+  "type": "domain",
+  "title": "Task",
+  "statement": "A unit of work with a title, description, assignee, and status that moves through a Kanban workflow.",
+  "constraints": [
+    "Tasks are created in 'backlog' status by default",
+    "Status transitions follow: backlog -> in-progress -> review -> done",
+    "Only the assignee or a project admin can change task status",
+    "Title is required (1-200 chars), description is optional (markdown supported)",
+    "Priority is one of: low, medium, high, critical"
+  ],
+  "verification": [
+    "Schema validation enforces field constraints",
+    "npm test -- --grep DOM-TASK-01"
+  ],
+  "status": "approved",
+  "metadata": {
+    "rationale": "Establishes shared vocabulary for tasks and their lifecycle."
+  }
+}

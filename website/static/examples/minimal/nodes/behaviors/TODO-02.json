@@ -1,0 +1,13 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "TODO-02",
+  "type": "behavior",
+  "title": "Complete Todo Item",
+  "expectation": "When user clicks the checkbox next to a todo item, it is marked as complete with a strikethrough style",
+  "invariant": "Completed items remain in the list",
+  "verification": "npm test -- --grep TODO-02",
+  "status": "approved",
+  "links": {
+    "depends_on": ["TODO-01"]
+  }
+}

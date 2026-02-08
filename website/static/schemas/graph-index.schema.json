@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oco-adam.github.io/specgraph/schemas/graph-index.schema.json",
+  "title": "Spec Graph Generated Edge Index",
+  "description": "Optional generated adjacency index derived from node-local links. This is a derived artifact — the source of truth is always the links field in each node file.",
+  "type": "object",
+  "required": ["specgraphVersion", "generatedFrom", "edges"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "specgraphVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z-.]+)?$"
+    },
+    "generatedFrom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["graphPath"],
+      "properties": {
+        "graphPath": {
+          "type": "string",
+          "pattern": "^(?!/)(?!.*\\.{2}/)[A-Za-z0-9._/-]+\\.json$"
+        },
+        "graphSha256": {
+          "type": "string",
+          "pattern": "^[A-Fa-f0-9]{64}$"
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "type", "to"],
+        "properties": {
+          "from": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "contains",
+              "depends_on",
+              "constrains",
+              "implements",
+              "derived_from",
+              "verified_by",
+              "supersedes"
+            ]
+          },
+          "to": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          }
+        }
+      }
+    }
+  }
+}

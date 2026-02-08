@@ -1,0 +1,16 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/graph.schema.json",
+  "specgraphVersion": "1.0.0",
+  "nodes": [
+    { "id": "TASKBOARD", "path": "nodes/features/TASKBOARD.json", "expectedType": "feature" },
+    { "id": "TASKBOARD-01", "path": "nodes/behaviors/TASKBOARD-01.json", "expectedType": "behavior" },
+    { "id": "TASKBOARD-02", "path": "nodes/behaviors/TASKBOARD-02.json", "expectedType": "behavior" },
+    { "id": "TASKBOARD-03", "path": "nodes/behaviors/TASKBOARD-03.json", "expectedType": "behavior" },
+    { "id": "DEC-TB-01", "path": "nodes/decisions/DEC-TB-01.json", "expectedType": "decision" },
+    { "id": "DEC-TB-02", "path": "nodes/decisions/DEC-TB-02.json", "expectedType": "decision" },
+    { "id": "DEC-TB-03", "path": "nodes/decisions/DEC-TB-03.json", "expectedType": "decision" },
+    { "id": "DOM-TASK-01", "path": "nodes/domains/DOM-TASK-01.json", "expectedType": "domain" },
+    { "id": "CON-TB-PERF-01", "path": "nodes/constraints/CON-TB-PERF-01.json", "expectedType": "constraint" },
+    { "id": "DT-TASKCARD-01", "path": "nodes/design_tokens/DT-TASKCARD-01.json", "expectedType": "design_token" }
+  ]
+}

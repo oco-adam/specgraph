@@ -1,0 +1,14 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "TASKBOARD-02",
+  "type": "behavior",
+  "title": "Task Card in Column",
+  "expectation": "Each task appears as a card in the column matching its current status, showing title and priority",
+  "invariant": "A task card must appear in exactly one column",
+  "verification": "npm test -- --grep TASKBOARD-02",
+  "status": "approved",
+  "links": {
+    "depends_on": ["TASKBOARD-01"],
+    "implements": ["DOM-TASK-01"]
+  }
+}

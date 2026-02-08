@@ -1,0 +1,13 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "AUTH-02",
+  "type": "behavior",
+  "title": "Email Validation Error",
+  "expectation": "When user submits an invalid email format, an inline error message appears below the email field",
+  "invariant": "Error message must appear without page reload",
+  "verification": "npm test -- --grep AUTH-02",
+  "status": "approved",
+  "links": {
+    "depends_on": ["AUTH-01"]
+  }
+}

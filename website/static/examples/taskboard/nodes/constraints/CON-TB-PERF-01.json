@@ -1,0 +1,31 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "CON-TB-PERF-01",
+  "type": "constraint",
+  "severity": "hard",
+  "title": "Board Render Performance",
+  "statement": "Board must render 200 tasks across 4 columns without dropping below 60fps during scroll.",
+  "constraints": [
+    "Measured in Chrome DevTools Performance tab",
+    "No frame may exceed 16ms render time with 200 cards visible"
+  ],
+  "verification": [
+    {
+      "kind": "manual",
+      "steps": [
+        "Seed database with 200 tasks distributed across 4 columns",
+        "Open Chrome DevTools Performance tab",
+        "Record while scrolling through all columns",
+        "Verify no frames exceed 16ms"
+      ],
+      "expected": "All frames render within 16ms budget"
+    }
+  ],
+  "status": "approved",
+  "links": {
+    "constrains": ["TASKBOARD-01", "TASKBOARD-02"]
+  },
+  "metadata": {
+    "rationale": "Active projects can have 100+ tasks; janky scrolling is unacceptable."
+  }
+}

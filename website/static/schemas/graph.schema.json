@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oco-adam.github.io/specgraph/schemas/graph.schema.json",
+  "title": "Spec Graph Index",
+  "description": "Entry-point index for a Spec Graph. Lists all nodes and their file paths. Edges are defined inside each node file.",
+  "type": "object",
+  "required": ["specgraphVersion", "nodes"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path or URL to this schema for editor validation."
+    },
+    "specgraphVersion": {
+      "type": "string",
+      "description": "Spec Graph schema version for this graph.",
+      "pattern": "^\\d+\\.\\d+\\.\\d+(-[0-9A-Za-z-.]+)?$",
+      "examples": ["1.0.0", "1.0.0-beta.1"]
+    },
+    "root": {
+      "type": "string",
+      "description": "Optional root node ID (commonly a feature or equivalence_contract node).",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "nodeSearchPaths": {
+      "type": "array",
+      "description": "Optional additional directories to scan for nodes.",
+      "items": { "$ref": "#/$defs/relativePath" }
+    },
+    "nodes": {
+      "type": "array",
+      "description": "Canonical list of nodes and their file paths (relative to graph.json).",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/nodeRef" }
+    },
+    "defaults": {
+      "type": "object",
+      "description": "Optional default values for tooling.",
+      "additionalProperties": false,
+      "properties": {
+        "defaultNodeStatus": {
+          "type": "string",
+          "enum": ["draft", "proposed", "approved", "deprecated", "rejected"],
+          "description": "Default status assigned to new nodes."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "relativePath": {
+      "type": "string",
+      "description": "Relative POSIX-style path. No absolute paths or parent traversal.",
+      "pattern": "^(?!/)(?!.*\\.{2}/)[A-Za-z0-9._/-]+\\.json$"
+    },
+    "sha256": {
+      "type": "string",
+      "description": "Hex-encoded SHA-256 digest.",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "nodeRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Node ID (must match the node file's id field).",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath",
+          "description": "Relative path to the node file."
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256",
+          "description": "Optional content hash for tamper detection."
+        },
+        "expectedType": {
+          "type": "string",
+          "description": "Optional expected node type for quick validation.",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

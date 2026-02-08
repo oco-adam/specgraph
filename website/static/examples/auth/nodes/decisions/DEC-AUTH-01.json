@@ -1,0 +1,24 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "DEC-AUTH-01",
+  "type": "decision",
+  "category": "architecture",
+  "title": "Abstract Auth Provider Interface",
+  "statement": "All authentication operations must go through an abstract AuthProvider interface. Concrete implementations include a production provider and a DeterministicProvider for testing.",
+  "constraints": [
+    "The interface must define: authenticate(credentials), validateSession(token), revokeSession(token)",
+    "No authentication call may bypass the AuthProvider interface"
+  ],
+  "verification": [
+    "npx tsc --noEmit",
+    "npm test -- --grep DEC-AUTH-01"
+  ],
+  "status": "approved",
+  "links": {
+    "constrains": ["AUTH-01", "AUTH-04", "AUTH-05"],
+    "depends_on": ["DEC-AUTH-02"]
+  },
+  "metadata": {
+    "rationale": "Enables deterministic testing of auth flows without hitting external services. Allows future provider swaps without changing consuming code."
+  }
+}

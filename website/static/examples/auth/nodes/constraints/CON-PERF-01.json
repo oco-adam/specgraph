@@ -1,0 +1,25 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "CON-PERF-01",
+  "type": "constraint",
+  "severity": "hard",
+  "title": "Page Load Performance Budget",
+  "statement": "All pages must reach First Contentful Paint within 1.5 seconds on a 4G connection.",
+  "constraints": [
+    "FCP must be measured under simulated 4G conditions",
+    "Budget applies to all routes including the login page"
+  ],
+  "verification": [
+    {
+      "kind": "command",
+      "command": "npx lighthouse --preset=perf --assert-fcp=1500 http://localhost:3000/login"
+    }
+  ],
+  "status": "approved",
+  "links": {
+    "constrains": ["AUTH-01"]
+  },
+  "metadata": {
+    "rationale": "Core Web Vitals compliance for SEO and user experience."
+  }
+}

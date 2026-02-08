@@ -1,0 +1,22 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "DEC-AUTH-02",
+  "type": "decision",
+  "category": "stack",
+  "title": "Clerk Authentication Provider",
+  "statement": "Use Clerk as the production authentication provider for OAuth and session management.",
+  "constraints": [
+    "Use Clerk's middleware for route protection",
+    "Store only Clerk subject ID in application database, not credentials"
+  ],
+  "verification": [
+    {
+      "kind": "command",
+      "command": "grep -q '@clerk/nextjs' package.json"
+    }
+  ],
+  "status": "approved",
+  "metadata": {
+    "rationale": "Managed auth reduces security surface area and provides built-in OAuth flows."
+  }
+}

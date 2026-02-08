@@ -1,0 +1,10 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/graph.schema.json",
+  "specgraphVersion": "1.0.0",
+  "nodes": [
+    { "id": "TODO", "path": "nodes/features/TODO.json", "expectedType": "feature" },
+    { "id": "TODO-01", "path": "nodes/behaviors/TODO-01.json", "expectedType": "behavior" },
+    { "id": "TODO-02", "path": "nodes/behaviors/TODO-02.json", "expectedType": "behavior" },
+    { "id": "TODO-03", "path": "nodes/behaviors/TODO-03.json", "expectedType": "behavior" }
+  ]
+}

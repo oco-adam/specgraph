@@ -1,0 +1,24 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "DEC-TB-03",
+  "type": "decision",
+  "category": "stack",
+  "title": "DnD Kit for Drag and Drop",
+  "statement": "Use @dnd-kit/core for all drag and drop interactions on the task board.",
+  "constraints": [
+    "Use SortableContext for within-column reordering",
+    "Use DndContext with multiple DroppableContainers for cross-column moves",
+    "Keyboard accessibility must work via DnD Kit's native support"
+  ],
+  "verification": [
+    {
+      "kind": "command",
+      "command": "grep -q '@dnd-kit/core' package.json"
+    },
+    "Drag operations work via keyboard tab + space"
+  ],
+  "status": "approved",
+  "metadata": {
+    "rationale": "DnD Kit is the most accessible React DnD library with the smallest bundle size."
+  }
+}
