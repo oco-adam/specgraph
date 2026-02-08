@@ -47,10 +47,16 @@ const config: Config = {
 
   themeConfig: {
     colorMode: {
-      respectPrefersColorScheme: true,
+      defaultMode: 'dark',
+      disableSwitch: true,
+      respectPrefersColorScheme: false,
     },
     navbar: {
       title: 'Spec Graph',
+      logo: {
+        alt: 'Spec Graph',
+        src: 'img/logo.svg',
+      },
       items: [
         {
           type: 'docSidebar',
@@ -109,7 +115,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Spec Graph Project. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Spec Graph Project.`,
     },
     prism: {
       theme: prismThemes.github,
