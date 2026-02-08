@@ -1,0 +1,17 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "ART-TB-01",
+  "type": "artifact",
+  "title": "Taskboard Design Token Source (Pinned)",
+  "statement": "Content-addressed source artifact used to derive taskboard design tokens.",
+  "artifact": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "source": "figma://file/example-taskboard?node-id=design-tokens",
+    "format": "tokens-studio-json"
+  },
+  "verification": [
+    "specgraph verify-artifacts --id ART-TB-01"
+  ],
+  "status": "approved"
+}
+

@@ -11,6 +11,7 @@
     { "id": "DEC-TB-03", "path": "nodes/decisions/DEC-TB-03.json", "expectedType": "decision" },
     { "id": "DOM-TASK-01", "path": "nodes/domains/DOM-TASK-01.json", "expectedType": "domain" },
     { "id": "CON-TB-PERF-01", "path": "nodes/constraints/CON-TB-PERF-01.json", "expectedType": "constraint" },
+    { "id": "ART-TB-01", "path": "nodes/artifacts/ART-TB-01.json", "expectedType": "artifact" },
     { "id": "DT-TASKCARD-01", "path": "nodes/design_tokens/DT-TASKCARD-01.json", "expectedType": "design_token" }
   ]
 }

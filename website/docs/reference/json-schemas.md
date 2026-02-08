@@ -62,7 +62,10 @@ All other types (decision, domain, constraint, and extensions).
 
 Required: `id`, `type`, `title`, `statement`, `verification` (array), `status`
 
-Optional: `category` (for decisions), `severity` (for constraints), `constraints` (array), `links`, `metadata`
+Optional: `category` (decision nodes only), `severity` (constraint nodes only), `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
+
+Special case:
+- `artifact` nodes require an `artifact` object with a normative `sha256` hash (and optional `source`/`format`).
 
 ### The `links` Field
 
@@ -105,9 +108,9 @@ Supported `kind` values: `command`, `http`, `manual`, `observation`, `policy`.
 
 ### Node ID Format
 
-Node IDs must match: `^[A-Z][A-Za-z0-9_-]{0,79}$`
+Node IDs must match: `^[A-Z][A-Z0-9-]{0,79}$`
 
-Feature IDs must match: `^[A-Z][A-Z0-9_-]{0,19}$`
+Feature IDs must match: `^[A-Z][A-Z0-9-]{0,19}$`
 
 ### Status Values
 
@@ -160,4 +163,10 @@ Or use the provided validation script:
 
 ```bash
 node validate.js
+```
+
+For graph-level integrity checks (edges, missing targets, `depends_on` cycles, pins), run:
+
+```bash
+node graph_check.js
 ```

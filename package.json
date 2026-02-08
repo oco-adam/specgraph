@@ -1,4 +1,11 @@
 {
+  "private": true,
+  "scripts": {
+    "validate:schema": "node validate.js",
+    "validate:graph": "node graph_check.js",
+    "validate": "npm run validate:schema && npm run validate:graph",
+    "llms:generate": "node generate_llms_full.js"
+  },
   "dependencies": {
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1"

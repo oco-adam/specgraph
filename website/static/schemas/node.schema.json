@@ -14,7 +14,33 @@
       "description": "Node identifier. Uppercase letters, digits, hyphens.",
       "minLength": 1,
       "maxLength": 80,
-      "pattern": "^[A-Z][A-Za-z0-9_-]{0,79}$"
+      "pattern": "^[A-Z][A-Z0-9-]{0,79}$"
+    },
+    "sha256": {
+      "type": "string",
+      "description": "Hex-encoded SHA-256 digest.",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "pin": {
+      "type": "object",
+      "description": "Pins a referenced source node to a specific content hash for reproducible derivations.",
+      "additionalProperties": false,
+      "required": ["id", "sha256"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nodeId" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "artifactInfo": {
+      "type": "object",
+      "description": "Content-addressed artifact metadata. sha256 is normative; source/format are informative pointers.",
+      "additionalProperties": false,
+      "required": ["sha256"],
+      "properties": {
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "source": { "type": "string", "minLength": 1 },
+        "format": { "type": "string", "minLength": 1 }
+      }
     },
     "status": {
       "type": "string",
@@ -143,8 +169,8 @@
         "$schema": { "type": "string" },
         "id": {
           "type": "string",
-          "description": "Feature ID. Uppercase letters only.",
-          "pattern": "^[A-Z][A-Z0-9_-]{0,19}$"
+          "description": "Feature ID. Uppercase letters, digits, hyphens.",
+          "pattern": "^[A-Z][A-Z0-9-]{0,19}$"
         },
         "type": { "const": "feature" },
         "title": { "type": "string", "minLength": 3, "maxLength": 100 },
@@ -222,6 +248,15 @@
           "description": "For constraint nodes: whether violation blocks manifestation.",
           "enum": ["hard", "soft"]
         },
+        "pins": {
+          "type": "array",
+          "description": "Optional source pins for derived nodes. Use with links.derived_from to make derivations reproducible.",
+          "items": { "$ref": "#/$defs/pin" }
+        },
+        "artifact": {
+          "$ref": "#/$defs/artifactInfo",
+          "description": "Required for type=artifact. Contains the content hash and optional source/format metadata."
+        },
         "constraints": {
           "type": "array",
           "description": "Normative invariants for this node.",
@@ -236,7 +271,24 @@
         "status": { "$ref": "#/$defs/status" },
         "links": { "$ref": "#/$defs/links" },
         "metadata": { "$ref": "#/$defs/metadata" }
-      }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "decision" } }, "required": ["type"] },
+          "then": {},
+          "else": { "not": { "required": ["category"] } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "constraint" } }, "required": ["type"] },
+          "then": {},
+          "else": { "not": { "required": ["severity"] } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "artifact" } }, "required": ["type"] },
+          "then": { "required": ["artifact"] },
+          "else": { "not": { "required": ["artifact"] } }
+        }
+      ]
     }
   }
 }

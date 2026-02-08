@@ -83,7 +83,9 @@ Links a concrete node to the abstract concept it realizes. Typically used by beh
 
 ### `derived_from`
 
-Indicates that this node was generated from or imported from another node, typically an artifact. The implication is that changes to the source should trigger re-derivation.
+Indicates that this node was generated from or imported from another node, typically an `artifact`.
+
+To make derivations reproducible, derived nodes should include `pins` entries that record the expected source hash at derivation time. Tooling can then detect when a derived node is stale (source hash changed) and trigger re-derivation.
 
 ### `verified_by`
 
