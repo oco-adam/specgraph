@@ -1,0 +1,83 @@
+{
+  "@context": "../spec-graph.context.jsonld",
+
+  "@graph": [
+
+    {
+      "id": "AUTH-01",
+      "label": "Login Form Display",
+      "guided-by":      ["TECH-AUTH-01"],
+      "uses":            ["DESIGN-FORM-01", "DESIGN-COLOR-01"],
+      "implements":      ["DOMAIN-USER-01"],
+      "constrained-by":  ["CONSTRAINT-PERF-01"]
+    },
+    {
+      "id": "AUTH-02",
+      "label": "Email Validation Error",
+      "guided-by":      ["TECH-AUTH-01"],
+      "uses":            ["DESIGN-FORM-01"],
+      "depends-on":      ["AUTH-01"]
+    },
+    {
+      "id": "AUTH-03",
+      "label": "Password Validation Error",
+      "guided-by":      ["TECH-AUTH-01"],
+      "uses":            ["DESIGN-FORM-01"],
+      "depends-on":      ["AUTH-01"]
+    },
+    {
+      "id": "AUTH-04",
+      "label": "Successful Login Redirect",
+      "guided-by":      ["TECH-AUTH-01"],
+      "implements":      ["DOMAIN-USER-01"],
+      "depends-on":      ["AUTH-01"]
+    },
+    {
+      "id": "AUTH-05",
+      "label": "Session Persistence",
+      "guided-by":      ["TECH-AUTH-01"],
+      "implements":      ["DOMAIN-USER-01"],
+      "depends-on":      ["AUTH-04"]
+    },
+
+    {
+      "id": "TECH-AUTH-01",
+      "label": "Abstract Auth Provider Interface",
+      "requires":  ["STACK-AUTH-01", "STACK-TYPESCRIPT-01"]
+    },
+
+    {
+      "id": "DESIGN-FORM-01",
+      "label": "Form Input Pattern",
+      "depends-on": ["DESIGN-COLOR-01"]
+    },
+    {
+      "id": "DESIGN-COLOR-01",
+      "label": "Primary Color Palette"
+    },
+
+    {
+      "id": "STACK-AUTH-01",
+      "label": "Clerk Authentication"
+    },
+    {
+      "id": "STACK-TYPESCRIPT-01",
+      "label": "Strict TypeScript"
+    },
+
+    {
+      "id": "DOMAIN-USER-01",
+      "label": "User Account",
+      "related-to": ["DOMAIN-PROJECT-01"]
+    },
+    {
+      "id": "DOMAIN-PROJECT-01",
+      "label": "Project"
+    },
+
+    {
+      "id": "CONSTRAINT-PERF-01",
+      "label": "Page Load Budget"
+    }
+  ]
+}
