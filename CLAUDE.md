@@ -38,6 +38,9 @@ cd website && npm start
 # Validate examples against schemas
 node validate.js
 
+# Validate graph integrity (examples)
+node graph_check.js
+
 # Regenerate LLM artifacts
 node generate_llms_full.js
 ```

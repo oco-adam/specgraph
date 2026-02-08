@@ -67,7 +67,8 @@
           "type": "string",
           "description": "Node ID (must match the node file's id field).",
           "minLength": 1,
-          "maxLength": 80
+          "maxLength": 80,
+          "pattern": "^[A-Z][A-Z0-9-]{0,79}$"
         },
         "path": {
           "$ref": "#/$defs/relativePath",

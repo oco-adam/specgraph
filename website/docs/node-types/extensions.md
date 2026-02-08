@@ -90,6 +90,43 @@ API contracts specify the interface between services or modules.
 }
 ```
 
+## Artifacts
+
+Artifact nodes pin external inputs (Figma exports, config files, etc.) by **content hash** so that manifestation can be reproduced later.
+
+```json
+{
+  "id": "ART-DS-01",
+  "type": "artifact",
+  "title": "Design Tokens Export (Pinned)",
+  "statement": "Pinned design token export used as an input to derived nodes.",
+  "artifact": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "source": "figma://file/abc123?node-id=...",
+    "format": "tokens-studio-json"
+  },
+  "verification": ["specgraph verify-artifacts --id ART-DS-01"],
+  "status": "approved"
+}
+```
+
+## Pins for `derived_from`
+
+When a node is derived from an artifact, use `links.derived_from` plus `pins` so tooling can detect staleness:
+
+```json
+{
+  "id": "DT-TASKCARD-01",
+  "type": "design_token",
+  "title": "Task Card Design Token",
+  "statement": "Visual specification for task cards on the board.",
+  "verification": [{ "kind": "observation", "description": "Visual inspection: matches spec" }],
+  "status": "approved",
+  "pins": [{ "id": "ART-DS-01", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
+  "links": { "derived_from": ["ART-DS-01"] }
+}
+```
+
 ## Equivalence Contracts
 
 An equivalence contract formally declares what "same system" means for this graph.

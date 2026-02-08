@@ -107,3 +107,15 @@ The graph is validated at two levels:
 | **Graph integrity** | Referential integrity (all edge targets exist), no self-references, `depends_on` is acyclic | Graph validator tooling |
 
 Schema validation and graph integrity validation are independent — you can validate node content without checking structural integrity, and vice versa.
+
+### Commands
+
+From the repo root:
+
+```bash
+# Schema validation (examples)
+node validate.js
+
+# Graph integrity validation (examples)
+node graph_check.js
+```

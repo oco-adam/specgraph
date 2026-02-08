@@ -37,4 +37,7 @@ All schemas use: `https://oco-adam.github.io/specgraph/schemas/`
 
 ## Validation
 
-Run `node validate.js` from the repo root to validate all examples against schemas.
+Run these from the repo root:
+
+- `node validate.js` — validate all examples against schemas
+- `node graph_check.js` — validate graph integrity (missing targets, self-edges, depends_on cycles, pins)

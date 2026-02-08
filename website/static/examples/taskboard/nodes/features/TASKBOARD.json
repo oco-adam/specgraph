@@ -6,6 +6,6 @@
   "description": "Kanban-style board for managing project tasks with drag-and-drop and real-time sync",
   "status": "approved",
   "links": {
-    "contains": ["TASKBOARD-01", "TASKBOARD-02", "TASKBOARD-03", "DEC-TB-01", "DEC-TB-02", "DEC-TB-03", "DOM-TASK-01", "CON-TB-PERF-01", "DT-TASKCARD-01"]
+    "contains": ["TASKBOARD-01", "TASKBOARD-02", "TASKBOARD-03", "DEC-TB-01", "DEC-TB-02", "DEC-TB-03", "DOM-TASK-01", "CON-TB-PERF-01", "ART-TB-01", "DT-TASKCARD-01"]
   }
 }

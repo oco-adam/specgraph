@@ -551,6 +551,18 @@ The graph is validated at two levels:
 
 Schema validation and graph integrity validation are independent — you can validate node content without checking structural integrity, and vice versa.
 
+### Commands
+
+From the repo root:
+
+```bash
+# Schema validation (examples)
+node validate.js
+
+# Graph integrity validation (examples)
+node graph_check.js
+```
+
 ---
 
 # Node Types Overview
@@ -731,7 +743,9 @@ Links a concrete node to the abstract concept it realizes. Typically used by beh
 
 ### `derived_from`
 
-Indicates that this node was generated from or imported from another node, typically an artifact. The implication is that changes to the source should trigger re-derivation.
+Indicates that this node was generated from or imported from another node, typically an `artifact`.
+
+To make derivations reproducible, derived nodes should include `pins` entries that record the expected source hash at derivation time. Tooling can then detect when a derived node is stale (source hash changed) and trigger re-derivation.
 
 ### `verified_by`
 
@@ -1526,6 +1540,43 @@ API contracts specify the interface between services or modules.
       "expectStatus": 200
     }
   ]
+}
+```
+
+## Artifacts
+
+Artifact nodes pin external inputs (Figma exports, config files, etc.) by **content hash** so that manifestation can be reproduced later.
+
+```json
+{
+  "id": "ART-DS-01",
+  "type": "artifact",
+  "title": "Design Tokens Export (Pinned)",
+  "statement": "Pinned design token export used as an input to derived nodes.",
+  "artifact": {
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "source": "figma://file/abc123?node-id=...",
+    "format": "tokens-studio-json"
+  },
+  "verification": ["specgraph verify-artifacts --id ART-DS-01"],
+  "status": "approved"
+}
+```
+
+## Pins for `derived_from`
+
+When a node is derived from an artifact, use `links.derived_from` plus `pins` so tooling can detect staleness:
+
+```json
+{
+  "id": "DT-TASKCARD-01",
+  "type": "design_token",
+  "title": "Task Card Design Token",
+  "statement": "Visual specification for task cards on the board.",
+  "verification": [{ "kind": "observation", "description": "Visual inspection: matches spec" }],
+  "status": "approved",
+  "pins": [{ "id": "ART-DS-01", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
+  "links": { "derived_from": ["ART-DS-01"] }
 }
 ```
 
@@ -2995,7 +3046,10 @@ All other types (decision, domain, constraint, and extensions).
 
 Required: `id`, `type`, `title`, `statement`, `verification` (array), `status`
 
-Optional: `category` (for decisions), `severity` (for constraints), `constraints` (array), `links`, `metadata`
+Optional: `category` (decision nodes only), `severity` (constraint nodes only), `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
+
+Special case:
+- `artifact` nodes require an `artifact` object with a normative `sha256` hash (and optional `source`/`format`).
 
 ### The `links` Field
 
@@ -3038,9 +3092,9 @@ Supported `kind` values: `command`, `http`, `manual`, `observation`, `policy`.
 
 ### Node ID Format
 
-Node IDs must match: `^[A-Z][A-Za-z0-9_-]{0,79}$`
+Node IDs must match: `^[A-Z][A-Z0-9-]{0,79}$`
 
-Feature IDs must match: `^[A-Z][A-Z0-9_-]{0,19}$`
+Feature IDs must match: `^[A-Z][A-Z0-9-]{0,19}$`
 
 ### Status Values
 
@@ -3093,6 +3147,12 @@ Or use the provided validation script:
 
 ```bash
 node validate.js
+```
+
+For graph-level integrity checks (edges, missing targets, `depends_on` cycles, pins), run:
+
+```bash
+node graph_check.js
 ```
 
 ---
