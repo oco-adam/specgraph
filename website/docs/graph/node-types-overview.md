@@ -32,8 +32,7 @@ The core types use two distinct shapes:
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
   "invariant": "Password field must mask input characters",
-  "verification": "npm test -- --grep AUTH-01",
-  "status": "approved"
+  "verification": "npm test -- --grep AUTH-01"
 }
 ```
 
@@ -47,12 +46,11 @@ The core types use two distinct shapes:
   "title": "Abstract Auth Provider Interface",
   "statement": "All auth operations go through an AuthProvider interface.",
   "constraints": ["Interface must define authenticate(), validateSession(), revokeSession()"],
-  "verification": ["npx tsc --noEmit", "npm test -- --grep DEC-AUTH-01"],
-  "status": "approved"
+  "verification": ["npx tsc --noEmit", "npm test -- --grep DEC-AUTH-01"]
 }
 ```
 
-**Feature nodes** are the simplest — they have `title`, `description`, and `status`, plus `links` to group their children.
+**Feature nodes** are the simplest — they have `title`, `description`, plus `links` to group their children.
 
 ## Extension Types
 

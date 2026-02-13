@@ -37,14 +37,7 @@
     "defaults": {
       "type": "object",
       "description": "Optional default values for tooling.",
-      "additionalProperties": false,
-      "properties": {
-        "defaultNodeStatus": {
-          "type": "string",
-          "enum": ["draft", "proposed", "approved", "deprecated", "rejected"],
-          "description": "Default status assigned to new nodes."
-        }
-      }
+      "additionalProperties": true
     }
   },
   "$defs": {

@@ -15,7 +15,6 @@
       "command": "grep -q '@clerk/nextjs' package.json"
     }
   ],
-  "status": "approved",
   "metadata": {
     "rationale": "Managed auth reduces security surface area and provides built-in OAuth flows."
   }

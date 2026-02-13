@@ -29,7 +29,7 @@ Optional fields:
 
 - `root` — root node ID
 - `nodeSearchPaths` — additional directories to scan
-- `defaults` — default values for tooling (e.g., default node status)
+- `defaults` — default values for tooling
 
 ### Node References
 
@@ -50,17 +50,17 @@ Validates individual node files. Uses `oneOf` to distinguish three shapes:
 
 ### Feature Nodes
 
-Required: `id`, `type` (= `"feature"`), `title`, `description`, `status`
+Required: `id`, `type` (= `"feature"`), `title`, `description`
 
 ### Behavior Nodes
 
-Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `invariant`, `verification`, `status`
+Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `invariant`, `verification`
 
 ### Contract Nodes
 
 All other types (decision, domain, constraint, and extensions).
 
-Required: `id`, `type`, `title`, `statement`, `verification` (array), `status`
+Required: `id`, `type`, `title`, `statement`, `verification` (array)
 
 Optional: `category` (decision nodes only), `severity` (constraint nodes only), `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
 
@@ -111,10 +111,6 @@ Supported `kind` values: `command`, `http`, `manual`, `observation`, `policy`.
 Node IDs must match: `^[A-Z][A-Z0-9-]{0,79}$`
 
 Feature IDs must match: `^[A-Z][A-Z0-9-]{0,19}$`
-
-### Status Values
-
-`draft`, `proposed`, `approved`, `deprecated`, `rejected`
 
 ### Node Types
 

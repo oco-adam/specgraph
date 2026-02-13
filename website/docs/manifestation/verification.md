@@ -153,18 +153,6 @@ Reference to an external policy or rule:
 }
 ```
 
-## Verification and Status Gates
-
-Verification results gate node status transitions:
-
-| Verification Result | Status Transition |
-|---|---|
-| All pass | Node can move to `approved` status |
-| Any fail | Node stays in current status; failure logged |
-| Not run | Node status unchanged; warning raised |
-
-During manifestation, only `approved` nodes generate implementation tasks. A node whose verification fails cannot be approved.
-
 ## Verification and Determinism
 
 Verification is the mechanism by which equivalence is established. If every node's verification passes for both manifestation M₁ and M₂, the systems are equivalent under the graph's equivalence relation.

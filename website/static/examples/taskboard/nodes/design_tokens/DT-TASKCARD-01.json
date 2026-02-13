@@ -17,7 +17,6 @@
       "description": "Visual inspection: task cards match spec in all four columns"
     }
   ],
-  "status": "approved",
   "pins": [
     {
       "id": "ART-TB-01",
@@ -25,7 +24,11 @@
     }
   ],
   "links": {
-    "constrains": ["TASKBOARD-02"],
-    "derived_from": ["ART-TB-01"]
+    "constrains": [
+      "TASKBOARD-02"
+    ],
+    "derived_from": [
+      "ART-TB-01"
+    ]
   }
 }

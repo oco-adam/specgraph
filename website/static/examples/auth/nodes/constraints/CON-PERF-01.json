@@ -15,9 +15,10 @@
       "command": "npx lighthouse --preset=perf --assert-fcp=1500 http://localhost:3000/login"
     }
   ],
-  "status": "approved",
   "links": {
-    "constrains": ["AUTH-01"]
+    "constrains": [
+      "AUTH-01"
+    ]
   },
   "metadata": {
     "rationale": "Core Web Vitals compliance for SEO and user experience."

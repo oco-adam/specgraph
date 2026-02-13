@@ -17,7 +17,6 @@ A feature node is a **non-normative grouping** — it organizes nodes but does n
   "type": "feature",
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
-  "status": "approved",
   "links": {
     "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "CON-PERF-01"]
   }
@@ -60,7 +59,6 @@ Create a feature for cross-cutting concerns:
   "type": "feature",
   "title": "Platform",
   "description": "Cross-cutting infrastructure, constraints, and decisions",
-  "status": "approved",
   "links": {
     "contains": ["CON-PERF-01", "DEC-PLATFORM-01", "DOM-TENANT-01"]
   }

@@ -15,7 +15,6 @@ Feature nodes are **non-normative grouping nodes** that organize the graph into 
   "type": "feature",
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
-  "status": "approved",
   "links": {
     "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "CON-PERF-01"]
   }
@@ -30,7 +29,6 @@ Feature nodes are **non-normative grouping nodes** that organize the graph into 
 | `type` | Yes | Must be `"feature"` |
 | `title` | Yes | Human-readable name (3–100 chars) |
 | `description` | Yes | What this feature area covers |
-| `status` | Yes | Lifecycle status |
 | `links` | No | Outbound edges (typically `contains`) |
 | `metadata` | No | Non-normative context |
 

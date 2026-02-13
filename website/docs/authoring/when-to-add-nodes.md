@@ -102,4 +102,4 @@ Nodes should also be removed when they stop being load-bearing. Common reasons:
 - A domain concept was consolidated with another
 - A node was superseded by a new node
 
-Set the status to `deprecated` or `rejected`, and add a `supersedes` edge from the replacement if applicable.
+Add a `supersedes` edge from the replacement node if applicable. The old node's deprecated state is inferred from the existence of this edge.

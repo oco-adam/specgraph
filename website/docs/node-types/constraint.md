@@ -26,7 +26,6 @@ Constraint nodes capture **non-functional requirements** that cut across feature
       "command": "npx lighthouse --preset=perf --assert-fcp=1500 http://localhost:3000"
     }
   ],
-  "status": "approved",
   "links": {
     "constrains": ["AUTH-01", "AUTH-04"]
   },
@@ -47,7 +46,6 @@ Constraint nodes capture **non-functional requirements** that cut across feature
 | `statement` | Yes | What must be true, with measurable criteria |
 | `constraints` | No | Additional invariants |
 | `verification` | Yes | How to measure compliance (min 1) |
-| `status` | Yes | Lifecycle status |
 | `links` | No | Outbound edges (typically `constrains`) |
 | `metadata` | No | Non-normative context |
 

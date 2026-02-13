@@ -39,4 +39,3 @@ title: Glossary
 | **Minimality Test** | "If I removed this node, could a competent agent make a choice I wouldn't want?" |
 | **Shadow Spec** | The scattered, mutable, implicit collection of documents and knowledge that fills gaps left by a behavior-only spec. |
 | **Severity** | For constraint nodes: `hard` (blocks manifestation) or `soft` (quality target). |
-| **Status** | Lifecycle state of a node: draft, proposed, approved, deprecated, rejected. |

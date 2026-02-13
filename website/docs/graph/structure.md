@@ -60,7 +60,6 @@ Each node is a self-contained JSON file. Edges are expressed as outbound links i
   "expectation": "Login page renders email and password input fields with a submit button",
   "invariant": "Password field must mask input characters",
   "verification": "npm test -- --grep AUTH-01",
-  "status": "approved",
   "links": {
     "implements": ["DOM-USER-01"],
     "depends_on": ["DEC-AUTH-01"]

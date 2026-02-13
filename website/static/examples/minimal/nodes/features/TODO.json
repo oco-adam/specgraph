@@ -4,8 +4,11 @@
   "type": "feature",
   "title": "Todo List",
   "description": "A simple todo list with add, complete, and delete operations",
-  "status": "approved",
   "links": {
-    "contains": ["TODO-01", "TODO-02", "TODO-03"]
+    "contains": [
+      "TODO-01",
+      "TODO-02",
+      "TODO-03"
+    ]
   }
 }

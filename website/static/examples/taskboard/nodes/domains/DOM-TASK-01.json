@@ -15,7 +15,6 @@
     "Schema validation enforces field constraints",
     "npm test -- --grep DOM-TASK-01"
   ],
-  "status": "approved",
   "metadata": {
     "rationale": "Establishes shared vocabulary for tasks and their lifecycle."
   }

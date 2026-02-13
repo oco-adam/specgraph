@@ -17,7 +17,6 @@
     },
     "Drag operations work via keyboard tab + space"
   ],
-  "status": "approved",
   "metadata": {
     "rationale": "DnD Kit is the most accessible React DnD library with the smallest bundle size."
   }

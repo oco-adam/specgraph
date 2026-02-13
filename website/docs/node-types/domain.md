@@ -24,7 +24,6 @@ Domain nodes capture **business concepts, terms, and rules** — the ubiquitous 
     "Database schema enforces email uniqueness",
     "npm test -- --grep DOM-USER-01"
   ],
-  "status": "approved",
   "metadata": {
     "rationale": "Establishes shared vocabulary for 'user' across the system."
   }
@@ -41,7 +40,6 @@ Domain nodes capture **business concepts, terms, and rules** — the ubiquitous 
 | `statement` | Yes | What this concept IS — its definition |
 | `constraints` | No | Business rules governing this concept |
 | `verification` | Yes | How to verify the domain model is correct (min 1) |
-| `status` | Yes | Lifecycle status |
 | `links` | No | Outbound edges |
 | `metadata` | No | Non-normative context |
 

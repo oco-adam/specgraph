@@ -11,7 +11,5 @@
   },
   "verification": [
     "specgraph verify-artifacts --id ART-TB-01"
-  ],
-  "status": "approved"
+  ]
 }
-

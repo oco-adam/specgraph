@@ -21,9 +21,11 @@
       "expected": "All frames render within 16ms budget"
     }
   ],
-  "status": "approved",
   "links": {
-    "constrains": ["TASKBOARD-01", "TASKBOARD-02"]
+    "constrains": [
+      "TASKBOARD-01",
+      "TASKBOARD-02"
+    ]
   },
   "metadata": {
     "rationale": "Active projects can have 100+ tasks; janky scrolling is unacceptable."

@@ -24,7 +24,6 @@ Decision nodes capture **any architectural, technical, or stack decision that na
     "npx tsc --noEmit",
     "npm test -- --grep DEC-AUTH-01"
   ],
-  "status": "approved",
   "links": {
     "constrains": ["AUTH-01", "AUTH-04", "AUTH-05"]
   },
@@ -45,7 +44,6 @@ Decision nodes capture **any architectural, technical, or stack decision that na
 | `statement` | Yes | The declarative truth that must hold |
 | `constraints` | No | Array of normative invariants |
 | `verification` | Yes | Array of pass/fail checks (min 1) |
-| `status` | Yes | Lifecycle status |
 | `links` | No | Outbound edges |
 | `metadata` | No | Non-normative context |
 

@@ -17,7 +17,6 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
   "expectation": "Login page renders email and password input fields with a submit button",
   "invariant": "Password field must mask input characters",
   "verification": "npm test -- --grep AUTH-01",
-  "status": "approved",
   "links": {
     "implements": ["DOM-USER-01"],
     "depends_on": ["DEC-AUTH-01"]
@@ -35,7 +34,6 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
 | `expectation` | Yes | WHAT the system does (min 10 chars) |
 | `invariant` | Yes | Hard constraint that must always hold, or `"None"` |
 | `verification` | Yes | Single pass/fail check (min 5 chars) |
-| `status` | Yes | Lifecycle status: draft, proposed, approved, deprecated, rejected |
 | `links` | No | Outbound edges to other nodes |
 | `metadata` | No | Non-normative context (rationale, notes, tags) |
 

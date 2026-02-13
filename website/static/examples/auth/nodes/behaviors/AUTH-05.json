@@ -6,9 +6,12 @@
   "expectation": "When user refreshes the page after login, they remain authenticated and are not redirected to the login page",
   "invariant": "Session must survive page reload",
   "verification": "npm test -- --grep AUTH-05",
-  "status": "approved",
   "links": {
-    "depends_on": ["AUTH-04"],
-    "implements": ["DOM-USER-01"]
+    "depends_on": [
+      "AUTH-04"
+    ],
+    "implements": [
+      "DOM-USER-01"
+    ]
   }
 }

@@ -11,10 +11,13 @@
   "verification": [
     "Simulate network failure during drag; card reverts to original column"
   ],
-  "status": "approved",
   "links": {
-    "constrains": ["TASKBOARD-03"],
-    "depends_on": ["DEC-TB-03"]
+    "constrains": [
+      "TASKBOARD-03"
+    ],
+    "depends_on": [
+      "DEC-TB-03"
+    ]
   },
   "metadata": {
     "rationale": "Kanban boards feel sluggish without optimistic updates. Users expect instant visual feedback."

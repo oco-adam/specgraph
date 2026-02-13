@@ -6,9 +6,12 @@
   "expectation": "After submitting valid credentials, user is redirected to the dashboard page",
   "invariant": "Session token must be stored before redirect",
   "verification": "npm test -- --grep AUTH-04",
-  "status": "approved",
   "links": {
-    "depends_on": ["AUTH-01"],
-    "implements": ["DOM-USER-01"]
+    "depends_on": [
+      "AUTH-01"
+    ],
+    "implements": [
+      "DOM-USER-01"
+    ]
   }
 }
