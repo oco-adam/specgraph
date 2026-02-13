@@ -93,7 +93,7 @@ Points from a node to the node(s) that verify it. Useful when verification logic
 
 ### `supersedes`
 
-Marks a node as replacing another. The superseded node should typically have `deprecated` or `rejected` status. This supports evolution without losing history.
+Marks a node as replacing another. The existence of this edge signals that the target node is deprecated. This supports evolution without losing history.
 
 ## Validation Rules
 

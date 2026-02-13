@@ -58,14 +58,13 @@ Convert each v1 behavior into a standalone node file:
   "title": "Login Form Display",
   "expectation": "Login page renders email and password fields",
   "invariant": "Password field must mask input",
-  "verification": "npm test -- --grep AUTH-01",
-  "status": "approved"
+  "verification": "npm test -- --grep AUTH-01"
 }
 ```
 
 Changes:
 - `name` → `title`
-- Added `type: "behavior"` and `status`
+- Added `type: "behavior"`
 - Each behavior is now its own file
 
 ### Step 2: Create Feature Nodes
@@ -78,7 +77,6 @@ Convert each v1 feature into a feature node:
   "type": "feature",
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
-  "status": "approved",
   "links": {
     "contains": ["AUTH-01", "AUTH-02", "AUTH-03"]
   }
@@ -135,10 +133,6 @@ This allows teams to migrate incrementally without breaking existing tooling tha
 ### Edges Replace Feature Nesting
 
 In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is expressed via the `contains` edge in the feature node. A node could conceptually belong to multiple features.
-
-### Status Is Explicit
-
-V1 didn't have an explicit status field. In the Spec Graph, every node has a status. During migration, set all existing behaviors to `approved`.
 
 ### Verification Is Richer
 

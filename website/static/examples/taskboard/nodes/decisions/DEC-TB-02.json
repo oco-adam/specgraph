@@ -11,9 +11,11 @@
   "verification": [
     "Open two browser tabs; move a task in one; verify it appears in the other within 1s"
   ],
-  "status": "approved",
   "links": {
-    "constrains": ["TASKBOARD-01", "TASKBOARD-02"]
+    "constrains": [
+      "TASKBOARD-01",
+      "TASKBOARD-02"
+    ]
   },
   "metadata": {
     "rationale": "Multi-user collaboration requires real-time state synchronization."

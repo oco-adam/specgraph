@@ -26,7 +26,7 @@ The Spec Graph shares ideas with several existing approaches. This page clarifie
 | Aspect | ADRs | Spec Graph Decision Nodes |
 |---|---|---|
 | Purpose | Historical narrative of decisions | Prescriptive, living specification |
-| Status | Usually immutable once accepted | Can evolve (draft → approved → deprecated) |
+| Status | Usually immutable once accepted | Can evolve via `supersedes` edges |
 | Verification | None | Required for every decision |
 | Relationships | Cross-references in text | Typed edges (depends_on, constrains) |
 

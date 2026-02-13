@@ -6,8 +6,9 @@
   "expectation": "Task board displays four columns: Backlog, In Progress, Review, and Done",
   "invariant": "Column order is fixed and not user-configurable",
   "verification": "npm test -- --grep TASKBOARD-01",
-  "status": "approved",
   "links": {
-    "implements": ["DOM-TASK-01"]
+    "implements": [
+      "DOM-TASK-01"
+    ]
   }
 }

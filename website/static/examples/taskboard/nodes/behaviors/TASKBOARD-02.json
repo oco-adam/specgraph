@@ -6,9 +6,12 @@
   "expectation": "Each task appears as a card in the column matching its current status, showing title and priority",
   "invariant": "A task card must appear in exactly one column",
   "verification": "npm test -- --grep TASKBOARD-02",
-  "status": "approved",
   "links": {
-    "depends_on": ["TASKBOARD-01"],
-    "implements": ["DOM-TASK-01"]
+    "depends_on": [
+      "TASKBOARD-01"
+    ],
+    "implements": [
+      "DOM-TASK-01"
+    ]
   }
 }

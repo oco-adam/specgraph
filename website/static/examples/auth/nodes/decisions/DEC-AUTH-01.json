@@ -13,10 +13,15 @@
     "npx tsc --noEmit",
     "npm test -- --grep DEC-AUTH-01"
   ],
-  "status": "approved",
   "links": {
-    "constrains": ["AUTH-01", "AUTH-04", "AUTH-05"],
-    "depends_on": ["DEC-AUTH-02"]
+    "constrains": [
+      "AUTH-01",
+      "AUTH-04",
+      "AUTH-05"
+    ],
+    "depends_on": [
+      "DEC-AUTH-02"
+    ]
   },
   "metadata": {
     "rationale": "Enables deterministic testing of auth flows without hitting external services. Allows future provider swaps without changing consuming code."

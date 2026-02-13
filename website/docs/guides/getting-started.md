@@ -30,7 +30,7 @@ Create `specgraph/nodes/features/TODO.json`:
   "type": "feature",
   "title": "Todo List",
   "description": "A simple todo list with add, complete, and delete operations",
-  "status": "approved",
+
   "links": {
     "contains": ["TODO-01", "TODO-02", "TODO-03"]
   }
@@ -49,8 +49,7 @@ Create `specgraph/nodes/behaviors/TODO-01.json`:
   "title": "Add Todo Item",
   "expectation": "When user types text into the input field and presses Enter, a new todo item appears in the list",
   "invariant": "Input field is cleared after adding",
-  "verification": "npm test -- --grep TODO-01",
-  "status": "approved"
+  "verification": "npm test -- --grep TODO-01"
 }
 ```
 
@@ -65,7 +64,7 @@ Create `specgraph/nodes/behaviors/TODO-02.json`:
   "expectation": "When user clicks the checkbox next to a todo item, it is marked as complete with a strikethrough style",
   "invariant": "Completed items remain in the list",
   "verification": "npm test -- --grep TODO-02",
-  "status": "approved",
+
   "links": {
     "depends_on": ["TODO-01"]
   }
@@ -83,7 +82,7 @@ Create `specgraph/nodes/behaviors/TODO-03.json`:
   "expectation": "When user clicks the delete button on a todo item, it is removed from the list",
   "invariant": "Deletion is immediate with no confirmation dialog",
   "verification": "npm test -- --grep TODO-03",
-  "status": "approved",
+
   "links": {
     "depends_on": ["TODO-01"]
   }

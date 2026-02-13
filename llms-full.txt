@@ -2,7 +2,7 @@
 
 > The minimal specification framework for predictable system manifestation.
 
-> Generated: 2026-02-08
+> Generated: 2026-02-13
 
 ---
 
@@ -503,7 +503,6 @@ Each node is a self-contained JSON file. Edges are expressed as outbound links i
   "expectation": "Login page renders email and password input fields with a submit button",
   "invariant": "Password field must mask input characters",
   "verification": "npm test -- --grep AUTH-01",
-  "status": "approved",
   "links": {
     "implements": ["DOM-USER-01"],
     "depends_on": ["DEC-AUTH-01"]
@@ -594,8 +593,7 @@ The core types use two distinct shapes:
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
   "invariant": "Password field must mask input characters",
-  "verification": "npm test -- --grep AUTH-01",
-  "status": "approved"
+  "verification": "npm test -- --grep AUTH-01"
 }
 ```
 
@@ -609,12 +607,11 @@ The core types use two distinct shapes:
   "title": "Abstract Auth Provider Interface",
   "statement": "All auth operations go through an AuthProvider interface.",
   "constraints": ["Interface must define authenticate(), validateSession(), revokeSession()"],
-  "verification": ["npx tsc --noEmit", "npm test -- --grep DEC-AUTH-01"],
-  "status": "approved"
+  "verification": ["npx tsc --noEmit", "npm test -- --grep DEC-AUTH-01"]
 }
 ```
 
-**Feature nodes** are the simplest — they have `title`, `description`, and `status`, plus `links` to group their children.
+**Feature nodes** are the simplest — they have `title`, `description`, plus `links` to group their children.
 
 ## Extension Types
 
@@ -753,7 +750,7 @@ Points from a node to the node(s) that verify it. Useful when verification logic
 
 ### `supersedes`
 
-Marks a node as replacing another. The superseded node should typically have `deprecated` or `rejected` status. This supports evolution without losing history.
+Marks a node as replacing another. The existence of this edge signals that the target node is deprecated. This supports evolution without losing history.
 
 ## Validation Rules
 
@@ -813,7 +810,6 @@ A feature node is a **non-normative grouping** — it organizes nodes but does n
   "type": "feature",
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
-  "status": "approved",
   "links": {
     "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "CON-PERF-01"]
   }
@@ -856,7 +852,6 @@ Create a feature for cross-cutting concerns:
   "type": "feature",
   "title": "Platform",
   "description": "Cross-cutting infrastructure, constraints, and decisions",
-  "status": "approved",
   "links": {
     "contains": ["CON-PERF-01", "DEC-PLATFORM-01", "DOM-TENANT-01"]
   }
@@ -922,7 +917,6 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
   "expectation": "Login page renders email and password input fields with a submit button",
   "invariant": "Password field must mask input characters",
   "verification": "npm test -- --grep AUTH-01",
-  "status": "approved",
   "links": {
     "implements": ["DOM-USER-01"],
     "depends_on": ["DEC-AUTH-01"]
@@ -940,7 +934,6 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
 | `expectation` | Yes | WHAT the system does (min 10 chars) |
 | `invariant` | Yes | Hard constraint that must always hold, or `"None"` |
 | `verification` | Yes | Single pass/fail check (min 5 chars) |
-| `status` | Yes | Lifecycle status: draft, proposed, approved, deprecated, rejected |
 | `links` | No | Outbound edges to other nodes |
 | `metadata` | No | Non-normative context (rationale, notes, tags) |
 
@@ -1030,7 +1023,6 @@ Decision nodes capture **any architectural, technical, or stack decision that na
     "npx tsc --noEmit",
     "npm test -- --grep DEC-AUTH-01"
   ],
-  "status": "approved",
   "links": {
     "constrains": ["AUTH-01", "AUTH-04", "AUTH-05"]
   },
@@ -1051,7 +1043,6 @@ Decision nodes capture **any architectural, technical, or stack decision that na
 | `statement` | Yes | The declarative truth that must hold |
 | `constraints` | No | Array of normative invariants |
 | `verification` | Yes | Array of pass/fail checks (min 1) |
-| `status` | Yes | Lifecycle status |
 | `links` | No | Outbound edges |
 | `metadata` | No | Non-normative context |
 
@@ -1170,7 +1161,6 @@ Domain nodes capture **business concepts, terms, and rules** — the ubiquitous 
     "Database schema enforces email uniqueness",
     "npm test -- --grep DOM-USER-01"
   ],
-  "status": "approved",
   "metadata": {
     "rationale": "Establishes shared vocabulary for 'user' across the system."
   }
@@ -1187,7 +1177,6 @@ Domain nodes capture **business concepts, terms, and rules** — the ubiquitous 
 | `statement` | Yes | What this concept IS — its definition |
 | `constraints` | No | Business rules governing this concept |
 | `verification` | Yes | How to verify the domain model is correct (min 1) |
-| `status` | Yes | Lifecycle status |
 | `links` | No | Outbound edges |
 | `metadata` | No | Non-normative context |
 
@@ -1283,7 +1272,6 @@ Constraint nodes capture **non-functional requirements** that cut across feature
       "command": "npx lighthouse --preset=perf --assert-fcp=1500 http://localhost:3000"
     }
   ],
-  "status": "approved",
   "links": {
     "constrains": ["AUTH-01", "AUTH-04"]
   },
@@ -1304,7 +1292,6 @@ Constraint nodes capture **non-functional requirements** that cut across feature
 | `statement` | Yes | What must be true, with measurable criteria |
 | `constraints` | No | Additional invariants |
 | `verification` | Yes | How to measure compliance (min 1) |
-| `status` | Yes | Lifecycle status |
 | `links` | No | Outbound edges (typically `constrains`) |
 | `metadata` | No | Non-normative context |
 
@@ -1399,7 +1386,6 @@ Feature nodes are **non-normative grouping nodes** that organize the graph into 
   "type": "feature",
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
-  "status": "approved",
   "links": {
     "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "CON-PERF-01"]
   }
@@ -1414,7 +1400,6 @@ Feature nodes are **non-normative grouping nodes** that organize the graph into 
 | `type` | Yes | Must be `"feature"` |
 | `title` | Yes | Human-readable name (3–100 chars) |
 | `description` | Yes | What this feature area covers |
-| `status` | Yes | Lifecycle status |
 | `links` | No | Outbound edges (typically `contains`) |
 | `metadata` | No | Non-normative context |
 
@@ -1493,7 +1478,6 @@ All extension types use the same contract shape:
       "description": "Visual inspection: task cards match spec in all four columns"
     }
   ],
-  "status": "approved",
   "links": {
     "constrains": ["TASKBOARD-02"]
   }
@@ -1558,8 +1542,7 @@ Artifact nodes pin external inputs (Figma exports, config files, etc.) by **cont
     "source": "figma://file/abc123?node-id=...",
     "format": "tokens-studio-json"
   },
-  "verification": ["specgraph verify-artifacts --id ART-DS-01"],
-  "status": "approved"
+  "verification": ["specgraph verify-artifacts --id ART-DS-01"]
 }
 ```
 
@@ -1574,7 +1557,6 @@ When a node is derived from an artifact, use `links.derived_from` plus `pins` so
   "title": "Task Card Design Token",
   "statement": "Visual specification for task cards on the board.",
   "verification": [{ "kind": "observation", "description": "Visual inspection: matches spec" }],
-  "status": "approved",
   "pins": [{ "id": "ART-DS-01", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
   "links": { "derived_from": ["ART-DS-01"] }
 }
@@ -1754,23 +1736,17 @@ The `metadata` field is for **non-normative context** — information that helps
 
 **Key rule:** if something in metadata would change implementation if removed, it belongs in `statement` or `constraints`, not metadata.
 
-## Status Lifecycle
+## Status Is Workflow-Derived
 
-All nodes go through a status lifecycle:
+**Status is not stored in nodes.** A node's lifecycle state is determined by git context:
 
-```
-draft → proposed → approved → deprecated → rejected
-```
+- **Draft** — the node exists on a feature branch that hasn't been reviewed yet
+- **Proposed** — the node's branch has an open pull request
+- **Approved** — the PR merged to the main branch
+- **Deprecated** — a `supersedes` edge from another node points to it
+- **Rejected** — the PR was closed without merging
 
-| Status | Meaning |
-|---|---|
-| `draft` | Work in progress, not yet ready for review |
-| `proposed` | Ready for review, not yet binding |
-| `approved` | Binding — must be implemented and verified |
-| `deprecated` | Was approved, now being phased out |
-| `rejected` | Reviewed and explicitly not adopted |
-
-Only `approved` nodes are binding during manifestation. Tooling should skip `draft`, `proposed`, `deprecated`, and `rejected` nodes when assembling context for implementation.
+This keeps nodes purely declarative and avoids the **mutation-after-approval paradox** — where marking a node as "approved" requires editing a file that was already reviewed, creating a tautological commit. By deriving status from git workflow, the spec graph describes *what the system is*, not *where each node is in a review process*.
 
 ---
 
@@ -1976,7 +1952,7 @@ Nodes should also be removed when they stop being load-bearing. Common reasons:
 - A domain concept was consolidated with another
 - A node was superseded by a new node
 
-Set the status to `deprecated` or `rejected`, and add a `supersedes` edge from the replacement if applicable.
+Add a `supersedes` edge from the replacement node if applicable. The old node's deprecated state is inferred from the existence of this edge.
 
 ---
 
@@ -2539,18 +2515,6 @@ Reference to an external policy or rule:
 }
 ```
 
-## Verification and Status Gates
-
-Verification results gate node status transitions:
-
-| Verification Result | Status Transition |
-|---|---|
-| All pass | Node can move to `approved` status |
-| Any fail | Node stays in current status; failure logged |
-| Not run | Node status unchanged; warning raised |
-
-During manifestation, only `approved` nodes generate implementation tasks. A node whose verification fails cannot be approved.
-
 ## Verification and Determinism
 
 Verification is the mechanism by which equivalence is established. If every node's verification passes for both manifestation M₁ and M₂, the systems are equivalent under the graph's equivalence relation.
@@ -2607,7 +2571,7 @@ Create `specgraph/nodes/features/TODO.json`:
   "type": "feature",
   "title": "Todo List",
   "description": "A simple todo list with add, complete, and delete operations",
-  "status": "approved",
+
   "links": {
     "contains": ["TODO-01", "TODO-02", "TODO-03"]
   }
@@ -2626,8 +2590,7 @@ Create `specgraph/nodes/behaviors/TODO-01.json`:
   "title": "Add Todo Item",
   "expectation": "When user types text into the input field and presses Enter, a new todo item appears in the list",
   "invariant": "Input field is cleared after adding",
-  "verification": "npm test -- --grep TODO-01",
-  "status": "approved"
+  "verification": "npm test -- --grep TODO-01"
 }
 ```
 
@@ -2642,7 +2605,7 @@ Create `specgraph/nodes/behaviors/TODO-02.json`:
   "expectation": "When user clicks the checkbox next to a todo item, it is marked as complete with a strikethrough style",
   "invariant": "Completed items remain in the list",
   "verification": "npm test -- --grep TODO-02",
-  "status": "approved",
+
   "links": {
     "depends_on": ["TODO-01"]
   }
@@ -2660,7 +2623,7 @@ Create `specgraph/nodes/behaviors/TODO-03.json`:
   "expectation": "When user clicks the delete button on a todo item, it is removed from the list",
   "invariant": "Deletion is immediate with no confirmation dialog",
   "verification": "npm test -- --grep TODO-03",
-  "status": "approved",
+
   "links": {
     "depends_on": ["TODO-01"]
   }
@@ -2897,14 +2860,13 @@ Convert each v1 behavior into a standalone node file:
   "title": "Login Form Display",
   "expectation": "Login page renders email and password fields",
   "invariant": "Password field must mask input",
-  "verification": "npm test -- --grep AUTH-01",
-  "status": "approved"
+  "verification": "npm test -- --grep AUTH-01"
 }
 ```
 
 Changes:
 - `name` → `title`
-- Added `type: "behavior"` and `status`
+- Added `type: "behavior"`
 - Each behavior is now its own file
 
 ### Step 2: Create Feature Nodes
@@ -2917,7 +2879,6 @@ Convert each v1 feature into a feature node:
   "type": "feature",
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
-  "status": "approved",
   "links": {
     "contains": ["AUTH-01", "AUTH-02", "AUTH-03"]
   }
@@ -2975,10 +2936,6 @@ This allows teams to migrate incrementally without breaking existing tooling tha
 
 In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is expressed via the `contains` edge in the feature node. A node could conceptually belong to multiple features.
 
-### Status Is Explicit
-
-V1 didn't have an explicit status field. In the Spec Graph, every node has a status. During migration, set all existing behaviors to `approved`.
-
 ### Verification Is Richer
 
 V1 behavior verification was a single string. Spec Graph contract nodes (decision, domain, constraint) support arrays of verification entries, including structured formats (command, http, manual).
@@ -3013,7 +2970,7 @@ Optional fields:
 
 - `root` — root node ID
 - `nodeSearchPaths` — additional directories to scan
-- `defaults` — default values for tooling (e.g., default node status)
+- `defaults` — default values for tooling
 
 ### Node References
 
@@ -3034,17 +2991,17 @@ Validates individual node files. Uses `oneOf` to distinguish three shapes:
 
 ### Feature Nodes
 
-Required: `id`, `type` (= `"feature"`), `title`, `description`, `status`
+Required: `id`, `type` (= `"feature"`), `title`, `description`
 
 ### Behavior Nodes
 
-Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `invariant`, `verification`, `status`
+Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `invariant`, `verification`
 
 ### Contract Nodes
 
 All other types (decision, domain, constraint, and extensions).
 
-Required: `id`, `type`, `title`, `statement`, `verification` (array), `status`
+Required: `id`, `type`, `title`, `statement`, `verification` (array)
 
 Optional: `category` (decision nodes only), `severity` (constraint nodes only), `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
 
@@ -3095,10 +3052,6 @@ Supported `kind` values: `command`, `http`, `manual`, `observation`, `policy`.
 Node IDs must match: `^[A-Z][A-Z0-9-]{0,79}$`
 
 Feature IDs must match: `^[A-Z][A-Z0-9-]{0,19}$`
-
-### Status Values
-
-`draft`, `proposed`, `approved`, `deprecated`, `rejected`
 
 ### Node Types
 
@@ -3311,7 +3264,6 @@ taskboard/
 | **Minimality Test** | "If I removed this node, could a competent agent make a choice I wouldn't want?" |
 | **Shadow Spec** | The scattered, mutable, implicit collection of documents and knowledge that fills gaps left by a behavior-only spec. |
 | **Severity** | For constraint nodes: `hard` (blocks manifestation) or `soft` (quality target). |
-| **Status** | Lifecycle state of a node: draft, proposed, approved, deprecated, rejected. |
 
 ---
 
@@ -3338,7 +3290,7 @@ The Spec Graph shares ideas with several existing approaches. This page clarifie
 | Aspect | ADRs | Spec Graph Decision Nodes |
 |---|---|---|
 | Purpose | Historical narrative of decisions | Prescriptive, living specification |
-| Status | Usually immutable once accepted | Can evolve (draft → approved → deprecated) |
+| Status | Usually immutable once accepted | Can evolve via `supersedes` edges |
 | Verification | None | Required for every decision |
 | Relationships | Cross-references in text | Typed edges (depends_on, constrains) |
 

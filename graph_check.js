@@ -9,7 +9,6 @@
  * - All link targets exist (referential integrity)
  * - No self-references in links
  * - depends_on is acyclic (cycle detection with path output)
- * - Basic status/dependency hygiene (approved nodes can't depend on draft/proposed/rejected)
  * - Optional pin verification for derived nodes ("derived_from" + "pins")
  * - Optional tamper detection (graph.json nodeRef.sha256 compared to file hash)
  *
@@ -240,47 +239,6 @@ function checkGraph(graphPath, opts) {
   const cycle = detectDependsOnCycle(idToDeps);
   if (cycle) {
     errors.push(`depends_on cycle detected: ${cycle.join(' -> ')}`);
-  }
-
-  // Status/dependency hygiene.
-  for (const [fromId, deps] of idToDeps.entries()) {
-    const node = idToNode.get(fromId);
-    if (!node) continue;
-
-    const status = node.status;
-    for (const depId of deps) {
-      const dep = idToNode.get(depId);
-      if (!dep) continue;
-      const depStatus = dep.status;
-
-      if (depStatus === 'rejected') {
-        errors.push(`${fromId} depends_on rejected node ${depId}`);
-      }
-
-      if (status === 'approved') {
-        if (depStatus === 'draft' || depStatus === 'proposed') {
-          errors.push(`${fromId} is approved but depends_on non-approved node ${depId} (status=${depStatus})`);
-        } else if (depStatus === 'deprecated') {
-          warnings.push(`${fromId} is approved but depends_on deprecated node ${depId}`);
-        }
-      }
-    }
-  }
-
-  // supersedes hygiene.
-  for (const [fromId, node] of idToNode.entries()) {
-    const supersedes = node?.links?.supersedes;
-    if (!Array.isArray(supersedes)) continue;
-    for (const toId of supersedes) {
-      const target = idToNode.get(toId);
-      if (!target) continue;
-      const targetStatus = target.status;
-      if (targetStatus !== 'deprecated' && targetStatus !== 'rejected') {
-        const msg = `${fromId} supersedes ${toId} but target status is ${targetStatus} (expected deprecated/rejected)`;
-        if (opts.strict) errors.push(msg);
-        else warnings.push(msg);
-      }
-    }
   }
 
   // derived_from pin checks (best-effort; strict mode tightens).

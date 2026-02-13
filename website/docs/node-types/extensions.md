@@ -40,7 +40,6 @@ All extension types use the same contract shape:
       "description": "Visual inspection: task cards match spec in all four columns"
     }
   ],
-  "status": "approved",
   "links": {
     "constrains": ["TASKBOARD-02"]
   }
@@ -105,8 +104,7 @@ Artifact nodes pin external inputs (Figma exports, config files, etc.) by **cont
     "source": "figma://file/abc123?node-id=...",
     "format": "tokens-studio-json"
   },
-  "verification": ["specgraph verify-artifacts --id ART-DS-01"],
-  "status": "approved"
+  "verification": ["specgraph verify-artifacts --id ART-DS-01"]
 }
 ```
 
@@ -121,7 +119,6 @@ When a node is derived from an artifact, use `links.derived_from` plus `pins` so
   "title": "Task Card Design Token",
   "statement": "Visual specification for task cards on the board.",
   "verification": [{ "kind": "observation", "description": "Visual inspection: matches spec" }],
-  "status": "approved",
   "pins": [{ "id": "ART-DS-01", "sha256": "0000000000000000000000000000000000000000000000000000000000000000" }],
   "links": { "derived_from": ["ART-DS-01"] }
 }

@@ -13,7 +13,6 @@
     "Database schema enforces email uniqueness",
     "npm test -- --grep DOM-USER-01"
   ],
-  "status": "approved",
   "metadata": {
     "rationale": "Establishes shared vocabulary for 'user' across the system."
   }

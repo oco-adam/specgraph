@@ -6,8 +6,9 @@
   "expectation": "When user clicks the delete button on a todo item, it is removed from the list",
   "invariant": "Deletion is immediate with no confirmation dialog",
   "verification": "npm test -- --grep TODO-03",
-  "status": "approved",
   "links": {
-    "depends_on": ["TODO-01"]
+    "depends_on": [
+      "TODO-01"
+    ]
   }
 }

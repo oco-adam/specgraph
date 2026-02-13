@@ -135,20 +135,14 @@ The `metadata` field is for **non-normative context** — information that helps
 
 **Key rule:** if something in metadata would change implementation if removed, it belongs in `statement` or `constraints`, not metadata.
 
-## Status Lifecycle
+## Status Is Workflow-Derived
 
-All nodes go through a status lifecycle:
+**Status is not stored in nodes.** A node's lifecycle state is determined by git context:
 
-```
-draft → proposed → approved → deprecated → rejected
-```
+- **Draft** — the node exists on a feature branch that hasn't been reviewed yet
+- **Proposed** — the node's branch has an open pull request
+- **Approved** — the PR merged to the main branch
+- **Deprecated** — a `supersedes` edge from another node points to it
+- **Rejected** — the PR was closed without merging
 
-| Status | Meaning |
-|---|---|
-| `draft` | Work in progress, not yet ready for review |
-| `proposed` | Ready for review, not yet binding |
-| `approved` | Binding — must be implemented and verified |
-| `deprecated` | Was approved, now being phased out |
-| `rejected` | Reviewed and explicitly not adopted |
-
-Only `approved` nodes are binding during manifestation. Tooling should skip `draft`, `proposed`, `deprecated`, and `rejected` nodes when assembling context for implementation.
+This keeps nodes purely declarative and avoids the **mutation-after-approval paradox** — where marking a node as "approved" requires editing a file that was already reviewed, creating a tautological commit. By deriving status from git workflow, the spec graph describes *what the system is*, not *where each node is in a review process*.
