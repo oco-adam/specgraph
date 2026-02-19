@@ -59,19 +59,19 @@ When business terms are ambiguous or domain rules are being violated, add domain
 
 **What you get:** domain equivalence — same data model and business rules.
 
-### Level 4: + Constraint Nodes
+### Level 4: + Policy Nodes
 
-When non-functional requirements need measurement, add constraint nodes.
+When non-functional requirements need measurement, add policy nodes.
 
 ```
   nodes/
     ...
-    constraints/CON-PERF-01.json  ← NEW
+    policies/POL-PERF-01.json  ← NEW
 ```
 
 **Trigger:** "The page is too slow" or "We need WCAG compliance."
 
-**What you get:** constraint equivalence — same non-functional characteristics.
+**What you get:** policy equivalence — same non-functional characteristics.
 
 ### Level 5: + Extension Types
 
@@ -95,7 +95,7 @@ Each level is triggered by a **manifestation failure** — a case where the curr
 | Two implementations have incompatible architectures | Decision nodes (architecture) |
 | Wrong technology or library was used | Decision nodes (stack) |
 | Agent misunderstood a business term | Domain nodes |
-| Performance or security requirement was violated | Constraint nodes |
+| Performance or security requirement was violated | Policy nodes |
 | Visual design is inconsistent | Design token extensions |
 
 ## You Don't Need Every Level
@@ -115,6 +115,6 @@ If your project has no formal spec at all:
 3. **Group into features** — create feature nodes
 4. **Build the index** — create `graph.json`
 5. **Validate** — run the schema validator
-6. **Iterate** — add decision/domain/constraint nodes as needed
+6. **Iterate** — add decision/domain/policy nodes as needed
 
 The initial behavior audit is the most time-consuming step. Once you have behaviors, the graph grows incrementally.

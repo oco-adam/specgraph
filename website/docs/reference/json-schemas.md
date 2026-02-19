@@ -54,15 +54,17 @@ Required: `id`, `type` (= `"feature"`), `title`, `description`
 
 ### Behavior Nodes
 
-Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `invariant`, `verification`
+Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `verification`
+
+Optional: `constraints` (array)
 
 ### Contract Nodes
 
-All other types (decision, domain, constraint, and extensions).
+All other types (decision, domain, policy, and extensions).
 
 Required: `id`, `type`, `title`, `statement`, `verification` (array)
 
-Optional: `category` (decision nodes only), `severity` (constraint nodes only), `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
+Optional: `category` (decision nodes only), `severity` (policy nodes only), `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
 
 Special case:
 - `artifact` nodes require an `artifact` object with a normative `sha256` hash (and optional `source`/`format`).
@@ -114,7 +116,7 @@ Feature IDs must match: `^[A-Z][A-Z0-9-]{0,19}$`
 
 ### Node Types
 
-Core: `feature`, `behavior`, `decision`, `domain`, `constraint`
+Core: `feature`, `behavior`, `decision`, `domain`, `policy`
 
 Extensions: `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`
 

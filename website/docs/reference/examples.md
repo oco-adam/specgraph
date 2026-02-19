@@ -40,7 +40,7 @@ graph TD
 
 **Purpose:** The primary example used throughout the documentation. Demonstrates all five core node types.
 
-**Node types used:** `feature`, `behavior`, `decision`, `domain`, `constraint`
+**Node types used:** `feature`, `behavior`, `decision`, `domain`, `policy`
 
 **Source:** [`examples/auth/`](pathname:///specgraph/examples/auth/graph.json)
 
@@ -53,7 +53,7 @@ auth/
     decisions/DEC-AUTH-01.json    # Auth provider abstraction (architecture)
     decisions/DEC-AUTH-02.json    # Clerk provider (stack)
     domains/DOM-USER-01.json     # User Account concept
-    constraints/CON-PERF-01.json # Page load budget
+    policies/POL-PERF-01.json    # Page load budget
 ```
 
 ```mermaid
@@ -66,7 +66,7 @@ graph TD
     AUTH -->|contains| D1[DEC-AUTH-01]
     AUTH -->|contains| D2[DEC-AUTH-02]
     AUTH -->|contains| DOM[DOM-USER-01]
-    AUTH -->|contains| CON[CON-PERF-01]
+    AUTH -->|contains| POL[POL-PERF-01]
 
     B1 -->|implements| DOM
     B1 -->|depends_on| D1
@@ -74,7 +74,7 @@ graph TD
     B5 -->|implements| DOM
     D1 -->|depends_on| D2
     D1 -->|constrains| B1
-    CON -->|constrains| B1
+    POL -->|constrains| B1
     B2 -->|depends_on| B1
     B3 -->|depends_on| B1
     B4 -->|depends_on| B1
@@ -85,7 +85,7 @@ graph TD
 
 - **Decision nodes** with different categories (architecture vs. stack)
 - **Domain nodes** defining shared vocabulary
-- **Constraint nodes** with severity and structured verification
+- **Policy nodes** with severity and structured verification
 - **Edge patterns**: `implements`, `depends_on`, `constrains`
 - **Dependency chain**: behavior → decision → decision
 
@@ -93,7 +93,7 @@ graph TD
 
 **Purpose:** A richer example showing extension types alongside core types.
 
-**Node types used:** `feature`, `behavior`, `decision`, `domain`, `constraint`, `design_token`
+**Node types used:** `feature`, `behavior`, `decision`, `domain`, `policy`, `design_token`
 
 **Source:** [`examples/taskboard/`](pathname:///specgraph/examples/taskboard/graph.json)
 
@@ -107,7 +107,7 @@ taskboard/
     decisions/DEC-TB-02.json     # Real-time sync (pattern)
     decisions/DEC-TB-03.json     # DnD Kit (stack)
     domains/DOM-TASK-01.json     # Task concept with status transitions
-    constraints/CON-TB-PERF-01.json  # 60fps render performance
+    policies/POL-TB-PERF-01.json # 60fps render performance
     design_tokens/DT-TASKCARD-01.json # Task card visual spec
 ```
 
@@ -116,5 +116,5 @@ taskboard/
 - **Extension type** (`design_token`) used alongside core types
 - **Multiple decision categories**: pattern and stack
 - **Rich domain model** with status transitions and business rules
-- **Performance constraint** with manual verification steps
+- **Performance policy** with manual verification steps
 - **Visual specification** through design tokens

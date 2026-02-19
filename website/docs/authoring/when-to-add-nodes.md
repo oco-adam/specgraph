@@ -46,14 +46,14 @@ For any proposed node:
 
 **Key signal:** you say "by 'user' I mean..." more than once.
 
-### Add Constraint Nodes When...
+### Add Policy Nodes When...
 
 - Performance, security, or accessibility must be measured
 - A non-functional requirement cuts across multiple features
 - Cost budgets must be enforced
 - Reliability targets need explicit verification
 
-**Key signal:** the quality attribute matters enough that you'd reject an implementation that ignores it.
+**Key signal:** the quality attribute matters enough that you'd reject an implementation that ignores it. Express it as a policy node with appropriate severity.
 
 ### Add Extension Types When...
 
@@ -76,7 +76,7 @@ A typical project's spec graph grows in this order:
 2. Tech decisions:  + decision nodes (stack category)
 3. Architecture:    + decision nodes (architecture/pattern categories)
 4. Domain model:    + domain nodes
-5. Quality gates:   + constraint nodes
+5. Quality gates:   + policy nodes
 6. Refinement:      + extension types as needed
 ```
 

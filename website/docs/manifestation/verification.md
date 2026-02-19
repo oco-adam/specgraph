@@ -26,12 +26,12 @@ Each node has its own verification criteria. After implementing a behavior or sc
 ]
 ```
 
-### Constraint-Level Verification
+### Policy-Level Verification
 
-After implementing behaviors, constraint nodes that `constrain` those behaviors are verified:
+After implementing behaviors, policy nodes that `constrain` those behaviors are verified:
 
 ```json
-// Constraint node
+// Policy node
 "verification": [
   {
     "kind": "command",
@@ -45,7 +45,7 @@ After implementing behaviors, constraint nodes that `constrain` those behaviors 
 After all nodes are manifested, the full graph is verified:
 
 1. All behavior node verifications pass
-2. All constraint node verifications pass
+2. All policy node verifications pass
 3. All decision node verifications pass
 4. If an `equivalence_contract` exists, its criteria are met
 
@@ -72,7 +72,7 @@ These are **agent/tooling concerns**, not properties of the manifested system, s
 Quality gates answer: "Does the code meet the project's quality standard before we ship/review it?"
 
 In Spec Graph terms, the **normative** quality bar should be expressed as:
-- `constraint` nodes (with `severity: hard|soft` and explicit `verification` commands), and/or
+- `policy` nodes (with `severity: hard|soft` and explicit `verification` commands), and/or
 - an `equivalence_contract` node that aggregates the definition of "done".
 
 The **execution strategy** (fast vs slow ordering, fail-fast behavior, retries, timeouts, parallelism) belongs to the agent/tooling layer.
@@ -82,7 +82,7 @@ The **execution strategy** (fast vs slow ordering, fail-fast behavior, retries, 
 1. Run preflight checks (tooling)
 2. Implement changes
 3. Run fast quality gates (lint/typecheck/format)
-4. Run node + constraint verification
+4. Run node + policy verification
 5. Run slow gates / equivalence contract (tests/build/perf/security)
 
 ## Verification Types
@@ -171,10 +171,10 @@ Verification flows through the graph:
 ```mermaid
 graph TD
     B[AUTH-01<br/>npm test -- --grep AUTH-01] --> N[Node-level: ✓]
-    C[CON-PERF-01<br/>lighthouse --assert-fcp=1500] --> CL[Constraint-level: ✓]
+    P[POL-PERF-01<br/>lighthouse --assert-fcp=1500] --> PL[Policy-level: ✓]
     D[DEC-AUTH-01<br/>npx tsc --noEmit] --> DL[Decision-level: ✓]
     N --> G[Graph-level: All pass]
-    CL --> G
+    PL --> G
     DL --> G
 ```
 

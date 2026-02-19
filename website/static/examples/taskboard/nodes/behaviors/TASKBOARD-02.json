@@ -4,7 +4,7 @@
   "type": "behavior",
   "title": "Task Card in Column",
   "expectation": "Each task appears as a card in the column matching its current status, showing title and priority",
-  "invariant": "A task card must appear in exactly one column",
+  "constraints": ["A task card must appear in exactly one column"],
   "verification": "npm test -- --grep TASKBOARD-02",
   "links": {
     "depends_on": [

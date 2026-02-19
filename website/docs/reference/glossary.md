@@ -20,13 +20,14 @@ title: Glossary
 | **Equivalence Contract** | An optional extension node that formally declares what "same system" means for this graph. |
 | **Implementing Agent** | The agent (human or AI) that processes the spec graph to produce a running system. |
 | **Capable Agent** | An implementing agent that can parse, traverse, apply, respect, and verify the spec graph. |
-| **Contract Node** | The unified shape shared by all non-feature, non-behavior node types (decision, domain, constraint, extensions). |
+| **Contract Node** | The unified shape shared by all non-feature, non-behavior node types (decision, domain, policy, extensions). |
 | **Decision Node** | A node capturing an architectural, technical, or stack decision that narrows the solution space. |
 | **Domain Node** | A node defining a business concept, term, or rule — the ubiquitous language of the system. |
-| **Constraint Node** | A node specifying a non-functional requirement (performance, security, accessibility, cost). |
+| **Policy Node** | A node specifying a cross-cutting non-functional requirement (performance, security, accessibility, cost, reliability). Uses `severity` (hard/soft) and `constrains` edges. Not to be confused with the `constraints` field. |
+| **Constraints (field)** | Normative conditions on a node that narrow its primary field (`expectation` or `statement`). Each entry is independent and testable. Present on both behavior and contract node shapes. Not to be confused with policy nodes (a node type for cross-cutting NFRs). |
 | **Extension Type** | An optional node type for finer-grained modelling (design_token, api_contract, data_model, etc.). |
 | **Verification** | Pass/fail criteria attached to a node. The mechanism by which equivalence is established. |
-| **Normative** | Content that MUST be true, MUST be implemented, MUST pass verification (statement, constraints, verification). |
+| **Normative** | Content that MUST be true, MUST be implemented, MUST pass verification (expectation, statement, constraints, verification). |
 | **Informative** | Content that provides context but is not a requirement (metadata.rationale, metadata.notes). |
 | **Orient** | The first manifestation phase: read all nodes to build system understanding. |
 | **Scaffold** | The second manifestation phase: create architectural infrastructure from decision and domain nodes. |
@@ -38,4 +39,4 @@ title: Glossary
 | **The ONE Rule** | Atomicity rule for behaviors: ONE trigger, ONE behavior, ONE outcome. |
 | **Minimality Test** | "If I removed this node, could a competent agent make a choice I wouldn't want?" |
 | **Shadow Spec** | The scattered, mutable, implicit collection of documents and knowledge that fills gaps left by a behavior-only spec. |
-| **Severity** | For constraint nodes: `hard` (blocks manifestation) or `soft` (quality target). |
+| **Severity** | For policy nodes: `hard` (blocks manifestation) or `soft` (quality target). |

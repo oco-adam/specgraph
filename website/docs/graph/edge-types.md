@@ -15,7 +15,7 @@ The Spec Graph defines seven forward-only edge types:
 |---|---|---|
 | `contains` | Grouping/namespace relationship | Feature contains its child nodes |
 | `depends_on` | Must be satisfied before this node | A behavior depends on a decision being in place |
-| `constrains` | Narrows implementation choices for the target | A constraint limits how a behavior can be implemented |
+| `constrains` | Narrows implementation choices for the target | A policy limits how a behavior can be implemented |
 | `implements` | This node realizes part of the target | A behavior implements a domain concept |
 | `derived_from` | Generated or imported from target (pinned hash) | A design token derived from an artifact |
 | `verified_by` | Points to verification checks | A behavior verified by a test strategy node |
@@ -61,10 +61,10 @@ Establishes ordering requirements. If A depends on B, then B must be manifested 
 
 ### `constrains`
 
-Narrows the implementation space of the target. A constraint node might constrain a behavior node, meaning the behavior must be implemented within the constraint's boundaries.
+Narrows the implementation space of the target. A policy node might constrain a behavior node, meaning the behavior must be implemented within the policy's boundaries.
 
 ```json
-// In CON-PERF-01.json (constraint)
+// In POL-PERF-01.json (policy)
 "links": {
   "constrains": ["AUTH-01", "AUTH-04"]
 }
@@ -114,16 +114,16 @@ graph LR
 
 A behavior depends on an architectural decision, which in turn depends on a technology choice.
 
-### Constraint → Multiple Behaviors
+### Policy → Multiple Behaviors
 
 ```mermaid
 graph TD
-    C[CON-PERF-01<br/>constraint] -->|constrains| B1[AUTH-01]
-    C -->|constrains| B2[AUTH-04]
-    C -->|constrains| B3[DASH-01]
+    P[POL-PERF-01<br/>policy] -->|constrains| B1[AUTH-01]
+    P -->|constrains| B2[AUTH-04]
+    P -->|constrains| B3[DASH-01]
 ```
 
-A performance constraint applies to multiple behaviors across features.
+A performance policy applies to multiple behaviors across features.
 
 ### Feature → Children
 

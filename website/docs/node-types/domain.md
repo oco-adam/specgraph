@@ -71,7 +71,7 @@ The `constraints` array captures the business rules governing this concept:
 ]
 ```
 
-Each constraint is a normative rule that implementations must respect.
+Each entry is a normative condition that implementations must respect.
 
 ## When to Create Domain Nodes
 

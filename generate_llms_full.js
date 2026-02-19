@@ -29,7 +29,7 @@ const pages = [
   'node-types/behavior.md',
   'node-types/decision.md',
   'node-types/domain.md',
-  'node-types/constraint.md',
+  'node-types/policy.md',
   'node-types/feature.md',
   'node-types/extensions.md',
   'authoring/writing-nodes.md',

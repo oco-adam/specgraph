@@ -11,6 +11,6 @@
     { "id": "DEC-AUTH-01", "path": "nodes/decisions/DEC-AUTH-01.json", "expectedType": "decision" },
     { "id": "DEC-AUTH-02", "path": "nodes/decisions/DEC-AUTH-02.json", "expectedType": "decision" },
     { "id": "DOM-USER-01", "path": "nodes/domains/DOM-USER-01.json", "expectedType": "domain" },
-    { "id": "CON-PERF-01", "path": "nodes/constraints/CON-PERF-01.json", "expectedType": "constraint" }
+    { "id": "POL-PERF-01", "path": "nodes/policies/POL-PERF-01.json", "expectedType": "policy" }
   ]
 }

@@ -42,7 +42,7 @@ Decision nodes capture **any architectural, technical, or stack decision that na
 | `category` | No | One of: `architecture`, `stack`, `pattern`, `interface` |
 | `title` | Yes | Short name (3–140 chars) |
 | `statement` | Yes | The declarative truth that must hold |
-| `constraints` | No | Array of normative invariants |
+| `constraints` | No | Normative conditions that further narrow this decision's statement |
 | `verification` | Yes | Array of pass/fail checks (min 1) |
 | `links` | No | Outbound edges |
 | `metadata` | No | Non-normative context |

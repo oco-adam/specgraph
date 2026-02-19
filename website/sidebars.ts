@@ -40,7 +40,7 @@ const sidebars: SidebarsConfig = {
         'node-types/behavior',
         'node-types/decision',
         'node-types/domain',
-        'node-types/constraint',
+        'node-types/policy',
         'node-types/feature',
         'node-types/extensions',
       ],

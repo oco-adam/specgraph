@@ -4,7 +4,7 @@
   "type": "behavior",
   "title": "Password Validation Error",
   "expectation": "When user submits a password shorter than 8 characters, an inline error message appears below the password field",
-  "invariant": "Error message must appear without page reload",
+  "constraints": ["Error message must appear without page reload"],
   "verification": "npm test -- --grep AUTH-03",
   "links": {
     "depends_on": [

@@ -27,7 +27,7 @@ specgraph/
     behaviors/AUTH-01.json      # Behavior node
     decisions/DEC-AUTH-01.json  # Decision node
     domains/DOM-USER-01.json   # Domain node
-    constraints/CON-PERF-01.json  # Constraint node
+    policies/POL-PERF-01.json     # Policy node
 ```
 
 ### The Index File
@@ -43,7 +43,7 @@ specgraph/
     { "id": "AUTH-01", "path": "nodes/behaviors/AUTH-01.json" },
     { "id": "DEC-AUTH-01", "path": "nodes/decisions/DEC-AUTH-01.json" },
     { "id": "DOM-USER-01", "path": "nodes/domains/DOM-USER-01.json" },
-    { "id": "CON-PERF-01", "path": "nodes/constraints/CON-PERF-01.json" }
+    { "id": "POL-PERF-01", "path": "nodes/policies/POL-PERF-01.json" }
   ]
 }
 ```
@@ -58,7 +58,7 @@ Each node is a self-contained JSON file. Edges are expressed as outbound links i
   "type": "behavior",
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
-  "invariant": "Password field must mask input characters",
+  "constraints": ["Password field must mask input characters"],
   "verification": "npm test -- --grep AUTH-01",
   "links": {
     "implements": ["DOM-USER-01"],
@@ -85,13 +85,13 @@ graph TD
     AUTH -->|contains| AUTH02[AUTH-02<br/>behavior]
     AUTH -->|contains| DEC[DEC-AUTH-01<br/>decision]
     AUTH -->|contains| DOM[DOM-USER-01<br/>domain]
-    AUTH -->|contains| CON[CON-PERF-01<br/>constraint]
+    AUTH -->|contains| POL[POL-PERF-01<br/>policy]
 
     AUTH01 -->|implements| DOM
     AUTH01 -->|depends_on| DEC
     AUTH02 -->|depends_on| AUTH01
     DEC -->|constrains| AUTH01
-    CON -->|constrains| AUTH01
+    POL -->|constrains| AUTH01
 ```
 
 At manifestation time, tooling loads all node files and constructs the full in-memory graph. The file-per-node layout is a storage concern — at runtime, it's one unified graph.

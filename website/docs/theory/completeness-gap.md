@@ -72,7 +72,7 @@ Each node type addresses a specific category of decisions:
 | `behavior` | What the system does |
 | `decision` | How it's structured and what it's built with |
 | `domain` | What business concepts mean |
-| `constraint` | What non-functional boundaries must hold |
+| `policy` | What non-functional boundaries must hold |
 | `feature` | How specs are organized and grouped |
 
 Extension types (`design_token`, `api_contract`, etc.) close additional specialized gaps as needed.

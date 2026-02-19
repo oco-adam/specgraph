@@ -22,12 +22,12 @@ graph TD
     F --> B2[AUTH-02: Email Validation]
     F --> D1[DEC-AUTH-01: Auth Provider Interface]
     F --> DOM1[DOM-USER-01: User Account]
-    F --> C1[CON-PERF-01: Page Load Budget]
+    F --> P1[POL-PERF-01: Page Load Budget]
 
     B1 -->|implements| DOM1
     B1 -->|depends_on| D1
     D1 -->|constrains| B1
-    C1 -->|constrains| B1
+    P1 -->|constrains| B1
 ```
 
 ## The Defining Property

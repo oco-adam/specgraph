@@ -1,7 +1,7 @@
 {
   "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
-  "id": "CON-TB-PERF-01",
-  "type": "constraint",
+  "id": "POL-TB-PERF-01",
+  "type": "policy",
   "severity": "hard",
   "title": "Board Render Performance",
   "statement": "Board must render 200 tasks across 4 columns without dropping below 60fps during scroll.",

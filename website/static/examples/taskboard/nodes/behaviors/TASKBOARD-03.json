@@ -4,7 +4,7 @@
   "type": "behavior",
   "title": "Drag Task Between Columns",
   "expectation": "Users can drag a task card from one column to another to change its status with immediate visual feedback",
-  "invariant": "Status transitions must follow the allowed sequence",
+  "constraints": ["Status transitions must follow the allowed sequence"],
   "verification": "npm test -- --grep TASKBOARD-03",
   "links": {
     "depends_on": [

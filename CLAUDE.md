@@ -47,7 +47,7 @@ node generate_llms_full.js
 
 ## Key Technical Details
 
-- **5 core node types**: feature, behavior, decision, domain, constraint
+- **5 core node types**: feature, behavior, decision, domain, policy
 - **7 extension types**: design_token, ui_contract, api_contract, data_model, artifact, equivalence_contract, pipeline
 - **7 edge types** (forward-only, node-local): contains, depends_on, constrains, implements, derived_from, verified_by, supersedes
 - **JSON Schema Draft 2020-12** — requires `ajv/dist/2020` (not plain `ajv`)

@@ -17,13 +17,13 @@ These five types are sufficient for most spec graphs:
 | **`behavior`** | Observable system behavior | What does the user see and do? |
 | **`decision`** | Architectural, technical, or stack decision | How should it be built, and with what? |
 | **`domain`** | Business concept, term, or rule | What do the domain terms mean? |
-| **`constraint`** | Non-functional requirement | What limits must be met? |
+| **`policy`** | Non-functional requirement | What limits must be met? |
 
 ### Node Shapes
 
 The core types use two distinct shapes:
 
-**Behavior nodes** carry `expectation` and `invariant` as their primary fields — these are the canonical fields for describing observable behavior:
+**Behavior nodes** carry `expectation` and `constraints` as their primary fields — these are the canonical fields for describing observable behavior:
 
 ```json
 {
@@ -31,12 +31,12 @@ The core types use two distinct shapes:
   "type": "behavior",
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
-  "invariant": "Password field must mask input characters",
+  "constraints": ["Password field must mask input characters"],
   "verification": "npm test -- --grep AUTH-01"
 }
 ```
 
-**All other non-feature types** (decision, domain, constraint, and extensions) share a uniform **contract shape**:
+**All other non-feature types** (decision, domain, policy, and extensions) share a uniform **contract shape**:
 
 ```json
 {
@@ -66,7 +66,7 @@ For graphs that need finer-grained modelling, extension types are available:
 | `equivalence_contract` | Formal definition of "same system" |
 | `pipeline` | Manifestation pipeline steps and gates |
 
-Extension types use the same contract shape as decision/domain/constraint nodes. They add no new fields — the `type` value is what distinguishes them.
+Extension types use the same contract shape as decision/domain/policy nodes. They add no new fields — the `type` value is what distinguishes them.
 
 ## The Decision Type
 
@@ -91,7 +91,7 @@ This merging reflects the reality that architectural decisions and technology ch
 │ behavior     │ expectation         │ What does the user see/do?       │
 │ decision     │ statement + category│ How should it be built?          │
 │ domain       │ statement           │ What do domain concepts mean?    │
-│ constraint   │ statement + severity│ What limits must be met?         │
+│ policy       │ statement + severity│ What limits must be met?         │
 └──────────────┴─────────────────────┴──────────────────────────────────┘
 ```
 

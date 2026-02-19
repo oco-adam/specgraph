@@ -1,18 +1,18 @@
 ---
 sidebar_position: 4
-title: Constraint Nodes
+title: Policy Nodes
 ---
 
-# Constraint Nodes
+# Policy Nodes
 
-Constraint nodes capture **non-functional requirements** that cut across features — performance budgets, security policies, accessibility standards, cost limits.
+Policy nodes capture **cross-cutting non-functional requirements** — performance budgets, security policies, accessibility standards, cost limits, reliability targets.
 
 ## Schema
 
 ```json
 {
-  "id": "CON-PERF-01",
-  "type": "constraint",
+  "id": "POL-PERF-01",
+  "type": "policy",
   "severity": "hard",
   "title": "Page Load Performance Budget",
   "statement": "All pages must reach First Contentful Paint within 1.5 seconds on a 4G connection.",
@@ -39,12 +39,12 @@ Constraint nodes capture **non-functional requirements** that cut across feature
 
 | Field | Required | Description |
 |---|---|---|
-| `id` | Yes | Unique identifier (e.g., `CON-PERF-01`) |
-| `type` | Yes | Must be `"constraint"` |
+| `id` | Yes | Unique identifier (e.g., `POL-PERF-01`) |
+| `type` | Yes | Must be `"policy"` |
 | `severity` | No | `"hard"` (blocks manifestation) or `"soft"` (quality target) |
 | `title` | Yes | Short name (3–140 chars) |
 | `statement` | Yes | What must be true, with measurable criteria |
-| `constraints` | No | Additional invariants |
+| `constraints` | No | Normative sub-conditions that further narrow this node's statement |
 | `verification` | Yes | How to measure compliance (min 1) |
 | `links` | No | Outbound edges (typically `constrains`) |
 | `metadata` | No | Non-normative context |
@@ -55,7 +55,7 @@ The `severity` field distinguishes between requirements that block manifestation
 
 ### `hard`
 
-A hard constraint **must** be satisfied. If verification fails, manifestation is blocked.
+A hard policy **must** be satisfied. If verification fails, manifestation is blocked.
 
 ```json
 {
@@ -66,7 +66,7 @@ A hard constraint **must** be satisfied. If verification fails, manifestation is
 
 ### `soft`
 
-A soft constraint is a **quality target**. Failing it produces a warning, not a blocker.
+A soft policy is a **quality target**. Failing it produces a warning, not a blocker.
 
 ```json
 {
@@ -75,11 +75,11 @@ A soft constraint is a **quality target**. Failing it produces a warning, not a 
 }
 ```
 
-If `severity` is omitted, tooling should treat the constraint as `hard` by default.
+If `severity` is omitted, tooling should treat the policy as `hard` by default.
 
-## Constraint Categories
+## Policy Categories
 
-Constraint nodes cover a wide range of non-functional requirements:
+Policy nodes cover a wide range of non-functional requirements:
 
 | Category | Examples |
 |---|---|
@@ -91,18 +91,18 @@ Constraint nodes cover a wide range of non-functional requirements:
 
 ## The `constrains` Edge
 
-Constraint nodes typically use the `constrains` edge to declare which nodes they apply to:
+Policy nodes typically use the `constrains` edge to declare which nodes they apply to:
 
 ```mermaid
 graph TD
-    C[CON-PERF-01<br/>Performance Budget] -->|constrains| B1[AUTH-01<br/>Login Form]
-    C -->|constrains| B2[AUTH-04<br/>Login Redirect]
-    C -->|constrains| B3[DASH-01<br/>Dashboard Load]
+    P[POL-PERF-01<br/>Performance Budget] -->|constrains| B1[AUTH-01<br/>Login Form]
+    P -->|constrains| B2[AUTH-04<br/>Login Redirect]
+    P -->|constrains| B3[DASH-01<br/>Dashboard Load]
 ```
 
-A single constraint can apply to many behaviors across multiple features.
+A single policy can apply to many behaviors across multiple features.
 
-## When to Create Constraint Nodes
+## When to Create Policy Nodes
 
 Apply the minimality test:
 
@@ -110,7 +110,7 @@ Apply the minimality test:
 
 Common triggers:
 
-| Scenario | Constraint Type |
+| Scenario | Policy Type |
 |---|---|
 | Pages must load within a time budget | Performance |
 | All user data must be encrypted at rest | Security |
@@ -120,8 +120,8 @@ Common triggers:
 
 ## ID Conventions
 
-Constraint IDs follow the pattern `CON-CATEGORY-##` or `CON-FEATURE-CATEGORY-##`:
+Policy IDs follow the pattern `POL-CATEGORY-##` or `POL-FEATURE-CATEGORY-##`:
 
-- `CON-PERF-01` — global performance constraint
-- `CON-SEC-01` — global security constraint
-- `CON-TB-PERF-01` — taskboard-specific performance constraint
+- `POL-PERF-01` — global performance policy
+- `POL-SEC-01` — global security policy
+- `POL-TB-PERF-01` — taskboard-specific performance policy

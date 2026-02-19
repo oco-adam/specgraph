@@ -18,7 +18,7 @@ A feature node is a **non-normative grouping** — it organizes nodes but does n
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
   "links": {
-    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "CON-PERF-01"]
+    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "POL-PERF-01"]
   }
 }
 ```
@@ -34,7 +34,7 @@ graph TD
     AUTH -->|contains| D1[DEC-AUTH-01<br/>decision]
     AUTH -->|contains| D2[DEC-AUTH-02<br/>decision]
     AUTH -->|contains| DOM[DOM-USER-01<br/>domain]
-    AUTH -->|contains| CON[CON-PERF-01<br/>constraint]
+    AUTH -->|contains| POL[POL-PERF-01<br/>policy]
 ```
 
 This means when you look at the AUTH feature, you see **everything** related to authentication: what the user does, how it's built, what "user" means, and what performance limits apply.
@@ -58,9 +58,9 @@ Create a feature for cross-cutting concerns:
   "id": "PLATFORM",
   "type": "feature",
   "title": "Platform",
-  "description": "Cross-cutting infrastructure, constraints, and decisions",
+  "description": "Cross-cutting infrastructure, policies, and decisions",
   "links": {
-    "contains": ["CON-PERF-01", "DEC-PLATFORM-01", "DOM-TENANT-01"]
+    "contains": ["POL-PERF-01", "DEC-PLATFORM-01", "DOM-TENANT-01"]
   }
 }
 ```

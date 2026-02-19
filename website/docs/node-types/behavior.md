@@ -15,7 +15,7 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
   "type": "behavior",
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
-  "invariant": "Password field must mask input characters",
+  "constraints": ["Password field must mask input characters"],
   "verification": "npm test -- --grep AUTH-01",
   "links": {
     "implements": ["DOM-USER-01"],
@@ -32,7 +32,7 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
 | `type` | Yes | Must be `"behavior"` |
 | `title` | Yes | Short human-readable name (3–100 chars) |
 | `expectation` | Yes | WHAT the system does (min 10 chars) |
-| `invariant` | Yes | Hard constraint that must always hold, or `"None"` |
+| `constraints` | No | Normative conditions that must hold for this behavior (default: empty) |
 | `verification` | Yes | Single pass/fail check (min 5 chars) |
 | `links` | No | Outbound edges to other nodes |
 | `metadata` | No | Non-normative context (rationale, notes, tags) |
@@ -57,12 +57,73 @@ This is one observable state — the login form.
 ```
 This is three behaviors. Split into: form display, email validation, and redirect.
 
-## Expectation vs. Invariant
+## Expectation vs. Constraints
 
 - **Expectation**: describes WHAT happens — the observable behavior
-- **Invariant**: describes a constraint that must ALWAYS hold during this behavior, or `"None"`
+- **Constraints**: conditions that must hold for this behavior — guard rails, not additional behaviors
 
-The invariant is not a second behavior — it's a guard rail. "Password field must mask input characters" constrains how the login form is displayed, not what happens when you submit it.
+The constraints are not second behaviors — they are side-conditions on the expectation.
+"Password field must mask input characters" constrains how the login form is displayed,
+not what happens when you submit it.
+
+A behavior with no constraints simply omits the field (or uses an empty array).
+There is no need for a `"None"` sentinel.
+
+### Temporal specificity
+
+Constraints are normative — an implementor must respect them. But not all conditions
+hold at all times. The condition's own language carries its temporal semantics:
+
+| Condition | Temporal profile |
+|-----------|--------------------|
+| "Form fields remain disabled during submission" | **Immediate** — must hold at all times during the operation |
+| "Email must be eventually unique" | **Eventual** — converges after the operation; brief violations during convergence are acceptable |
+| "Confirmation email is sent within 30 seconds" | **Bounded** — must complete within a time window |
+
+All three are normative and testable. The enforcement model is encoded in the
+condition text, not in the field name or type.
+
+#### Example: immediate and eventual constraints on the same behavior
+
+```json
+{
+  "type": "behavior",
+  "id": "REG-01",
+  "title": "User Registration",
+  "expectation": "When user submits valid registration form, an account is created and confirmation email is sent",
+  "constraints": [
+    "Form fields remain disabled during submission",
+    "Email must be eventually unique",
+    "Confirmation email is sent within 30 seconds"
+  ]
+}
+```
+
+Three constraints with three different temporal profiles — all normative, all testable,
+none contradicted by the field name.
+
+If the choice of enforcement model (strong vs. eventual consistency, database vs.
+application-level) is itself a dangerous completeness gap, capture it as a
+**decision node** — that's what decisions are for. See the
+[Conditions, Enforcement, and Strictness](/docs/authoring/writing-nodes#conditions-enforcement-and-strictness)
+section for the full pattern.
+
+:::info Disambiguation: `constraints` field vs policy nodes vs `constrains` edges
+
+The spec graph uses related but distinct concepts:
+
+| Concept | What it is | Scope |
+|---------|-----------|-------|
+| `constraints` field | Array of normative conditions on a single node | Narrows THIS node's `expectation` or `statement` |
+| Policy node (`type: "policy"`) | A standalone node for cross-cutting NFRs | Affects OTHER nodes via `constrains` edges; has `severity` (hard/soft) |
+| `constrains` edge | A graph relationship | Declares that the source node narrows implementation choices for the target |
+
+**Decision rule:**
+- Condition specific to one node → `constraints` field entry on that node
+- Cross-cutting requirement affecting multiple nodes → policy node with `constrains` edges
+- Expressing that one node limits another → `constrains` edge
+
+:::
 
 ## Verification
 

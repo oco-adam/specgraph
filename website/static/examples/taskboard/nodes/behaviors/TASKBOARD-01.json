@@ -4,7 +4,7 @@
   "type": "behavior",
   "title": "Board Column Display",
   "expectation": "Task board displays four columns: Backlog, In Progress, Review, and Done",
-  "invariant": "Column order is fixed and not user-configurable",
+  "constraints": ["Column order is fixed and not user-configurable"],
   "verification": "npm test -- --grep TASKBOARD-01",
   "links": {
     "implements": [

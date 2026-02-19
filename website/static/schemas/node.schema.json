@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
   "title": "Spec Graph Node",
-  "description": "Schema for a single Spec Graph node file. Supports core types (feature, behavior, decision, domain, constraint) and extension types. Edges are expressed as outbound links.",
+  "description": "Schema for a single Spec Graph node file. Supports core types (feature, behavior, decision, domain, policy) and extension types. Edges are expressed as outbound links.",
   "oneOf": [
     { "$ref": "#/$defs/featureNode" },
     { "$ref": "#/$defs/behaviorNode" },
@@ -177,7 +177,7 @@
     "behaviorNode": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "type", "title", "expectation", "invariant", "verification"],
+      "required": ["id", "type", "title", "expectation", "verification"],
       "properties": {
         "$schema": { "type": "string" },
         "id": { "$ref": "#/$defs/nodeId" },
@@ -188,10 +188,11 @@
           "description": "WHAT the system does. Atomic: ONE trigger, ONE behavior, ONE outcome.",
           "minLength": 10
         },
-        "invariant": {
-          "type": "string",
-          "description": "Hard constraint that must always hold, or 'None'.",
-          "minLength": 1
+        "constraints": {
+          "type": "array",
+          "description": "Normative conditions that must hold for this behavior. Each entry is an independent, testable condition. The condition's own language carries temporal semantics (e.g. 'must hold at all times' vs 'must eventually hold').",
+          "items": { "type": "string", "minLength": 1 },
+          "default": []
         },
         "verification": {
           "type": "string",
@@ -204,7 +205,7 @@
     },
     "contractNode": {
       "type": "object",
-      "description": "Unified shape for all non-feature, non-behavior node types. Includes core types (decision, domain, constraint) and extension types.",
+      "description": "Unified shape for all non-feature, non-behavior node types. Includes core types (decision, domain, policy) and extension types.",
       "additionalProperties": false,
       "required": ["id", "type", "title", "statement", "verification"],
       "properties": {
@@ -215,7 +216,7 @@
           "enum": [
             "decision",
             "domain",
-            "constraint",
+            "policy",
             "design_token",
             "ui_contract",
             "api_contract",
@@ -238,7 +239,7 @@
         },
         "severity": {
           "type": "string",
-          "description": "For constraint nodes: whether violation blocks manifestation.",
+          "description": "For policy nodes: whether violation blocks manifestation.",
           "enum": ["hard", "soft"]
         },
         "pins": {
@@ -252,7 +253,7 @@
         },
         "constraints": {
           "type": "array",
-          "description": "Normative invariants for this node.",
+          "description": "Normative conditions that further narrow this node's statement. Each entry is an independent, testable condition.",
           "items": { "type": "string", "minLength": 1 }
         },
         "verification": {
@@ -271,7 +272,7 @@
           "else": { "not": { "required": ["category"] } }
         },
         {
-          "if": { "properties": { "type": { "const": "constraint" } }, "required": ["type"] },
+          "if": { "properties": { "type": { "const": "policy" } }, "required": ["type"] },
           "then": {},
           "else": { "not": { "required": ["severity"] } }
         },
