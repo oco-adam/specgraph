@@ -4,7 +4,7 @@
   "type": "behavior",
   "title": "Session Persistence",
   "expectation": "When user refreshes the page after login, they remain authenticated and are not redirected to the login page",
-  "invariant": "Session must survive page reload",
+  "constraints": ["Session must survive page reload"],
   "verification": "npm test -- --grep AUTH-05",
   "links": {
     "depends_on": [

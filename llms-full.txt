@@ -2,7 +2,7 @@
 
 > The minimal specification framework for predictable system manifestation.
 
-> Generated: 2026-02-13
+> Generated: 2026-02-19
 
 ---
 
@@ -24,12 +24,12 @@ graph TD
     F --> B2[AUTH-02: Email Validation]
     F --> D1[DEC-AUTH-01: Auth Provider Interface]
     F --> DOM1[DOM-USER-01: User Account]
-    F --> C1[CON-PERF-01: Page Load Budget]
+    F --> P1[POL-PERF-01: Page Load Budget]
 
     B1 -->|implements| DOM1
     B1 -->|depends_on| D1
     D1 -->|constrains| B1
-    C1 -->|constrains| B1
+    P1 -->|constrains| B1
 ```
 
 ## The Defining Property
@@ -121,7 +121,7 @@ DLOOP v1's ONE rule — ONE trigger, ONE behavior, ONE outcome — was a good id
 
 > **Every node expresses one decision, one contract, or one constraint.**
 
-If a node contains "and" across multiple decisions, split it. This applies to all node types, not just behaviors. A decision node captures one architectural decision. A domain node defines one business concept. A constraint node specifies one measurable requirement.
+If a node contains "and" across multiple decisions, split it. This applies to all node types, not just behaviors. A decision node captures one architectural decision. A domain node defines one business concept. A policy node specifies one measurable requirement.
 
 Atomicity creates **review pressure** (each node is small enough to reason about), **composability** (nodes combine without hidden coupling), and **testability** (each node has a clear verification criterion).
 
@@ -129,7 +129,7 @@ Atomicity creates **review pressure** (each node is small enough to reason about
 
 If it cannot be verified, it is not a complete spec.
 
-Every node that makes a normative claim — a behavior, a constraint, a decision — must include verification criteria that produce a pass/fail result. Verification can be:
+Every node that makes a normative claim — a behavior, a policy, a decision — must include verification criteria that produce a pass/fail result. Verification can be:
 
 - **Executable**: test commands, linters, policy checks
 - **Static**: type checking, AST rules, dependency constraints
@@ -154,7 +154,7 @@ Additional node types are added when the minimality test demands it — when man
 1. Start with behavior nodes (captures what the system does)
 2. Add decision nodes (locks in architecture and tech stack)
 3. Add domain nodes (establishes shared vocabulary)
-4. Add constraint nodes (sets non-functional boundaries)
+4. Add policy nodes (sets non-functional boundaries)
 
 ## 5. Declarative Truth, Not Narrative Docs
 
@@ -166,7 +166,7 @@ Narrative documentation is valuable for explanation, but it is not authoritative
 
 The framework strictly distinguishes:
 
-- **Normative**: `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
+- **Normative**: `expectation`, `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
 - **Informative**: `metadata.rationale`, `metadata.notes` — context and explanation, never requirements
 
 This prevents "helpful notes" from becoming implicit requirements that break predictable manifestation.
@@ -196,7 +196,7 @@ Equivalence is **parameterized by the node types present in the graph**:
 | behavior only | Same observable behavior |
 | + decision | Same architectural structure and technology choices |
 | + domain | Same data model and business rules |
-| + constraint | Same non-functional characteristics |
+| + policy | Same non-functional characteristics |
 | All core types | Approaches total equivalence |
 
 A graph with only behavior nodes guarantees behavioral equivalence — two manifestations do the same things, but may be structured completely differently. Adding decision nodes narrows the architecture. Adding domain nodes aligns the data model. Each additional dimension tightens the equivalence relation.
@@ -367,7 +367,7 @@ Each node type addresses a specific category of decisions:
 | `behavior` | What the system does |
 | `decision` | How it's structured and what it's built with |
 | `domain` | What business concepts mean |
-| `constraint` | What non-functional boundaries must hold |
+| `policy` | What non-functional boundaries must hold |
 | `feature` | How specs are organized and grouped |
 
 Extension types (`design_token`, `api_contract`, etc.) close additional specialized gaps as needed.
@@ -470,7 +470,7 @@ specgraph/
     behaviors/AUTH-01.json      # Behavior node
     decisions/DEC-AUTH-01.json  # Decision node
     domains/DOM-USER-01.json   # Domain node
-    constraints/CON-PERF-01.json  # Constraint node
+    policies/POL-PERF-01.json     # Policy node
 ```
 
 ### The Index File
@@ -486,7 +486,7 @@ specgraph/
     { "id": "AUTH-01", "path": "nodes/behaviors/AUTH-01.json" },
     { "id": "DEC-AUTH-01", "path": "nodes/decisions/DEC-AUTH-01.json" },
     { "id": "DOM-USER-01", "path": "nodes/domains/DOM-USER-01.json" },
-    { "id": "CON-PERF-01", "path": "nodes/constraints/CON-PERF-01.json" }
+    { "id": "POL-PERF-01", "path": "nodes/policies/POL-PERF-01.json" }
   ]
 }
 ```
@@ -501,7 +501,7 @@ Each node is a self-contained JSON file. Edges are expressed as outbound links i
   "type": "behavior",
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
-  "invariant": "Password field must mask input characters",
+  "constraints": ["Password field must mask input characters"],
   "verification": "npm test -- --grep AUTH-01",
   "links": {
     "implements": ["DOM-USER-01"],
@@ -528,13 +528,13 @@ graph TD
     AUTH -->|contains| AUTH02[AUTH-02<br/>behavior]
     AUTH -->|contains| DEC[DEC-AUTH-01<br/>decision]
     AUTH -->|contains| DOM[DOM-USER-01<br/>domain]
-    AUTH -->|contains| CON[CON-PERF-01<br/>constraint]
+    AUTH -->|contains| POL[POL-PERF-01<br/>policy]
 
     AUTH01 -->|implements| DOM
     AUTH01 -->|depends_on| DEC
     AUTH02 -->|depends_on| AUTH01
     DEC -->|constrains| AUTH01
-    CON -->|constrains| AUTH01
+    POL -->|constrains| AUTH01
 ```
 
 At manifestation time, tooling loads all node files and constructs the full in-memory graph. The file-per-node layout is a storage concern — at runtime, it's one unified graph.
@@ -578,13 +578,13 @@ These five types are sufficient for most spec graphs:
 | **`behavior`** | Observable system behavior | What does the user see and do? |
 | **`decision`** | Architectural, technical, or stack decision | How should it be built, and with what? |
 | **`domain`** | Business concept, term, or rule | What do the domain terms mean? |
-| **`constraint`** | Non-functional requirement | What limits must be met? |
+| **`policy`** | Non-functional requirement | What limits must be met? |
 
 ### Node Shapes
 
 The core types use two distinct shapes:
 
-**Behavior nodes** carry `expectation` and `invariant` as their primary fields — these are the canonical fields for describing observable behavior:
+**Behavior nodes** carry `expectation` and `constraints` as their primary fields — these are the canonical fields for describing observable behavior:
 
 ```json
 {
@@ -592,12 +592,12 @@ The core types use two distinct shapes:
   "type": "behavior",
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
-  "invariant": "Password field must mask input characters",
+  "constraints": ["Password field must mask input characters"],
   "verification": "npm test -- --grep AUTH-01"
 }
 ```
 
-**All other non-feature types** (decision, domain, constraint, and extensions) share a uniform **contract shape**:
+**All other non-feature types** (decision, domain, policy, and extensions) share a uniform **contract shape**:
 
 ```json
 {
@@ -627,7 +627,7 @@ For graphs that need finer-grained modelling, extension types are available:
 | `equivalence_contract` | Formal definition of "same system" |
 | `pipeline` | Manifestation pipeline steps and gates |
 
-Extension types use the same contract shape as decision/domain/constraint nodes. They add no new fields — the `type` value is what distinguishes them.
+Extension types use the same contract shape as decision/domain/policy nodes. They add no new fields — the `type` value is what distinguishes them.
 
 ## The Decision Type
 
@@ -652,7 +652,7 @@ This merging reflects the reality that architectural decisions and technology ch
 │ behavior     │ expectation         │ What does the user see/do?       │
 │ decision     │ statement + category│ How should it be built?          │
 │ domain       │ statement           │ What do domain concepts mean?    │
-│ constraint   │ statement + severity│ What limits must be met?         │
+│ policy       │ statement + severity│ What limits must be met?         │
 └──────────────┴─────────────────────┴──────────────────────────────────┘
 ```
 
@@ -672,7 +672,7 @@ The Spec Graph defines seven forward-only edge types:
 |---|---|---|
 | `contains` | Grouping/namespace relationship | Feature contains its child nodes |
 | `depends_on` | Must be satisfied before this node | A behavior depends on a decision being in place |
-| `constrains` | Narrows implementation choices for the target | A constraint limits how a behavior can be implemented |
+| `constrains` | Narrows implementation choices for the target | A policy limits how a behavior can be implemented |
 | `implements` | This node realizes part of the target | A behavior implements a domain concept |
 | `derived_from` | Generated or imported from target (pinned hash) | A design token derived from an artifact |
 | `verified_by` | Points to verification checks | A behavior verified by a test strategy node |
@@ -718,10 +718,10 @@ Establishes ordering requirements. If A depends on B, then B must be manifested 
 
 ### `constrains`
 
-Narrows the implementation space of the target. A constraint node might constrain a behavior node, meaning the behavior must be implemented within the constraint's boundaries.
+Narrows the implementation space of the target. A policy node might constrain a behavior node, meaning the behavior must be implemented within the policy's boundaries.
 
 ```json
-// In CON-PERF-01.json (constraint)
+// In POL-PERF-01.json (policy)
 "links": {
   "constrains": ["AUTH-01", "AUTH-04"]
 }
@@ -771,16 +771,16 @@ graph LR
 
 A behavior depends on an architectural decision, which in turn depends on a technology choice.
 
-### Constraint → Multiple Behaviors
+### Policy → Multiple Behaviors
 
 ```mermaid
 graph TD
-    C[CON-PERF-01<br/>constraint] -->|constrains| B1[AUTH-01]
-    C -->|constrains| B2[AUTH-04]
-    C -->|constrains| B3[DASH-01]
+    P[POL-PERF-01<br/>policy] -->|constrains| B1[AUTH-01]
+    P -->|constrains| B2[AUTH-04]
+    P -->|constrains| B3[DASH-01]
 ```
 
-A performance constraint applies to multiple behaviors across features.
+A performance policy applies to multiple behaviors across features.
 
 ### Feature → Children
 
@@ -811,7 +811,7 @@ A feature node is a **non-normative grouping** — it organizes nodes but does n
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
   "links": {
-    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "CON-PERF-01"]
+    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "POL-PERF-01"]
   }
 }
 ```
@@ -827,7 +827,7 @@ graph TD
     AUTH -->|contains| D1[DEC-AUTH-01<br/>decision]
     AUTH -->|contains| D2[DEC-AUTH-02<br/>decision]
     AUTH -->|contains| DOM[DOM-USER-01<br/>domain]
-    AUTH -->|contains| CON[CON-PERF-01<br/>constraint]
+    AUTH -->|contains| POL[POL-PERF-01<br/>policy]
 ```
 
 This means when you look at the AUTH feature, you see **everything** related to authentication: what the user does, how it's built, what "user" means, and what performance limits apply.
@@ -851,9 +851,9 @@ Create a feature for cross-cutting concerns:
   "id": "PLATFORM",
   "type": "feature",
   "title": "Platform",
-  "description": "Cross-cutting infrastructure, constraints, and decisions",
+  "description": "Cross-cutting infrastructure, policies, and decisions",
   "links": {
-    "contains": ["CON-PERF-01", "DEC-PLATFORM-01", "DOM-TENANT-01"]
+    "contains": ["POL-PERF-01", "DEC-PLATFORM-01", "DOM-TENANT-01"]
   }
 }
 ```
@@ -915,7 +915,7 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
   "type": "behavior",
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
-  "invariant": "Password field must mask input characters",
+  "constraints": ["Password field must mask input characters"],
   "verification": "npm test -- --grep AUTH-01",
   "links": {
     "implements": ["DOM-USER-01"],
@@ -932,7 +932,7 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
 | `type` | Yes | Must be `"behavior"` |
 | `title` | Yes | Short human-readable name (3–100 chars) |
 | `expectation` | Yes | WHAT the system does (min 10 chars) |
-| `invariant` | Yes | Hard constraint that must always hold, or `"None"` |
+| `constraints` | No | Normative conditions that must hold for this behavior (default: empty) |
 | `verification` | Yes | Single pass/fail check (min 5 chars) |
 | `links` | No | Outbound edges to other nodes |
 | `metadata` | No | Non-normative context (rationale, notes, tags) |
@@ -957,12 +957,73 @@ This is one observable state — the login form.
 ```
 This is three behaviors. Split into: form display, email validation, and redirect.
 
-## Expectation vs. Invariant
+## Expectation vs. Constraints
 
 - **Expectation**: describes WHAT happens — the observable behavior
-- **Invariant**: describes a constraint that must ALWAYS hold during this behavior, or `"None"`
+- **Constraints**: conditions that must hold for this behavior — guard rails, not additional behaviors
 
-The invariant is not a second behavior — it's a guard rail. "Password field must mask input characters" constrains how the login form is displayed, not what happens when you submit it.
+The constraints are not second behaviors — they are side-conditions on the expectation.
+"Password field must mask input characters" constrains how the login form is displayed,
+not what happens when you submit it.
+
+A behavior with no constraints simply omits the field (or uses an empty array).
+There is no need for a `"None"` sentinel.
+
+### Temporal specificity
+
+Constraints are normative — an implementor must respect them. But not all conditions
+hold at all times. The condition's own language carries its temporal semantics:
+
+| Condition | Temporal profile |
+|-----------|--------------------|
+| "Form fields remain disabled during submission" | **Immediate** — must hold at all times during the operation |
+| "Email must be eventually unique" | **Eventual** — converges after the operation; brief violations during convergence are acceptable |
+| "Confirmation email is sent within 30 seconds" | **Bounded** — must complete within a time window |
+
+All three are normative and testable. The enforcement model is encoded in the
+condition text, not in the field name or type.
+
+#### Example: immediate and eventual constraints on the same behavior
+
+```json
+{
+  "type": "behavior",
+  "id": "REG-01",
+  "title": "User Registration",
+  "expectation": "When user submits valid registration form, an account is created and confirmation email is sent",
+  "constraints": [
+    "Form fields remain disabled during submission",
+    "Email must be eventually unique",
+    "Confirmation email is sent within 30 seconds"
+  ]
+}
+```
+
+Three constraints with three different temporal profiles — all normative, all testable,
+none contradicted by the field name.
+
+If the choice of enforcement model (strong vs. eventual consistency, database vs.
+application-level) is itself a dangerous completeness gap, capture it as a
+**decision node** — that's what decisions are for. See the
+[Conditions, Enforcement, and Strictness](/docs/authoring/writing-nodes#conditions-enforcement-and-strictness)
+section for the full pattern.
+
+:::info Disambiguation: `constraints` field vs policy nodes vs `constrains` edges
+
+The spec graph uses related but distinct concepts:
+
+| Concept | What it is | Scope |
+|---------|-----------|-------|
+| `constraints` field | Array of normative conditions on a single node | Narrows THIS node's `expectation` or `statement` |
+| Policy node (`type: "policy"`) | A standalone node for cross-cutting NFRs | Affects OTHER nodes via `constrains` edges; has `severity` (hard/soft) |
+| `constrains` edge | A graph relationship | Declares that the source node narrows implementation choices for the target |
+
+**Decision rule:**
+- Condition specific to one node → `constraints` field entry on that node
+- Cross-cutting requirement affecting multiple nodes → policy node with `constrains` edges
+- Expressing that one node limits another → `constrains` edge
+
+:::
 
 ## Verification
 
@@ -1041,7 +1102,7 @@ Decision nodes capture **any architectural, technical, or stack decision that na
 | `category` | No | One of: `architecture`, `stack`, `pattern`, `interface` |
 | `title` | Yes | Short name (3–140 chars) |
 | `statement` | Yes | The declarative truth that must hold |
-| `constraints` | No | Array of normative invariants |
+| `constraints` | No | Normative conditions that further narrow this decision's statement |
 | `verification` | Yes | Array of pass/fail checks (min 1) |
 | `links` | No | Outbound edges |
 | `metadata` | No | Non-normative context |
@@ -1208,7 +1269,7 @@ The `constraints` array captures the business rules governing this concept:
 ]
 ```
 
-Each constraint is a normative rule that implementations must respect.
+Each entry is a normative condition that implementations must respect.
 
 ## When to Create Domain Nodes
 
@@ -1249,16 +1310,16 @@ Domain IDs follow the pattern `DOM-CONCEPT-##`:
 
 ---
 
-# Constraint Nodes
+# Policy Nodes
 
-Constraint nodes capture **non-functional requirements** that cut across features — performance budgets, security policies, accessibility standards, cost limits.
+Policy nodes capture **cross-cutting non-functional requirements** — performance budgets, security policies, accessibility standards, cost limits, reliability targets.
 
 ## Schema
 
 ```json
 {
-  "id": "CON-PERF-01",
-  "type": "constraint",
+  "id": "POL-PERF-01",
+  "type": "policy",
   "severity": "hard",
   "title": "Page Load Performance Budget",
   "statement": "All pages must reach First Contentful Paint within 1.5 seconds on a 4G connection.",
@@ -1285,12 +1346,12 @@ Constraint nodes capture **non-functional requirements** that cut across feature
 
 | Field | Required | Description |
 |---|---|---|
-| `id` | Yes | Unique identifier (e.g., `CON-PERF-01`) |
-| `type` | Yes | Must be `"constraint"` |
+| `id` | Yes | Unique identifier (e.g., `POL-PERF-01`) |
+| `type` | Yes | Must be `"policy"` |
 | `severity` | No | `"hard"` (blocks manifestation) or `"soft"` (quality target) |
 | `title` | Yes | Short name (3–140 chars) |
 | `statement` | Yes | What must be true, with measurable criteria |
-| `constraints` | No | Additional invariants |
+| `constraints` | No | Normative sub-conditions that further narrow this node's statement |
 | `verification` | Yes | How to measure compliance (min 1) |
 | `links` | No | Outbound edges (typically `constrains`) |
 | `metadata` | No | Non-normative context |
@@ -1301,7 +1362,7 @@ The `severity` field distinguishes between requirements that block manifestation
 
 ### `hard`
 
-A hard constraint **must** be satisfied. If verification fails, manifestation is blocked.
+A hard policy **must** be satisfied. If verification fails, manifestation is blocked.
 
 ```json
 {
@@ -1312,7 +1373,7 @@ A hard constraint **must** be satisfied. If verification fails, manifestation is
 
 ### `soft`
 
-A soft constraint is a **quality target**. Failing it produces a warning, not a blocker.
+A soft policy is a **quality target**. Failing it produces a warning, not a blocker.
 
 ```json
 {
@@ -1321,11 +1382,11 @@ A soft constraint is a **quality target**. Failing it produces a warning, not a 
 }
 ```
 
-If `severity` is omitted, tooling should treat the constraint as `hard` by default.
+If `severity` is omitted, tooling should treat the policy as `hard` by default.
 
-## Constraint Categories
+## Policy Categories
 
-Constraint nodes cover a wide range of non-functional requirements:
+Policy nodes cover a wide range of non-functional requirements:
 
 | Category | Examples |
 |---|---|
@@ -1337,18 +1398,18 @@ Constraint nodes cover a wide range of non-functional requirements:
 
 ## The `constrains` Edge
 
-Constraint nodes typically use the `constrains` edge to declare which nodes they apply to:
+Policy nodes typically use the `constrains` edge to declare which nodes they apply to:
 
 ```mermaid
 graph TD
-    C[CON-PERF-01<br/>Performance Budget] -->|constrains| B1[AUTH-01<br/>Login Form]
-    C -->|constrains| B2[AUTH-04<br/>Login Redirect]
-    C -->|constrains| B3[DASH-01<br/>Dashboard Load]
+    P[POL-PERF-01<br/>Performance Budget] -->|constrains| B1[AUTH-01<br/>Login Form]
+    P -->|constrains| B2[AUTH-04<br/>Login Redirect]
+    P -->|constrains| B3[DASH-01<br/>Dashboard Load]
 ```
 
-A single constraint can apply to many behaviors across multiple features.
+A single policy can apply to many behaviors across multiple features.
 
-## When to Create Constraint Nodes
+## When to Create Policy Nodes
 
 Apply the minimality test:
 
@@ -1356,7 +1417,7 @@ Apply the minimality test:
 
 Common triggers:
 
-| Scenario | Constraint Type |
+| Scenario | Policy Type |
 |---|---|
 | Pages must load within a time budget | Performance |
 | All user data must be encrypted at rest | Security |
@@ -1366,11 +1427,11 @@ Common triggers:
 
 ## ID Conventions
 
-Constraint IDs follow the pattern `CON-CATEGORY-##` or `CON-FEATURE-CATEGORY-##`:
+Policy IDs follow the pattern `POL-CATEGORY-##` or `POL-FEATURE-CATEGORY-##`:
 
-- `CON-PERF-01` — global performance constraint
-- `CON-SEC-01` — global security constraint
-- `CON-TB-PERF-01` — taskboard-specific performance constraint
+- `POL-PERF-01` — global performance policy
+- `POL-SEC-01` — global security policy
+- `POL-TB-PERF-01` — taskboard-specific performance policy
 
 ---
 
@@ -1387,7 +1448,7 @@ Feature nodes are **non-normative grouping nodes** that organize the graph into 
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
   "links": {
-    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "CON-PERF-01"]
+    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "POL-PERF-01"]
   }
 }
 ```
@@ -1423,7 +1484,7 @@ Features use the `contains` edge to declare their children:
 }
 ```
 
-A feature can contain nodes of **any type**: behaviors, decisions, domains, constraints, and extensions.
+A feature can contain nodes of **any type**: behaviors, decisions, domains, policies, and extensions.
 
 ## ID Conventions
 
@@ -1443,7 +1504,7 @@ Feature IDs should be recognizable and concise — they serve as the namespace p
 
 # Extension Types
 
-Extension types provide finer-grained modelling for graphs that need it. They use the same **contract shape** as decision, domain, and constraint nodes — the `type` value is what distinguishes them.
+Extension types provide finer-grained modelling for graphs that need it. They use the same **contract shape** as decision, domain, and policy nodes — the `type` value is what distinguishes them.
 
 ## Available Extensions
 
@@ -1570,7 +1631,7 @@ An equivalence contract formally declares what "same system" means for this grap
 {
   "type": "equivalence_contract",
   "title": "System Equivalence Definition",
-  "statement": "Two manifestations are equivalent if all unit tests pass, all integration tests pass, Lighthouse performance scores exceed thresholds, and all constraint nodes are satisfied.",
+  "statement": "Two manifestations are equivalent if all unit tests pass, all integration tests pass, Lighthouse performance scores exceed thresholds, and all policy nodes are satisfied.",
   "constraints": [
     "Unit test suite must achieve 100% pass rate",
     "Integration tests must cover all behavior nodes",
@@ -1596,7 +1657,7 @@ Start with core types. Add extensions when you discover that core types don't pr
 
 A typical extension adoption path:
 
-1. **Start** with core types only (behavior, decision, domain, constraint, feature)
+1. **Start** with core types only (behavior, decision, domain, policy, feature)
 2. **Add `design_token`** when visual inconsistency between features becomes a problem
 3. **Add `api_contract`** when service boundaries need formal specification
 4. **Add `data_model`** when database schema decisions are load-bearing
@@ -1613,7 +1674,7 @@ This guide covers the practical mechanics of writing good spec graph nodes.
 All normative nodes (everything except features) follow a pattern:
 
 1. **Declare** what must be true (`statement` or `expectation`)
-2. **Constrain** what limits apply (`constraints` or `invariant`)
+2. **Constrain** what limits apply (`constraints`)
 3. **Verify** how to check it (`verification`)
 
 This maps to the question: "What is true? What must hold? How do we know?"
@@ -1649,7 +1710,9 @@ State what must be true, not the steps to get there.
 
 ## Writing Good Constraints
 
-Constraints are normative invariants — conditions that must always hold.
+Each `constraints` entry is an independent, normative condition that must hold.
+The condition's own language carries its temporal semantics — "must hold at all
+times" vs "must eventually hold" vs "must hold within N seconds."
 
 ### Each Constraint is Independent
 
@@ -1676,6 +1739,95 @@ Each constraint should map to a verifiable condition:
 "constraints": ["Email uniqueness is enforced at the database level"]
 // → Verifiable by checking the schema has a unique constraint on email
 ```
+
+## Conditions, Enforcement, and Strictness
+
+The framework separates three orthogonal concerns:
+
+### 1. Condition — what must hold (`constraints` on any node)
+
+The condition text states what is required. It should be specific enough that an
+implementor knows exactly what to check. The condition's own language carries its
+temporal semantics:
+
+```
+"Email must be unique"                        — strong consistency implied
+"Email must be eventually unique"             — eventual consistency acceptable
+"Email must be unique within 5s of creation"  — bounded eventual consistency
+```
+
+All of these are normative — they are not suggestions. An implementor must respect
+the condition, including its temporal qualifier.
+
+### 2. Enforcement — how it's guaranteed (decision node)
+
+If the enforcement model is a dangerous completeness gap — meaning two implementors
+could choose incompatible approaches — capture it as a decision node:
+
+```json
+{
+  "type": "decision",
+  "id": "DEC-DATA-01",
+  "category": "architecture",
+  "title": "Eventual Consistency for User Records",
+  "statement": "User records use eventual consistency with a convergence window under 5 seconds",
+  "constraints": [
+    "A background uniqueness checker runs every 2 seconds",
+    "Duplicate accounts detected after convergence are merged, not deleted"
+  ],
+  "verification": [
+    "Integration test: two concurrent registrations with same email both succeed initially, one is merged within 5s"
+  ],
+  "links": {
+    "constrains": ["REG-01"]
+  }
+}
+```
+
+Apply the minimality test: if removing the enforcement choice would let an agent
+pick the wrong consistency model, add a decision node.
+
+### 3. Strictness — whether violation blocks manifestation (policy node severity)
+
+For cross-cutting non-functional requirements, policy nodes have `severity`:
+
+- `hard` — violation blocks manifestation
+- `soft` — quality target, produces a warning
+
+```json
+{
+  "type": "policy",
+  "id": "POL-DATA-01",
+  "severity": "hard",
+  "title": "Convergence Window Budget",
+  "statement": "All eventually-consistent operations must converge within 5 seconds under normal load",
+  "constraints": ["Measured at p99 under 100 concurrent writes per second"],
+  "verification": [
+    { "kind": "command", "command": "npm run test:convergence -- --timeout 5000" }
+  ],
+  "links": { "constrains": ["REG-01"] }
+}
+```
+
+Severity applies to the policy node as a whole, not to individual `constraints`
+field entries. Field-level `constraints` entries are always normative.
+
+:::info Disambiguation: `constraints` field vs policy nodes vs `constrains` edges
+
+The spec graph uses related but distinct concepts:
+
+| Concept | What it is | Scope |
+|---------|-----------|-------|
+| `constraints` field | Array of normative conditions on a single node | Narrows THIS node's `expectation` or `statement` |
+| Policy node (`type: "policy"`) | A standalone node for cross-cutting NFRs | Affects OTHER nodes via `constrains` edges; has `severity` (hard/soft) |
+| `constrains` edge | A graph relationship | Declares that the source node narrows implementation choices for the target |
+
+**Decision rule:**
+- Condition specific to one node → `constraints` field entry on that node
+- Cross-cutting requirement affecting multiple nodes → policy node with `constrains` edges
+- Expressing that one node limits another → `constrains` edge
+
+:::
 
 ## Writing Good Verification
 
@@ -1896,14 +2048,14 @@ For any proposed node:
 
 **Key signal:** you say "by 'user' I mean..." more than once.
 
-### Add Constraint Nodes When...
+### Add Policy Nodes When...
 
 - Performance, security, or accessibility must be measured
 - A non-functional requirement cuts across multiple features
 - Cost budgets must be enforced
 - Reliability targets need explicit verification
 
-**Key signal:** the quality attribute matters enough that you'd reject an implementation that ignores it.
+**Key signal:** the quality attribute matters enough that you'd reject an implementation that ignores it. Express it as a policy node with appropriate severity.
 
 ### Add Extension Types When...
 
@@ -1926,7 +2078,7 @@ A typical project's spec graph grows in this order:
 2. Tech decisions:  + decision nodes (stack category)
 3. Architecture:    + decision nodes (architecture/pattern categories)
 4. Domain model:    + domain nodes
-5. Quality gates:   + constraint nodes
+5. Quality gates:   + policy nodes
 6. Refinement:      + extension types as needed
 ```
 
@@ -1981,9 +2133,9 @@ specgraph/
     domains/
       DOM-USER-01.json
       DOM-TASK-01.json
-    constraints/
-      CON-PERF-01.json
-      CON-TB-PERF-01.json
+    policies/
+      POL-PERF-01.json
+      POL-TB-PERF-01.json
 ```
 
 ## Conventions
@@ -1998,7 +2150,7 @@ Node files are named after their ID:
 | `AUTH-01` | `nodes/behaviors/AUTH-01.json` |
 | `DEC-AUTH-01` | `nodes/decisions/DEC-AUTH-01.json` |
 | `DOM-USER-01` | `nodes/domains/DOM-USER-01.json` |
-| `CON-PERF-01` | `nodes/constraints/CON-PERF-01.json` |
+| `POL-PERF-01` | `nodes/policies/POL-PERF-01.json` |
 
 ### Extension Type Directories
 
@@ -2168,7 +2320,7 @@ The manifestation process follows three conceptual phases, each consuming a diff
 
 **Purpose:** Build a complete understanding of the system before writing any code.
 
-**Reads:** All node types — domain, decision, constraint, behavior, feature
+**Reads:** All node types — domain, decision, policy, behavior, feature
 
 **Produces:** Mental model of the system
 
@@ -2176,7 +2328,7 @@ During orientation, the implementing agent:
 
 1. Reads all **domain** nodes to understand the business vocabulary
 2. Reads all **decision** nodes to understand architectural and technology choices
-3. Reads all **constraint** nodes to understand non-functional boundaries
+3. Reads all **policy** nodes to understand non-functional boundaries
 4. Reads all **behavior** nodes to understand what the system does
 5. Traverses edges to understand how everything relates
 
@@ -2188,7 +2340,7 @@ Without orientation, the agent makes early implementation choices that may confl
 
 - Building a component before knowing the design token it should use
 - Choosing a data structure before reading the domain model
-- Implementing a feature without knowing the performance constraint
+- Implementing a feature without knowing the performance policy
 
 Orientation prevents these "premature implementation" errors.
 
@@ -2238,7 +2390,7 @@ For each behavior node:
 2. **Assemble context** — gather all related nodes into a unified context
 3. **Implement** — build the behavior following all guidance
 4. **Verify** — run the behavior's verification criteria
-5. **Check constraints** — verify related constraint nodes are satisfied
+5. **Check policies** — verify related policy nodes are satisfied
 
 ### Processing Order
 
@@ -2270,7 +2422,7 @@ Phase 3: IMPLEMENT
     1. Assemble context from edges
     2. Implement with full guidance
     3. Verify behavior
-    4. Check constraints
+    4. Check policies
 ```
 
 ---
@@ -2295,7 +2447,7 @@ Behavior: AUTH-01 "Login Form Display"
   │     → "A registered entity that can authenticate..."
   │     → constraints: "Email unique, verified before access"
   │
-  └─ (via inverse) CON-PERF-01 "Page Load Budget"
+  └─ (via inverse) POL-PERF-01 "Page Load Budget"
        → "FCP within 1.5s on 4G..."
 ```
 
@@ -2315,7 +2467,7 @@ In practice, depth 2 is usually sufficient. Going deeper can include nodes that 
 
 Some context comes from **inverse edges** — nodes that point TO this behavior:
 
-- A constraint node with `"constrains": ["AUTH-01"]` is relevant context for AUTH-01, even though AUTH-01 doesn't link to it
+- A policy node with `"constrains": ["AUTH-01"]` is relevant context for AUTH-01, even though AUTH-01 doesn't link to it
 - A feature node with `"contains": ["AUTH-01"]` provides namespace context
 
 Tooling computes inverse edges from the stored forward edges and includes them in context assembly.
@@ -2329,7 +2481,7 @@ The assembled context for a behavior can be rendered as a structured document:
 
 ## Behavior
 Login page renders email and password input fields with a submit button.
-Invariant: Password field must mask input characters.
+Constraints: Password field must mask input characters.
 
 ## Architectural Decisions
 - DEC-AUTH-01: All auth operations go through an AuthProvider interface.
@@ -2343,8 +2495,8 @@ Invariant: Password field must mask input characters.
 - DOM-USER-01: User Account — a registered entity that can authenticate,
   own resources, and have role-based permissions.
 
-## Constraints
-- CON-PERF-01: All pages must reach FCP within 1.5s on 4G. (severity: hard)
+## Policies
+- POL-PERF-01: All pages must reach FCP within 1.5s on 4G. (severity: hard)
 
 ## Verification
 npm test -- --grep AUTH-01
@@ -2359,7 +2511,7 @@ Without context assembly, the agent must independently discover that:
 - Auth should go through an abstract interface (from a decision node)
 - Clerk is the auth provider (from another decision node)
 - "User" means a registered entity with specific properties (from a domain node)
-- The page must load in under 1.5s (from a constraint node)
+- The page must load in under 1.5s (from a policy node)
 
 If any of these are missed, the implementation may diverge from the designer's intent. Context assembly ensures completeness at the per-behavior level.
 
@@ -2388,12 +2540,12 @@ Each node has its own verification criteria. After implementing a behavior or sc
 ]
 ```
 
-### Constraint-Level Verification
+### Policy-Level Verification
 
-After implementing behaviors, constraint nodes that `constrain` those behaviors are verified:
+After implementing behaviors, policy nodes that `constrain` those behaviors are verified:
 
 ```json
-// Constraint node
+// Policy node
 "verification": [
   {
     "kind": "command",
@@ -2407,7 +2559,7 @@ After implementing behaviors, constraint nodes that `constrain` those behaviors 
 After all nodes are manifested, the full graph is verified:
 
 1. All behavior node verifications pass
-2. All constraint node verifications pass
+2. All policy node verifications pass
 3. All decision node verifications pass
 4. If an `equivalence_contract` exists, its criteria are met
 
@@ -2434,7 +2586,7 @@ These are **agent/tooling concerns**, not properties of the manifested system, s
 Quality gates answer: "Does the code meet the project's quality standard before we ship/review it?"
 
 In Spec Graph terms, the **normative** quality bar should be expressed as:
-- `constraint` nodes (with `severity: hard|soft` and explicit `verification` commands), and/or
+- `policy` nodes (with `severity: hard|soft` and explicit `verification` commands), and/or
 - an `equivalence_contract` node that aggregates the definition of "done".
 
 The **execution strategy** (fast vs slow ordering, fail-fast behavior, retries, timeouts, parallelism) belongs to the agent/tooling layer.
@@ -2444,7 +2596,7 @@ The **execution strategy** (fast vs slow ordering, fail-fast behavior, retries, 
 1. Run preflight checks (tooling)
 2. Implement changes
 3. Run fast quality gates (lint/typecheck/format)
-4. Run node + constraint verification
+4. Run node + policy verification
 5. Run slow gates / equivalence contract (tests/build/perf/security)
 
 ## Verification Types
@@ -2533,10 +2685,10 @@ Verification flows through the graph:
 ```mermaid
 graph TD
     B[AUTH-01<br/>npm test -- --grep AUTH-01] --> N[Node-level: ✓]
-    C[CON-PERF-01<br/>lighthouse --assert-fcp=1500] --> CL[Constraint-level: ✓]
+    P[POL-PERF-01<br/>lighthouse --assert-fcp=1500] --> PL[Policy-level: ✓]
     D[DEC-AUTH-01<br/>npx tsc --noEmit] --> DL[Decision-level: ✓]
     N --> G[Graph-level: All pass]
-    CL --> G
+    PL --> G
     DL --> G
 ```
 
@@ -2589,7 +2741,7 @@ Create `specgraph/nodes/behaviors/TODO-01.json`:
   "type": "behavior",
   "title": "Add Todo Item",
   "expectation": "When user types text into the input field and presses Enter, a new todo item appears in the list",
-  "invariant": "Input field is cleared after adding",
+  "constraints": ["Input field is cleared after adding"],
   "verification": "npm test -- --grep TODO-01"
 }
 ```
@@ -2603,7 +2755,7 @@ Create `specgraph/nodes/behaviors/TODO-02.json`:
   "type": "behavior",
   "title": "Complete Todo Item",
   "expectation": "When user clicks the checkbox next to a todo item, it is marked as complete with a strikethrough style",
-  "invariant": "Completed items remain in the list",
+  "constraints": ["Completed items remain in the list"],
   "verification": "npm test -- --grep TODO-02",
 
   "links": {
@@ -2621,7 +2773,7 @@ Create `specgraph/nodes/behaviors/TODO-03.json`:
   "type": "behavior",
   "title": "Delete Todo Item",
   "expectation": "When user clicks the delete button on a todo item, it is removed from the list",
-  "invariant": "Deletion is immediate with no confirmation dialog",
+  "constraints": ["Deletion is immediate with no confirmation dialog"],
   "verification": "npm test -- --grep TODO-03",
 
   "links": {
@@ -2681,7 +2833,7 @@ This is a **behavior-only** graph — the simplest valid spec graph. It specifie
 
 - **Add decision nodes** when you want to constrain how the system is built. See [Decision Nodes](/docs/node-types/decision).
 - **Add domain nodes** when business terms need explicit definition. See [Domain Nodes](/docs/node-types/domain).
-- **Add constraint nodes** when non-functional requirements must be measured. See [Constraint Nodes](/docs/node-types/constraint).
+- **Add policy nodes** when non-functional requirements must be measured. See [Policy Nodes](/docs/node-types/policy).
 - Read [When to Add Nodes](/docs/authoring/when-to-add-nodes) for guidance on growing your graph.
 - See the [auth example](/docs/reference/examples) for a full-featured spec graph.
 
@@ -2743,19 +2895,19 @@ When business terms are ambiguous or domain rules are being violated, add domain
 
 **What you get:** domain equivalence — same data model and business rules.
 
-### Level 4: + Constraint Nodes
+### Level 4: + Policy Nodes
 
-When non-functional requirements need measurement, add constraint nodes.
+When non-functional requirements need measurement, add policy nodes.
 
 ```
   nodes/
     ...
-    constraints/CON-PERF-01.json  ← NEW
+    policies/POL-PERF-01.json  ← NEW
 ```
 
 **Trigger:** "The page is too slow" or "We need WCAG compliance."
 
-**What you get:** constraint equivalence — same non-functional characteristics.
+**What you get:** policy equivalence — same non-functional characteristics.
 
 ### Level 5: + Extension Types
 
@@ -2779,7 +2931,7 @@ Each level is triggered by a **manifestation failure** — a case where the curr
 | Two implementations have incompatible architectures | Decision nodes (architecture) |
 | Wrong technology or library was used | Decision nodes (stack) |
 | Agent misunderstood a business term | Domain nodes |
-| Performance or security requirement was violated | Constraint nodes |
+| Performance or security requirement was violated | Policy nodes |
 | Visual design is inconsistent | Design token extensions |
 
 ## You Don't Need Every Level
@@ -2799,7 +2951,7 @@ If your project has no formal spec at all:
 3. **Group into features** — create feature nodes
 4. **Build the index** — create `graph.json`
 5. **Validate** — run the schema validator
-6. **Iterate** — add decision/domain/constraint nodes as needed
+6. **Iterate** — add decision/domain/policy nodes as needed
 
 The initial behavior audit is the most time-consuming step. Once you have behaviors, the graph grows incrementally.
 
@@ -2819,7 +2971,7 @@ If you have an existing DLOOP v1 project with a `SPEC.json`, this guide explains
 | Relationships | Implicit (via feature grouping) | Explicit (typed edges) |
 | Tech guidance | External (agent instructions, profiles) | Inline (decision nodes) |
 | Domain model | Implicit (in code) | Explicit (domain nodes) |
-| Constraints | External (agent instructions) | Inline (constraint nodes) |
+| Constraints | External (agent instructions) | Inline (policy nodes) |
 | Edge storage | N/A (no edges) | Node-local (`links` field) |
 
 ## What Stays the Same
@@ -2859,7 +3011,7 @@ Convert each v1 behavior into a standalone node file:
   "type": "behavior",
   "title": "Login Form Display",
   "expectation": "Login page renders email and password fields",
-  "invariant": "Password field must mask input",
+  "constraints": ["Password field must mask input"],
   "verification": "npm test -- --grep AUTH-01"
 }
 ```
@@ -2867,6 +3019,7 @@ Convert each v1 behavior into a standalone node file:
 Changes:
 - `name` → `title`
 - Added `type: "behavior"`
+- `invariant` (string) → `constraints` (array of strings)
 - Each behavior is now its own file
 
 ### Step 2: Create Feature Nodes
@@ -2920,7 +3073,7 @@ Connect behaviors to the decision nodes that guide them:
 }
 ```
 
-### Step 6: Add Domain and Constraint Nodes
+### Step 6: Add Domain and Policy Nodes
 
 Based on the minimality test — add them when actual manifestation ambiguity requires it.
 
@@ -2938,7 +3091,7 @@ In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is 
 
 ### Verification Is Richer
 
-V1 behavior verification was a single string. Spec Graph contract nodes (decision, domain, constraint) support arrays of verification entries, including structured formats (command, http, manual).
+V1 behavior verification was a single string. Spec Graph contract nodes (decision, domain, policy) support arrays of verification entries, including structured formats (command, http, manual).
 
 Behavior nodes keep the single-string verification for simplicity.
 
@@ -2995,15 +3148,17 @@ Required: `id`, `type` (= `"feature"`), `title`, `description`
 
 ### Behavior Nodes
 
-Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `invariant`, `verification`
+Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `verification`
+
+Optional: `constraints` (array)
 
 ### Contract Nodes
 
-All other types (decision, domain, constraint, and extensions).
+All other types (decision, domain, policy, and extensions).
 
 Required: `id`, `type`, `title`, `statement`, `verification` (array)
 
-Optional: `category` (decision nodes only), `severity` (constraint nodes only), `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
+Optional: `category` (decision nodes only), `severity` (policy nodes only), `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
 
 Special case:
 - `artifact` nodes require an `artifact` object with a normative `sha256` hash (and optional `source`/`format`).
@@ -3055,7 +3210,7 @@ Feature IDs must match: `^[A-Z][A-Z0-9-]{0,19}$`
 
 ### Node Types
 
-Core: `feature`, `behavior`, `decision`, `domain`, `constraint`
+Core: `feature`, `behavior`, `decision`, `domain`, `policy`
 
 Extensions: `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`
 
@@ -3147,7 +3302,7 @@ graph TD
 
 **Purpose:** The primary example used throughout the documentation. Demonstrates all five core node types.
 
-**Node types used:** `feature`, `behavior`, `decision`, `domain`, `constraint`
+**Node types used:** `feature`, `behavior`, `decision`, `domain`, `policy`
 
 **Source:** [`examples/auth/`](pathname:///specgraph/examples/auth/graph.json)
 
@@ -3160,7 +3315,7 @@ auth/
     decisions/DEC-AUTH-01.json    # Auth provider abstraction (architecture)
     decisions/DEC-AUTH-02.json    # Clerk provider (stack)
     domains/DOM-USER-01.json     # User Account concept
-    constraints/CON-PERF-01.json # Page load budget
+    policies/POL-PERF-01.json    # Page load budget
 ```
 
 ```mermaid
@@ -3173,7 +3328,7 @@ graph TD
     AUTH -->|contains| D1[DEC-AUTH-01]
     AUTH -->|contains| D2[DEC-AUTH-02]
     AUTH -->|contains| DOM[DOM-USER-01]
-    AUTH -->|contains| CON[CON-PERF-01]
+    AUTH -->|contains| POL[POL-PERF-01]
 
     B1 -->|implements| DOM
     B1 -->|depends_on| D1
@@ -3181,7 +3336,7 @@ graph TD
     B5 -->|implements| DOM
     D1 -->|depends_on| D2
     D1 -->|constrains| B1
-    CON -->|constrains| B1
+    POL -->|constrains| B1
     B2 -->|depends_on| B1
     B3 -->|depends_on| B1
     B4 -->|depends_on| B1
@@ -3192,7 +3347,7 @@ graph TD
 
 - **Decision nodes** with different categories (architecture vs. stack)
 - **Domain nodes** defining shared vocabulary
-- **Constraint nodes** with severity and structured verification
+- **Policy nodes** with severity and structured verification
 - **Edge patterns**: `implements`, `depends_on`, `constrains`
 - **Dependency chain**: behavior → decision → decision
 
@@ -3200,7 +3355,7 @@ graph TD
 
 **Purpose:** A richer example showing extension types alongside core types.
 
-**Node types used:** `feature`, `behavior`, `decision`, `domain`, `constraint`, `design_token`
+**Node types used:** `feature`, `behavior`, `decision`, `domain`, `policy`, `design_token`
 
 **Source:** [`examples/taskboard/`](pathname:///specgraph/examples/taskboard/graph.json)
 
@@ -3214,7 +3369,7 @@ taskboard/
     decisions/DEC-TB-02.json     # Real-time sync (pattern)
     decisions/DEC-TB-03.json     # DnD Kit (stack)
     domains/DOM-TASK-01.json     # Task concept with status transitions
-    constraints/CON-TB-PERF-01.json  # 60fps render performance
+    policies/POL-TB-PERF-01.json # 60fps render performance
     design_tokens/DT-TASKCARD-01.json # Task card visual spec
 ```
 
@@ -3223,7 +3378,7 @@ taskboard/
 - **Extension type** (`design_token`) used alongside core types
 - **Multiple decision categories**: pattern and stack
 - **Rich domain model** with status transitions and business rules
-- **Performance constraint** with manual verification steps
+- **Performance policy** with manual verification steps
 - **Visual specification** through design tokens
 
 ---
@@ -3245,13 +3400,14 @@ taskboard/
 | **Equivalence Contract** | An optional extension node that formally declares what "same system" means for this graph. |
 | **Implementing Agent** | The agent (human or AI) that processes the spec graph to produce a running system. |
 | **Capable Agent** | An implementing agent that can parse, traverse, apply, respect, and verify the spec graph. |
-| **Contract Node** | The unified shape shared by all non-feature, non-behavior node types (decision, domain, constraint, extensions). |
+| **Contract Node** | The unified shape shared by all non-feature, non-behavior node types (decision, domain, policy, extensions). |
 | **Decision Node** | A node capturing an architectural, technical, or stack decision that narrows the solution space. |
 | **Domain Node** | A node defining a business concept, term, or rule — the ubiquitous language of the system. |
-| **Constraint Node** | A node specifying a non-functional requirement (performance, security, accessibility, cost). |
+| **Policy Node** | A node specifying a cross-cutting non-functional requirement (performance, security, accessibility, cost, reliability). Uses `severity` (hard/soft) and `constrains` edges. Not to be confused with the `constraints` field. |
+| **Constraints (field)** | Normative conditions on a node that narrow its primary field (`expectation` or `statement`). Each entry is independent and testable. Present on both behavior and contract node shapes. Not to be confused with policy nodes (a node type for cross-cutting NFRs). |
 | **Extension Type** | An optional node type for finer-grained modelling (design_token, api_contract, data_model, etc.). |
 | **Verification** | Pass/fail criteria attached to a node. The mechanism by which equivalence is established. |
-| **Normative** | Content that MUST be true, MUST be implemented, MUST pass verification (statement, constraints, verification). |
+| **Normative** | Content that MUST be true, MUST be implemented, MUST pass verification (expectation, statement, constraints, verification). |
 | **Informative** | Content that provides context but is not a requirement (metadata.rationale, metadata.notes). |
 | **Orient** | The first manifestation phase: read all nodes to build system understanding. |
 | **Scaffold** | The second manifestation phase: create architectural infrastructure from decision and domain nodes. |
@@ -3263,7 +3419,7 @@ taskboard/
 | **The ONE Rule** | Atomicity rule for behaviors: ONE trigger, ONE behavior, ONE outcome. |
 | **Minimality Test** | "If I removed this node, could a competent agent make a choice I wouldn't want?" |
 | **Shadow Spec** | The scattered, mutable, implicit collection of documents and knowledge that fills gaps left by a behavior-only spec. |
-| **Severity** | For constraint nodes: `hard` (blocks manifestation) or `soft` (quality target). |
+| **Severity** | For policy nodes: `hard` (blocks manifestation) or `soft` (quality target). |
 
 ---
 
@@ -3363,7 +3519,7 @@ The Spec Graph shares ideas with several existing approaches. This page clarifie
 
 | Aspect | BDD (Given/When/Then) | Spec Graph Behavior Nodes |
 |---|---|---|
-| Format | Natural language scenarios | Structured JSON with expectation + invariant |
+| Format | Natural language scenarios | Structured JSON with expectation + constraints |
 | Scope | User-facing behavior | Multi-dimensional (behavior + architecture + ...) |
 | Verification | Scenario runner (Cucumber) | Flexible (commands, HTTP, manual) |
 

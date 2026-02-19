@@ -4,7 +4,7 @@
   "type": "behavior",
   "title": "Successful Login Redirect",
   "expectation": "After submitting valid credentials, user is redirected to the dashboard page",
-  "invariant": "Session token must be stored before redirect",
+  "constraints": ["Session token must be stored before redirect"],
   "verification": "npm test -- --grep AUTH-04",
   "links": {
     "depends_on": [

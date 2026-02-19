@@ -26,7 +26,7 @@ Equivalence is **parameterized by the node types present in the graph**:
 | behavior only | Same observable behavior |
 | + decision | Same architectural structure and technology choices |
 | + domain | Same data model and business rules |
-| + constraint | Same non-functional characteristics |
+| + policy | Same non-functional characteristics |
 | All core types | Approaches total equivalence |
 
 A graph with only behavior nodes guarantees behavioral equivalence — two manifestations do the same things, but may be structured completely differently. Adding decision nodes narrows the architecture. Adding domain nodes aligns the data model. Each additional dimension tightens the equivalence relation.

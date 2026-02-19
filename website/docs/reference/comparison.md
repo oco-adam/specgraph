@@ -99,7 +99,7 @@ The Spec Graph shares ideas with several existing approaches. This page clarifie
 
 | Aspect | BDD (Given/When/Then) | Spec Graph Behavior Nodes |
 |---|---|---|
-| Format | Natural language scenarios | Structured JSON with expectation + invariant |
+| Format | Natural language scenarios | Structured JSON with expectation + constraints |
 | Scope | User-facing behavior | Multi-dimensional (behavior + architecture + ...) |
 | Verification | Scenario runner (Cucumber) | Flexible (commands, HTTP, manual) |
 

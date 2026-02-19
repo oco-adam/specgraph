@@ -5,7 +5,7 @@ title: Extension Types
 
 # Extension Types
 
-Extension types provide finer-grained modelling for graphs that need it. They use the same **contract shape** as decision, domain, and constraint nodes — the `type` value is what distinguishes them.
+Extension types provide finer-grained modelling for graphs that need it. They use the same **contract shape** as decision, domain, and policy nodes — the `type` value is what distinguishes them.
 
 ## Available Extensions
 
@@ -132,7 +132,7 @@ An equivalence contract formally declares what "same system" means for this grap
 {
   "type": "equivalence_contract",
   "title": "System Equivalence Definition",
-  "statement": "Two manifestations are equivalent if all unit tests pass, all integration tests pass, Lighthouse performance scores exceed thresholds, and all constraint nodes are satisfied.",
+  "statement": "Two manifestations are equivalent if all unit tests pass, all integration tests pass, Lighthouse performance scores exceed thresholds, and all policy nodes are satisfied.",
   "constraints": [
     "Unit test suite must achieve 100% pass rate",
     "Integration tests must cover all behavior nodes",
@@ -158,7 +158,7 @@ Start with core types. Add extensions when you discover that core types don't pr
 
 A typical extension adoption path:
 
-1. **Start** with core types only (behavior, decision, domain, constraint, feature)
+1. **Start** with core types only (behavior, decision, domain, policy, feature)
 2. **Add `design_token`** when visual inconsistency between features becomes a problem
 3. **Add `api_contract`** when service boundaries need formal specification
 4. **Add `data_model`** when database schema decisions are load-bearing

@@ -28,9 +28,9 @@ specgraph/
     domains/
       DOM-USER-01.json
       DOM-TASK-01.json
-    constraints/
-      CON-PERF-01.json
-      CON-TB-PERF-01.json
+    policies/
+      POL-PERF-01.json
+      POL-TB-PERF-01.json
 ```
 
 ## Conventions
@@ -45,7 +45,7 @@ Node files are named after their ID:
 | `AUTH-01` | `nodes/behaviors/AUTH-01.json` |
 | `DEC-AUTH-01` | `nodes/decisions/DEC-AUTH-01.json` |
 | `DOM-USER-01` | `nodes/domains/DOM-USER-01.json` |
-| `CON-PERF-01` | `nodes/constraints/CON-PERF-01.json` |
+| `POL-PERF-01` | `nodes/policies/POL-PERF-01.json` |
 
 ### Extension Type Directories
 

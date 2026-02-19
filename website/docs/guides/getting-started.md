@@ -48,7 +48,7 @@ Create `specgraph/nodes/behaviors/TODO-01.json`:
   "type": "behavior",
   "title": "Add Todo Item",
   "expectation": "When user types text into the input field and presses Enter, a new todo item appears in the list",
-  "invariant": "Input field is cleared after adding",
+  "constraints": ["Input field is cleared after adding"],
   "verification": "npm test -- --grep TODO-01"
 }
 ```
@@ -62,7 +62,7 @@ Create `specgraph/nodes/behaviors/TODO-02.json`:
   "type": "behavior",
   "title": "Complete Todo Item",
   "expectation": "When user clicks the checkbox next to a todo item, it is marked as complete with a strikethrough style",
-  "invariant": "Completed items remain in the list",
+  "constraints": ["Completed items remain in the list"],
   "verification": "npm test -- --grep TODO-02",
 
   "links": {
@@ -80,7 +80,7 @@ Create `specgraph/nodes/behaviors/TODO-03.json`:
   "type": "behavior",
   "title": "Delete Todo Item",
   "expectation": "When user clicks the delete button on a todo item, it is removed from the list",
-  "invariant": "Deletion is immediate with no confirmation dialog",
+  "constraints": ["Deletion is immediate with no confirmation dialog"],
   "verification": "npm test -- --grep TODO-03",
 
   "links": {
@@ -140,6 +140,6 @@ This is a **behavior-only** graph — the simplest valid spec graph. It specifie
 
 - **Add decision nodes** when you want to constrain how the system is built. See [Decision Nodes](/docs/node-types/decision).
 - **Add domain nodes** when business terms need explicit definition. See [Domain Nodes](/docs/node-types/domain).
-- **Add constraint nodes** when non-functional requirements must be measured. See [Constraint Nodes](/docs/node-types/constraint).
+- **Add policy nodes** when non-functional requirements must be measured. See [Policy Nodes](/docs/node-types/policy).
 - Read [When to Add Nodes](/docs/authoring/when-to-add-nodes) for guidance on growing your graph.
 - See the [auth example](/docs/reference/examples) for a full-featured spec graph.

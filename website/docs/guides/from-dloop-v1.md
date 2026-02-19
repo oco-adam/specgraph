@@ -17,7 +17,7 @@ If you have an existing DLOOP v1 project with a `SPEC.json`, this guide explains
 | Relationships | Implicit (via feature grouping) | Explicit (typed edges) |
 | Tech guidance | External (agent instructions, profiles) | Inline (decision nodes) |
 | Domain model | Implicit (in code) | Explicit (domain nodes) |
-| Constraints | External (agent instructions) | Inline (constraint nodes) |
+| Constraints | External (agent instructions) | Inline (policy nodes) |
 | Edge storage | N/A (no edges) | Node-local (`links` field) |
 
 ## What Stays the Same
@@ -57,7 +57,7 @@ Convert each v1 behavior into a standalone node file:
   "type": "behavior",
   "title": "Login Form Display",
   "expectation": "Login page renders email and password fields",
-  "invariant": "Password field must mask input",
+  "constraints": ["Password field must mask input"],
   "verification": "npm test -- --grep AUTH-01"
 }
 ```
@@ -65,6 +65,7 @@ Convert each v1 behavior into a standalone node file:
 Changes:
 - `name` → `title`
 - Added `type: "behavior"`
+- `invariant` (string) → `constraints` (array of strings)
 - Each behavior is now its own file
 
 ### Step 2: Create Feature Nodes
@@ -118,7 +119,7 @@ Connect behaviors to the decision nodes that guide them:
 }
 ```
 
-### Step 6: Add Domain and Constraint Nodes
+### Step 6: Add Domain and Policy Nodes
 
 Based on the minimality test — add them when actual manifestation ambiguity requires it.
 
@@ -136,6 +137,6 @@ In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is 
 
 ### Verification Is Richer
 
-V1 behavior verification was a single string. Spec Graph contract nodes (decision, domain, constraint) support arrays of verification entries, including structured formats (command, http, manual).
+V1 behavior verification was a single string. Spec Graph contract nodes (decision, domain, policy) support arrays of verification entries, including structured formats (command, http, manual).
 
 Behavior nodes keep the single-string verification for simplicity.

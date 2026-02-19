@@ -1,7 +1,7 @@
 {
   "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
-  "id": "CON-PERF-01",
-  "type": "constraint",
+  "id": "POL-PERF-01",
+  "type": "policy",
   "severity": "hard",
   "title": "Page Load Performance Budget",
   "statement": "All pages must reach First Contentful Paint within 1.5 seconds on a 4G connection.",

@@ -23,7 +23,7 @@ Behavior: AUTH-01 "Login Form Display"
   │     → "A registered entity that can authenticate..."
   │     → constraints: "Email unique, verified before access"
   │
-  └─ (via inverse) CON-PERF-01 "Page Load Budget"
+  └─ (via inverse) POL-PERF-01 "Page Load Budget"
        → "FCP within 1.5s on 4G..."
 ```
 
@@ -43,7 +43,7 @@ In practice, depth 2 is usually sufficient. Going deeper can include nodes that 
 
 Some context comes from **inverse edges** — nodes that point TO this behavior:
 
-- A constraint node with `"constrains": ["AUTH-01"]` is relevant context for AUTH-01, even though AUTH-01 doesn't link to it
+- A policy node with `"constrains": ["AUTH-01"]` is relevant context for AUTH-01, even though AUTH-01 doesn't link to it
 - A feature node with `"contains": ["AUTH-01"]` provides namespace context
 
 Tooling computes inverse edges from the stored forward edges and includes them in context assembly.
@@ -57,7 +57,7 @@ The assembled context for a behavior can be rendered as a structured document:
 
 ## Behavior
 Login page renders email and password input fields with a submit button.
-Invariant: Password field must mask input characters.
+Constraints: Password field must mask input characters.
 
 ## Architectural Decisions
 - DEC-AUTH-01: All auth operations go through an AuthProvider interface.
@@ -71,8 +71,8 @@ Invariant: Password field must mask input characters.
 - DOM-USER-01: User Account — a registered entity that can authenticate,
   own resources, and have role-based permissions.
 
-## Constraints
-- CON-PERF-01: All pages must reach FCP within 1.5s on 4G. (severity: hard)
+## Policies
+- POL-PERF-01: All pages must reach FCP within 1.5s on 4G. (severity: hard)
 
 ## Verification
 npm test -- --grep AUTH-01
@@ -87,6 +87,6 @@ Without context assembly, the agent must independently discover that:
 - Auth should go through an abstract interface (from a decision node)
 - Clerk is the auth provider (from another decision node)
 - "User" means a registered entity with specific properties (from a domain node)
-- The page must load in under 1.5s (from a constraint node)
+- The page must load in under 1.5s (from a policy node)
 
 If any of these are missed, the implementation may diverge from the designer's intent. Context assembly ensures completeness at the per-behavior level.

@@ -4,6 +4,6 @@
   "type": "behavior",
   "title": "Add Todo Item",
   "expectation": "When user types text into the input field and presses Enter, a new todo item appears in the list",
-  "invariant": "Input field is cleared after adding",
+  "constraints": ["Input field is cleared after adding"],
   "verification": "npm test -- --grep TODO-01"
 }

@@ -11,7 +11,7 @@ The manifestation process follows three conceptual phases, each consuming a diff
 
 **Purpose:** Build a complete understanding of the system before writing any code.
 
-**Reads:** All node types — domain, decision, constraint, behavior, feature
+**Reads:** All node types — domain, decision, policy, behavior, feature
 
 **Produces:** Mental model of the system
 
@@ -19,7 +19,7 @@ During orientation, the implementing agent:
 
 1. Reads all **domain** nodes to understand the business vocabulary
 2. Reads all **decision** nodes to understand architectural and technology choices
-3. Reads all **constraint** nodes to understand non-functional boundaries
+3. Reads all **policy** nodes to understand non-functional boundaries
 4. Reads all **behavior** nodes to understand what the system does
 5. Traverses edges to understand how everything relates
 
@@ -31,7 +31,7 @@ Without orientation, the agent makes early implementation choices that may confl
 
 - Building a component before knowing the design token it should use
 - Choosing a data structure before reading the domain model
-- Implementing a feature without knowing the performance constraint
+- Implementing a feature without knowing the performance policy
 
 Orientation prevents these "premature implementation" errors.
 
@@ -81,7 +81,7 @@ For each behavior node:
 2. **Assemble context** — gather all related nodes into a unified context
 3. **Implement** — build the behavior following all guidance
 4. **Verify** — run the behavior's verification criteria
-5. **Check constraints** — verify related constraint nodes are satisfied
+5. **Check policies** — verify related policy nodes are satisfied
 
 ### Processing Order
 
@@ -113,5 +113,5 @@ Phase 3: IMPLEMENT
     1. Assemble context from edges
     2. Implement with full guidance
     3. Verify behavior
-    4. Check constraints
+    4. Check policies
 ```

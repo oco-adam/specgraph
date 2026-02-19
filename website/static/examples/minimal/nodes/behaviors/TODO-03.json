@@ -4,7 +4,7 @@
   "type": "behavior",
   "title": "Delete Todo Item",
   "expectation": "When user clicks the delete button on a todo item, it is removed from the list",
-  "invariant": "Deletion is immediate with no confirmation dialog",
+  "constraints": ["Deletion is immediate with no confirmation dialog"],
   "verification": "npm test -- --grep TODO-03",
   "links": {
     "depends_on": [

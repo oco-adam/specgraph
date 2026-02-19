@@ -16,7 +16,7 @@ Feature nodes are **non-normative grouping nodes** that organize the graph into 
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
   "links": {
-    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "CON-PERF-01"]
+    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "POL-PERF-01"]
   }
 }
 ```
@@ -52,7 +52,7 @@ Features use the `contains` edge to declare their children:
 }
 ```
 
-A feature can contain nodes of **any type**: behaviors, decisions, domains, constraints, and extensions.
+A feature can contain nodes of **any type**: behaviors, decisions, domains, policies, and extensions.
 
 ## ID Conventions
 

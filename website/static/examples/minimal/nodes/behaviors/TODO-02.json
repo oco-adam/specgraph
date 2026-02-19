@@ -4,7 +4,7 @@
   "type": "behavior",
   "title": "Complete Todo Item",
   "expectation": "When user clicks the checkbox next to a todo item, it is marked as complete with a strikethrough style",
-  "invariant": "Completed items remain in the list",
+  "constraints": ["Completed items remain in the list"],
   "verification": "npm test -- --grep TODO-02",
   "links": {
     "depends_on": [

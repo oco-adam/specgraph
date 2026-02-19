@@ -13,7 +13,7 @@ DLOOP v1's ONE rule — ONE trigger, ONE behavior, ONE outcome — was a good id
 
 > **Every node expresses one decision, one contract, or one constraint.**
 
-If a node contains "and" across multiple decisions, split it. This applies to all node types, not just behaviors. A decision node captures one architectural decision. A domain node defines one business concept. A constraint node specifies one measurable requirement.
+If a node contains "and" across multiple decisions, split it. This applies to all node types, not just behaviors. A decision node captures one architectural decision. A domain node defines one business concept. A policy node specifies one measurable requirement.
 
 Atomicity creates **review pressure** (each node is small enough to reason about), **composability** (nodes combine without hidden coupling), and **testability** (each node has a clear verification criterion).
 
@@ -21,7 +21,7 @@ Atomicity creates **review pressure** (each node is small enough to reason about
 
 If it cannot be verified, it is not a complete spec.
 
-Every node that makes a normative claim — a behavior, a constraint, a decision — must include verification criteria that produce a pass/fail result. Verification can be:
+Every node that makes a normative claim — a behavior, a policy, a decision — must include verification criteria that produce a pass/fail result. Verification can be:
 
 - **Executable**: test commands, linters, policy checks
 - **Static**: type checking, AST rules, dependency constraints
@@ -46,7 +46,7 @@ Additional node types are added when the minimality test demands it — when man
 1. Start with behavior nodes (captures what the system does)
 2. Add decision nodes (locks in architecture and tech stack)
 3. Add domain nodes (establishes shared vocabulary)
-4. Add constraint nodes (sets non-functional boundaries)
+4. Add policy nodes (sets non-functional boundaries)
 
 ## 5. Declarative Truth, Not Narrative Docs
 
@@ -58,7 +58,7 @@ Narrative documentation is valuable for explanation, but it is not authoritative
 
 The framework strictly distinguishes:
 
-- **Normative**: `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
+- **Normative**: `expectation`, `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
 - **Informative**: `metadata.rationale`, `metadata.notes` — context and explanation, never requirements
 
 This prevents "helpful notes" from becoming implicit requirements that break predictable manifestation.
