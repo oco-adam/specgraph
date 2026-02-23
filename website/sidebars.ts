@@ -72,6 +72,7 @@ const sidebars: SidebarsConfig = {
       label: 'Guides',
       collapsed: true,
       items: [
+        'guides/mcp-server',
         'guides/getting-started',
         'guides/progressive-adoption',
         'guides/from-dloop-v1',

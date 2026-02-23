@@ -1,0 +1,44 @@
+{
+  "name": "@specgraph/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for validating, querying, and editing Spec Graph repositories.",
+  "type": "module",
+  "bin": {
+    "specgraph-mcp": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "npm exec -- tsc -p tsconfig.json",
+    "typecheck": "npm exec -- tsc --noEmit -p tsconfig.json",
+    "prepack": "npm run build",
+    "update-schemas": "node scripts/update-schemas.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "specgraph",
+    "model-context-protocol"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.26.0",
+    "ajv": "^8.17.1",
+    "fast-glob": "^3.3.3",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3"
+  }
+}

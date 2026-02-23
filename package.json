@@ -1,10 +1,15 @@
 {
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "validate:schema": "node validate.js",
     "validate:graph": "node graph_check.js",
     "validate": "npm run validate:schema && npm run validate:graph",
-    "llms:generate": "node generate_llms_full.js"
+    "llms:generate": "node generate_llms_full.js",
+    "mcp:build": "npm run build --workspace @specgraph/mcp",
+    "mcp:typecheck": "npm run typecheck --workspace @specgraph/mcp"
   },
   "dependencies": {
     "ajv": "^8.17.1",
