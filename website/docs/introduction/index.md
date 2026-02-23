@@ -8,6 +8,17 @@ slug: /introduction
 
 The **Spec Graph** is a formal specification framework for predictable, automated, agent-driven software development. It extends behavior-only specifications into a multi-dimensional graph that captures everything required to predictably manifest a system: behavior, architecture, design, technology choices, domain concepts, and constraints.
 
+## Authoring Model: AI-Agent First
+
+Spec Graph can be edited manually, and that is useful for learning and inspection.  
+However, the intended operating model is:
+
+- AI agents write and refactor spec graph nodes
+- AI agents consume spec graphs to manifest systems
+- humans supervise, review, and set direction
+
+In practice, this means using agent tooling (typically via MCP) as the primary interface to the graph, while keeping the JSON structure transparent and auditable.
+
 ## The Core Idea
 
 A Spec Graph is a directed, typed graph where:
@@ -53,8 +64,9 @@ These artifacts are sufficient for an engineering team to build a Spec Graph-bas
 If you want to jump straight in:
 
 1. Read [Motivation](/docs/introduction/motivation) to understand the problem
-2. Explore the [Graph Structure](/docs/graph/structure) to see how it works
-3. Check the [Getting Started](/docs/guides/getting-started) guide to write your first spec graph
+2. Use the [MCP Server guide](/docs/guides/mcp-server) for the recommended agent-driven workflow
+3. Explore the [Graph Structure](/docs/graph/structure) to understand the data model
+4. Check [Getting Started](/docs/guides/getting-started) to learn the manual file mechanics
 
 ## Background
 

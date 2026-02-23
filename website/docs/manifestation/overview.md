@@ -7,6 +7,13 @@ title: Overview
 
 **Manifestation** is the process of going from specification to running system. It encompasses all intermediate steps: planning, designing, coding, building, testing, and deploying.
 
+In the intended workflow, the same AI-agent ecosystem both:
+
+- maintains the spec graph (through graph-aware tools such as MCP), and
+- manifests the system from that graph.
+
+Humans keep strategic control; agents perform structured execution.
+
 ```
 Spec Graph  →  [Manifest]  →  Running System
      G              A               M

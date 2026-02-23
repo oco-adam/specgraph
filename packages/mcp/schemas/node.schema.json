@@ -1,0 +1,287 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "title": "Spec Graph Node",
+  "description": "Schema for a single Spec Graph node file. Supports core types (feature, behavior, decision, domain, policy) and extension types. Edges are expressed as outbound links.",
+  "oneOf": [
+    { "$ref": "#/$defs/featureNode" },
+    { "$ref": "#/$defs/behaviorNode" },
+    { "$ref": "#/$defs/contractNode" }
+  ],
+  "$defs": {
+    "nodeId": {
+      "type": "string",
+      "description": "Node identifier. Uppercase letters, digits, hyphens.",
+      "minLength": 1,
+      "maxLength": 80,
+      "pattern": "^[A-Z][A-Z0-9-]{0,79}$"
+    },
+    "sha256": {
+      "type": "string",
+      "description": "Hex-encoded SHA-256 digest.",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "pin": {
+      "type": "object",
+      "description": "Pins a referenced source node to a specific content hash for reproducible derivations.",
+      "additionalProperties": false,
+      "required": ["id", "sha256"],
+      "properties": {
+        "id": { "$ref": "#/$defs/nodeId" },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "artifactInfo": {
+      "type": "object",
+      "description": "Content-addressed artifact metadata. sha256 is normative; source/format are informative pointers.",
+      "additionalProperties": false,
+      "required": ["sha256"],
+      "properties": {
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "source": { "type": "string", "minLength": 1 },
+        "format": { "type": "string", "minLength": 1 }
+      }
+    },
+    "links": {
+      "type": "object",
+      "description": "Outbound typed edges from this node to other nodes. Forward-only; inverse edges are computed by tooling.",
+      "additionalProperties": false,
+      "properties": {
+        "contains": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nodeId" },
+          "description": "Grouping relationship (typically feature -> children)."
+        },
+        "depends_on": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nodeId" },
+          "description": "Must be satisfied before this node. Must be acyclic."
+        },
+        "constrains": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nodeId" },
+          "description": "Narrows implementation choices for target nodes."
+        },
+        "implements": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nodeId" },
+          "description": "This node realizes or provides part of the target."
+        },
+        "derived_from": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nodeId" },
+          "description": "Generated or imported from target with a pinned hash."
+        },
+        "verified_by": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nodeId" },
+          "description": "Points to verification checks or test nodes."
+        },
+        "supersedes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nodeId" },
+          "description": "Replaces the target node."
+        }
+      }
+    },
+    "verificationEntry": {
+      "description": "A single verification check. Can be a simple string or a structured object.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1,
+          "description": "Shorthand verification (e.g. a shell command or description)."
+        },
+        {
+          "type": "object",
+          "required": ["kind"],
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["command", "http", "manual", "observation", "policy"]
+            },
+            "command": { "type": "string", "minLength": 1 },
+            "cwd": { "type": "string", "minLength": 1 },
+            "env": {
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            },
+            "timeoutSeconds": { "type": "integer", "minimum": 1, "maximum": 3600 },
+            "method": { "type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+            "url": { "type": "string", "minLength": 1 },
+            "expectStatus": { "type": "integer", "minimum": 100, "maximum": 599 },
+            "steps": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "minItems": 1
+            },
+            "expected": { "type": "string", "minLength": 1 },
+            "description": { "type": "string", "minLength": 1 },
+            "ruleId": { "type": "string", "minLength": 1 }
+          },
+          "allOf": [
+            {
+              "if": { "properties": { "kind": { "const": "command" } }, "required": ["kind"] },
+              "then": { "required": ["command"] }
+            },
+            {
+              "if": { "properties": { "kind": { "const": "http" } }, "required": ["kind"] },
+              "then": { "required": ["method", "url", "expectStatus"] }
+            },
+            {
+              "if": { "properties": { "kind": { "const": "manual" } }, "required": ["kind"] },
+              "then": { "required": ["steps"] }
+            },
+            {
+              "if": { "properties": { "kind": { "const": "observation" } }, "required": ["kind"] },
+              "then": { "required": ["description"] }
+            },
+            {
+              "if": { "properties": { "kind": { "const": "policy" } }, "required": ["kind"] },
+              "then": { "required": ["ruleId"] }
+            }
+          ]
+        }
+      ]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Non-normative context. Tooling must never treat metadata as a requirement.",
+      "additionalProperties": true,
+      "properties": {
+        "rationale": { "type": "string" },
+        "notes": { "type": "string" },
+        "owner": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "featureNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "title", "description"],
+      "properties": {
+        "$schema": { "type": "string" },
+        "id": {
+          "type": "string",
+          "description": "Feature ID. Uppercase letters, digits, hyphens.",
+          "pattern": "^[A-Z][A-Z0-9-]{0,19}$"
+        },
+        "type": { "const": "feature" },
+        "title": { "type": "string", "minLength": 3, "maxLength": 100 },
+        "description": { "type": "string", "minLength": 1 },
+        "links": { "$ref": "#/$defs/links" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "behaviorNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "title", "expectation", "verification"],
+      "properties": {
+        "$schema": { "type": "string" },
+        "id": { "$ref": "#/$defs/nodeId" },
+        "type": { "const": "behavior" },
+        "title": { "type": "string", "minLength": 3, "maxLength": 100 },
+        "expectation": {
+          "type": "string",
+          "description": "WHAT the system does. Atomic: ONE trigger, ONE behavior, ONE outcome.",
+          "minLength": 10
+        },
+        "constraints": {
+          "type": "array",
+          "description": "Normative conditions that must hold for this behavior. Each entry is an independent, testable condition. The condition's own language carries temporal semantics (e.g. 'must hold at all times' vs 'must eventually hold').",
+          "items": { "type": "string", "minLength": 1 },
+          "default": []
+        },
+        "verification": {
+          "type": "string",
+          "description": "Single pass/fail check. Prefer executable commands.",
+          "minLength": 5
+        },
+        "links": { "$ref": "#/$defs/links" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
+    "contractNode": {
+      "type": "object",
+      "description": "Unified shape for all non-feature, non-behavior node types. Includes core types (decision, domain, policy) and extension types.",
+      "additionalProperties": false,
+      "required": ["id", "type", "title", "statement", "verification"],
+      "properties": {
+        "$schema": { "type": "string" },
+        "id": { "$ref": "#/$defs/nodeId" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "decision",
+            "domain",
+            "policy",
+            "design_token",
+            "ui_contract",
+            "api_contract",
+            "data_model",
+            "artifact",
+            "equivalence_contract",
+            "pipeline"
+          ]
+        },
+        "title": { "type": "string", "minLength": 3, "maxLength": 140 },
+        "statement": {
+          "type": "string",
+          "description": "The declarative truth that must hold.",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "description": "Sub-category for decision nodes: architecture, stack, pattern, interface. Optional for other types.",
+          "enum": ["architecture", "stack", "pattern", "interface"]
+        },
+        "severity": {
+          "type": "string",
+          "description": "For policy nodes: whether violation blocks manifestation.",
+          "enum": ["hard", "soft"]
+        },
+        "pins": {
+          "type": "array",
+          "description": "Optional source pins for derived nodes. Use with links.derived_from to make derivations reproducible.",
+          "items": { "$ref": "#/$defs/pin" }
+        },
+        "artifact": {
+          "$ref": "#/$defs/artifactInfo",
+          "description": "Required for type=artifact. Contains the content hash and optional source/format metadata."
+        },
+        "constraints": {
+          "type": "array",
+          "description": "Normative conditions that further narrow this node's statement. Each entry is an independent, testable condition.",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "verification": {
+          "type": "array",
+          "description": "One or more pass/fail checks.",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/verificationEntry" }
+        },
+        "links": { "$ref": "#/$defs/links" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "decision" } }, "required": ["type"] },
+          "then": {},
+          "else": { "not": { "required": ["category"] } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "policy" } }, "required": ["type"] },
+          "then": {},
+          "else": { "not": { "required": ["severity"] } }
+        },
+        {
+          "if": { "properties": { "type": { "const": "artifact" } }, "required": ["type"] },
+          "then": { "required": ["artifact"] },
+          "else": { "not": { "required": ["artifact"] } }
+        }
+      ]
+    }
+  }
+}

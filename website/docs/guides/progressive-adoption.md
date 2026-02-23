@@ -7,6 +7,9 @@ title: Progressive Adoption
 
 The Spec Graph is designed for incremental adoption. You don't need every node type from day one — start with behaviors and add dimensions as the [minimality test](/docs/theory/minimality) demands.
 
+Use this guide to decide **what** to add to the graph.  
+For **how** to operate on the graph in day-to-day work, use the agent-driven [MCP Server workflow](/docs/guides/mcp-server).
+
 ## The Adoption Path
 
 ### Level 1: Behavior-Only
