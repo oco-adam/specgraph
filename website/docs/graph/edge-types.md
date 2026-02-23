@@ -9,7 +9,7 @@ Edges encode the relationships between nodes. They are the connective tissue tha
 
 ## The Seven Edge Types
 
-The Spec Graph defines seven forward-only edge types:
+The Spec Graph defines seven typed edge kinds. Each relationship is authored once as a forward declaration in the source node:
 
 | Edge Type | Meaning | Example |
 |---|---|---|
@@ -40,6 +40,8 @@ This means: "AUTH-01 implements DOM-USER-01" and "AUTH-01 depends on DEC-AUTH-01
 
 **Inverse edges are computed by tooling, never stored.** If `AUTH-01` depends on `DEC-AUTH-01`, tooling derives that `DEC-AUTH-01` is depended on by `AUTH-01`. This keeps the graph DRY — each relationship is declared once, on the node where it's most natural to author.
 
+`forward-only` describes storage, not runtime traversal. Tooling materializes both outbound and inbound views in memory.
+
 ## Edge Semantics
 
 ### `contains`
@@ -58,6 +60,8 @@ Used by feature nodes to group their children. This is the primary organizationa
 Establishes ordering requirements. If A depends on B, then B must be manifested (or at least understood) before A.
 
 **Critical rule: `depends_on` must be acyclic.** Cycles in dependency edges are a validation error.
+
+This acyclicity requirement is specific to `depends_on` because manifestation order must be topologically sortable. Other edge types can be cyclic when that matches the domain model.
 
 ### `constrains`
 
@@ -103,6 +107,30 @@ Marks a node as replacing another. The existence of this edge signals that the t
 4. **Non-decorative**: edges must affect planning, implementation, or verification — purely decorative edges are discouraged
 
 ## Common Edge Patterns
+
+### Valid Non-`depends_on` Cycle
+
+Non-dependency cycles are allowed by graph integrity checks. For example, this structural cycle is valid:
+
+```mermaid
+graph LR
+    API[API-AUTH-01<br/>api_contract] -->|implements| DOM[DOM-USER-01<br/>domain]
+    DOM -->|constrains| API
+```
+
+This can model a bidirectional relationship between a contract and domain rules. It is valid because neither edge is `depends_on`.
+
+### Invalid `depends_on` Cycle
+
+Dependency cycles are rejected by graph integrity validation:
+
+```mermaid
+graph LR
+    A[AUTH-01<br/>behavior] -->|depends_on| B[DEC-AUTH-01<br/>decision]
+    B -->|depends_on| A
+```
+
+This is invalid because `depends_on` must be acyclic to preserve a deterministic manifestation order.
 
 ### Behavior → Decision → Stack
 
