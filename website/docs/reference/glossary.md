@@ -33,7 +33,7 @@ title: Glossary
 | **Scaffold** | The second manifestation phase: create architectural infrastructure from decision and domain nodes. |
 | **Implement** | The third manifestation phase: build each behavior with full graph context. |
 | **Context Assembly** | The process of gathering all related nodes for a behavior by following edges. |
-| **Forward Edge** | An edge stored in the source node's links field. The canonical representation. |
+| **Forward Edge** | An edge stored in the source node's links field. The canonical storage representation (not a traversal restriction). |
 | **Inverse Edge** | An edge computed by tooling from forward edges. Never stored. |
 | **Progressive Adoption** | The practice of starting with behavior nodes and adding other types as needed. |
 | **The ONE Rule** | Atomicity rule for behaviors: ONE trigger, ONE behavior, ONE outcome. |

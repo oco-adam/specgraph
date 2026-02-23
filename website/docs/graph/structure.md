@@ -77,6 +77,8 @@ Edges live inside the node that owns them. This is a deliberate design choice:
 
 Only **forward edges** are stored. If `AUTH-01` depends on `DEC-AUTH-01`, the `depends_on` link is stored in `AUTH-01.json`. The inverse ("`DEC-AUTH-01` is depended on by `AUTH-01`") is computed at query time.
 
+`Forward` here is a storage convention (declare the relationship once on the source node), not a runtime traversal limitation.
+
 ## The Graph as a Whole
 
 ```mermaid
@@ -95,6 +97,8 @@ graph TD
 ```
 
 At manifestation time, tooling loads all node files and constructs the full in-memory graph. The file-per-node layout is a storage concern — at runtime, it's one unified graph.
+
+Only `depends_on` is required to be acyclic. Other edge types may form cycles when modelling legitimate mutual relationships.
 
 ## Validation
 
