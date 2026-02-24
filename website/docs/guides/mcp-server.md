@@ -58,19 +58,15 @@ Runs schema validation and structural checks:
 - self-references
 - `depends_on` cycles
 
-### `query_specgraph`
-
-Supports:
+### Query tools
 
 - `list_nodes`
 - `get_node`
 - `get_feature_subgraph`
 - `list_edges`
-- `search`
+- `search_nodes`
 
-### `write_specgraph`
-
-Supports:
+### Write tools
 
 - `add_node`
 - `update_node`
@@ -95,4 +91,3 @@ For advanced cases, it supports environment overrides:
 - `SPECGRAPH_MCP_SCHEMA_BASE_URL`
 - `SPECGRAPH_MCP_GRAPH_SCHEMA`
 - `SPECGRAPH_MCP_NODE_SCHEMA`
-
