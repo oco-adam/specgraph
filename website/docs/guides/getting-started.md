@@ -17,7 +17,7 @@ Use an AI agent with the Spec Graph MCP server:
 
 1. Configure your MCP client to run `npx @specgraph/mcp --repo-dir .`
 2. Ask the agent to call `init_specgraph`
-3. Ask the agent to add/update nodes with `write_specgraph`
+3. Ask the agent to add/update nodes with `add_node` and `update_node`
 4. Ask the agent to run `validate_specgraph` after each change
 
 Then use the manual steps below to understand exactly what the agent is generating.
