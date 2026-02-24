@@ -17,7 +17,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "npm exec -- tsc -p tsconfig.json",
+    "build": "rm -rf dist && npm exec -- tsc -p tsconfig.json",
     "typecheck": "npm exec -- tsc --noEmit -p tsconfig.json",
     "prepack": "npm run build",
     "update-schemas": "node scripts/update-schemas.mjs"
