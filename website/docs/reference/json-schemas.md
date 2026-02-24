@@ -64,10 +64,15 @@ All other types (decision, domain, policy, and extensions).
 
 Required: `id`, `type`, `title`, `statement`, `verification` (array)
 
-Optional: `category` (decision nodes only), `severity` (policy nodes only), `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
+Type-specific requirements:
 
-Special case:
-- `artifact` nodes require an `artifact` object with a normative `sha256` hash (and optional `source`/`format`).
+- `decision` nodes require `category` and `metadata.rationale` (min length 10)
+- `policy` nodes require `severity`
+- `artifact` nodes require an `artifact` object with a normative `sha256` hash (and optional `source`/`format`)
+
+Other optional fields: `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
+
+Metadata supports optional `rejected_alternatives` entries (`title` + `reason`) for decision history context.
 
 ### The `links` Field
 

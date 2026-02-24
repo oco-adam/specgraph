@@ -3,9 +3,13 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { registerAddEdgeTool } from './tools/add-edge.js';
 import { registerAddNodeTool } from './tools/add-node.js';
+import { registerGetUpstreamContextTool } from './tools/get-affecting-nodes.js';
+import { registerGetEffectiveConstraintsTool } from './tools/get-effective-constraints.js';
 import { registerGetFeatureSubgraphTool } from './tools/get-feature-subgraph.js';
 import { registerGetNodeTool } from './tools/get-node.js';
 import { registerInitTool } from './tools/init.js';
+import { registerListDependenciesFullTool } from './tools/list-dependencies-full.js';
+import { registerListDependenciesTool } from './tools/list-dependencies.js';
 import { registerListEdgesTool } from './tools/list-edges.js';
 import { registerListNodesTool } from './tools/list-nodes.js';
 import { registerRemoveEdgeTool } from './tools/remove-edge.js';
@@ -22,7 +26,7 @@ export function createSpecgraphMcpServer(options: ServerOptions): McpServer {
   const server = new McpServer(
     {
       name: 'specgraph-mcp',
-      version: '0.2.0'
+      version: '0.3.0'
     },
     {
       capabilities: {
@@ -38,6 +42,10 @@ export function createSpecgraphMcpServer(options: ServerOptions): McpServer {
   registerValidateTool(server, context);
   registerListNodesTool(server, context);
   registerGetNodeTool(server, context);
+  registerGetUpstreamContextTool(server, context);
+  registerListDependenciesTool(server, context);
+  registerListDependenciesFullTool(server, context);
+  registerGetEffectiveConstraintsTool(server, context);
   registerGetFeatureSubgraphTool(server, context);
   registerListEdgesTool(server, context);
   registerSearchNodesTool(server, context);

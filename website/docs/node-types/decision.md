@@ -28,7 +28,13 @@ Decision nodes capture **any architectural, technical, or stack decision that na
     "constrains": ["AUTH-01", "AUTH-04", "AUTH-05"]
   },
   "metadata": {
-    "rationale": "Enables deterministic testing of auth flows without hitting external services."
+    "rationale": "Enables deterministic testing of auth flows without hitting external services.",
+    "rejected_alternatives": [
+      {
+        "title": "Direct Clerk SDK calls in UI components",
+        "reason": "Creates provider lock-in and makes deterministic integration testing significantly harder."
+      }
+    ]
   }
 }
 ```
@@ -39,13 +45,13 @@ Decision nodes capture **any architectural, technical, or stack decision that na
 |---|---|---|
 | `id` | Yes | Unique identifier (e.g., `DEC-AUTH-01`) |
 | `type` | Yes | Must be `"decision"` |
-| `category` | No | One of: `architecture`, `stack`, `pattern`, `interface` |
+| `category` | Yes | One of: `architecture`, `stack`, `pattern`, `interface` |
 | `title` | Yes | Short name (3–140 chars) |
 | `statement` | Yes | The declarative truth that must hold |
 | `constraints` | No | Normative conditions that further narrow this decision's statement |
 | `verification` | Yes | Array of pass/fail checks (min 1) |
 | `links` | No | Outbound edges |
-| `metadata` | No | Non-normative context |
+| `metadata` | Yes | Context object for decision history; must include `metadata.rationale` (min 10 chars) |
 
 ## Categories
 
@@ -115,6 +121,15 @@ The `statement` is the **declarative truth** that must hold. It should be:
 - **Specific**: "Use Clerk for authentication" not "Use a managed auth provider"
 - **Actionable**: an implementing agent can determine exactly what to do
 - **Verifiable**: there's a way to check whether it's been followed
+
+## Decision Rationale (Micro-ADR)
+
+Every decision node must include `metadata.rationale`. This keeps the top-level contract clean while preserving the historical "why" that agents need to avoid regressions.
+
+Use `metadata.rejected_alternatives` when meaningful trade-offs were evaluated. Each entry has:
+
+- `title`: rejected approach name
+- `reason`: why it was rejected
 
 ## When to Create Decision Nodes
 

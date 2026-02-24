@@ -147,13 +147,26 @@
     },
     "metadata": {
       "type": "object",
-      "description": "Non-normative context. Tooling must never treat metadata as a requirement.",
+      "description": "Non-executable context. Some metadata fields may be required by type-specific rules.",
       "additionalProperties": true,
       "properties": {
         "rationale": { "type": "string" },
         "notes": { "type": "string" },
         "owner": { "type": "string" },
-        "tags": { "type": "array", "items": { "type": "string" } }
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "rejected_alternatives": {
+          "type": "array",
+          "description": "Approaches considered and explicitly rejected.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["title", "reason"],
+            "properties": {
+              "title": { "type": "string", "minLength": 3 },
+              "reason": { "type": "string", "minLength": 10 }
+            }
+          }
+        }
       }
     },
     "featureNode": {
@@ -190,7 +203,7 @@
         },
         "constraints": {
           "type": "array",
-          "description": "Normative conditions that must hold for this behavior. Each entry is an independent, testable condition. The condition's own language carries temporal semantics (e.g. 'must hold at all times' vs 'must eventually hold').",
+          "description": "Localized normative conditions for this node only. For shared or cross-cutting rules, create a separate policy node and connect it via constrains edges.",
           "items": { "type": "string", "minLength": 1 },
           "default": []
         },
@@ -253,7 +266,7 @@
         },
         "constraints": {
           "type": "array",
-          "description": "Normative conditions that further narrow this node's statement. Each entry is an independent, testable condition.",
+          "description": "Localized normative conditions for this node only. For shared or cross-cutting rules, create a separate policy node and connect it via constrains edges.",
           "items": { "type": "string", "minLength": 1 }
         },
         "verification": {
@@ -268,12 +281,23 @@
       "allOf": [
         {
           "if": { "properties": { "type": { "const": "decision" } }, "required": ["type"] },
-          "then": {},
+          "then": {
+            "required": ["category", "metadata"],
+            "properties": {
+              "metadata": {
+                "type": "object",
+                "required": ["rationale"],
+                "properties": {
+                  "rationale": { "type": "string", "minLength": 10 }
+                }
+              }
+            }
+          },
           "else": { "not": { "required": ["category"] } }
         },
         {
           "if": { "properties": { "type": { "const": "policy" } }, "required": ["type"] },
-          "then": {},
+          "then": { "required": ["severity"] },
           "else": { "not": { "required": ["severity"] } }
         },
         {

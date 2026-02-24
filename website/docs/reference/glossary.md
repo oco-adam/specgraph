@@ -28,7 +28,7 @@ title: Glossary
 | **Extension Type** | An optional node type for finer-grained modelling (design_token, api_contract, data_model, etc.). |
 | **Verification** | Pass/fail criteria attached to a node. The mechanism by which equivalence is established. |
 | **Normative** | Content that MUST be true, MUST be implemented, MUST pass verification (expectation, statement, constraints, verification). |
-| **Informative** | Content that provides context but is not a requirement (metadata.rationale, metadata.notes). |
+| **Informative** | Content that provides non-executable context (metadata.rationale, metadata.notes). Some node types may require specific metadata fields. |
 | **Orient** | The first manifestation phase: read all nodes to build system understanding. |
 | **Scaffold** | The second manifestation phase: create architectural infrastructure from decision and domain nodes. |
 | **Implement** | The third manifestation phase: build each behavior with full graph context. |

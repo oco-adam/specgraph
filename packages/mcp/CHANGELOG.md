@@ -2,6 +2,25 @@
 
 All notable changes to `@specgraph/mcp` are documented in this file.
 
+## 0.3.0 - 2026-02-24
+
+### Added
+
+- New query tools for upstream context and dependency traversal:
+  - `get_upstream_context` (alias: `get_affecting_nodes`)
+  - `list_dependencies`
+  - `list_dependencies_full`
+  - `get_effective_constraints`
+- Search indexing now includes metadata context (for example rationale and rejected alternatives).
+
+### Changed
+
+- `NodeInput` tool schemas now enforce:
+  - `decision.category` is required
+  - `decision.metadata.rationale` is required (minimum length)
+  - `policy.severity` is required
+- Metadata schema now includes optional structured `rejected_alternatives`.
+
 ## 0.2.0 - 2026-02-24
 
 Breaking MCP tool-surface refactor to improve tool schema typing for agents.

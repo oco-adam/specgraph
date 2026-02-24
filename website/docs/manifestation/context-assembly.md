@@ -45,8 +45,14 @@ Some context comes from **inverse edges** — nodes that point TO this behavior:
 
 - A policy node with `"constrains": ["AUTH-01"]` is relevant context for AUTH-01, even though AUTH-01 doesn't link to it
 - A feature node with `"contains": ["AUTH-01"]` provides namespace context
+- A policy or decision that constrains an ancestor feature/domain of AUTH-01 is inherited by AUTH-01 via `contains` propagation
 
 Tooling computes inverse edges from the stored forward edges and includes them in context assembly.
+
+## Decision Metadata in Context
+
+For decision nodes, `metadata.rationale` is required and must be included in assembled context.  
+`metadata.rejected_alternatives` is optional but should be included whenever present so agents can avoid previously rejected approaches.
 
 ## Context as a Document
 
