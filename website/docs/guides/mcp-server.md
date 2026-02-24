@@ -44,6 +44,15 @@ Example MCP config:
 }
 ```
 
+## LLM Context Files
+
+For agent bootstrapping and retrieval workflows, the site publishes both summary and full-context text files:
+
+- [llms.txt](https://oco-adam.github.io/specgraph/llms.txt) — concise overview
+- [llms-full.txt](https://oco-adam.github.io/specgraph/llms-full.txt) — complete docs bundle
+
+See [LLM Context Files](/docs/reference/llm-context-files) for usage details.
+
 ## Tool Surface (`@specgraph/mcp@0.2.x`)
 
 ### Shared Definitions

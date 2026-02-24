@@ -2,13 +2,24 @@
 
 > The minimal specification framework for predictable system manifestation.
 
-> Generated: 2026-02-19
+> Generated: 2026-02-24
 
 ---
 
 # Spec Graph
 
 The **Spec Graph** is a formal specification framework for predictable, automated, agent-driven software development. It extends behavior-only specifications into a multi-dimensional graph that captures everything required to predictably manifest a system: behavior, architecture, design, technology choices, domain concepts, and constraints.
+
+## Authoring Model: AI-Agent First
+
+Spec Graph can be edited manually, and that is useful for learning and inspection.  
+However, the intended operating model is:
+
+- AI agents write and refactor spec graph nodes
+- AI agents consume spec graphs to manifest systems
+- humans supervise, review, and set direction
+
+In practice, this means using agent tooling (typically via MCP) as the primary interface to the graph, while keeping the JSON structure transparent and auditable.
 
 ## The Core Idea
 
@@ -55,8 +66,9 @@ These artifacts are sufficient for an engineering team to build a Spec Graph-bas
 If you want to jump straight in:
 
 1. Read [Motivation](/docs/introduction/motivation) to understand the problem
-2. Explore the [Graph Structure](/docs/graph/structure) to see how it works
-3. Check the [Getting Started](/docs/guides/getting-started) guide to write your first spec graph
+2. Use the [MCP Server guide](/docs/guides/mcp-server) for the recommended agent-driven workflow
+3. Explore the [Graph Structure](/docs/graph/structure) to understand the data model
+4. Check [Getting Started](/docs/guides/getting-started) to learn the manual file mechanics
 
 ## Background
 
@@ -520,6 +532,8 @@ Edges live inside the node that owns them. This is a deliberate design choice:
 
 Only **forward edges** are stored. If `AUTH-01` depends on `DEC-AUTH-01`, the `depends_on` link is stored in `AUTH-01.json`. The inverse ("`DEC-AUTH-01` is depended on by `AUTH-01`") is computed at query time.
 
+`Forward` here is a storage convention (declare the relationship once on the source node), not a runtime traversal limitation.
+
 ## The Graph as a Whole
 
 ```mermaid
@@ -538,6 +552,8 @@ graph TD
 ```
 
 At manifestation time, tooling loads all node files and constructs the full in-memory graph. The file-per-node layout is a storage concern — at runtime, it's one unified graph.
+
+Only `depends_on` is required to be acyclic. Other edge types may form cycles when modelling legitimate mutual relationships.
 
 ## Validation
 
@@ -666,7 +682,7 @@ Edges encode the relationships between nodes. They are the connective tissue tha
 
 ## The Seven Edge Types
 
-The Spec Graph defines seven forward-only edge types:
+The Spec Graph defines seven typed edge kinds. Each relationship is authored once as a forward declaration in the source node:
 
 | Edge Type | Meaning | Example |
 |---|---|---|
@@ -697,6 +713,8 @@ This means: "AUTH-01 implements DOM-USER-01" and "AUTH-01 depends on DEC-AUTH-01
 
 **Inverse edges are computed by tooling, never stored.** If `AUTH-01` depends on `DEC-AUTH-01`, tooling derives that `DEC-AUTH-01` is depended on by `AUTH-01`. This keeps the graph DRY — each relationship is declared once, on the node where it's most natural to author.
 
+`forward-only` describes storage, not runtime traversal. Tooling materializes both outbound and inbound views in memory.
+
 ## Edge Semantics
 
 ### `contains`
@@ -715,6 +733,8 @@ Used by feature nodes to group their children. This is the primary organizationa
 Establishes ordering requirements. If A depends on B, then B must be manifested (or at least understood) before A.
 
 **Critical rule: `depends_on` must be acyclic.** Cycles in dependency edges are a validation error.
+
+This acyclicity requirement is specific to `depends_on` because manifestation order must be topologically sortable. Other edge types can be cyclic when that matches the domain model.
 
 ### `constrains`
 
@@ -760,6 +780,30 @@ Marks a node as replacing another. The existence of this edge signals that the t
 4. **Non-decorative**: edges must affect planning, implementation, or verification — purely decorative edges are discouraged
 
 ## Common Edge Patterns
+
+### Valid Non-`depends_on` Cycle
+
+Non-dependency cycles are allowed by graph integrity checks. For example, this structural cycle is valid:
+
+```mermaid
+graph LR
+    API[API-AUTH-01<br/>api_contract] -->|implements| DOM[DOM-USER-01<br/>domain]
+    DOM -->|constrains| API
+```
+
+This can model a bidirectional relationship between a contract and domain rules. It is valid because neither edge is `depends_on`.
+
+### Invalid `depends_on` Cycle
+
+Dependency cycles are rejected by graph integrity validation:
+
+```mermaid
+graph LR
+    A[AUTH-01<br/>behavior] -->|depends_on| B[DEC-AUTH-01<br/>decision]
+    B -->|depends_on| A
+```
+
+This is invalid because `depends_on` must be acyclic to preserve a deterministic manifestation order.
 
 ### Behavior → Decision → Stack
 
@@ -2247,6 +2291,13 @@ The index file still lists all nodes — the directory structure is a convention
 
 **Manifestation** is the process of going from specification to running system. It encompasses all intermediate steps: planning, designing, coding, building, testing, and deploying.
 
+In the intended workflow, the same AI-agent ecosystem both:
+
+- maintains the spec graph (through graph-aware tools such as MCP), and
+- manifests the system from that graph.
+
+Humans keep strategic control; agents perform structured execution.
+
 ```
 Spec Graph  →  [Manifest]  →  Running System
      G              A               M
@@ -2696,9 +2747,308 @@ When all three levels pass, the manifestation is verified.
 
 ---
 
+# MCP Server (`@specgraph/mcp`)
+
+Spec Graph is designed to be **written and consumed primarily by AI agents**.  
+Humans should still understand the file format and graph mechanics, but day-to-day authoring is best done through agent tooling.
+
+The recommended interface is the Spec Graph MCP server: [`@specgraph/mcp`](https://www.npmjs.com/package/@specgraph/mcp).
+
+## Why MCP?
+
+With MCP, your coding agent can:
+
+- initialize a new spec graph
+- validate graph + nodes
+- query nodes/edges/subgraphs
+- perform safe graph writes (node/edge add/update/remove)
+
+This gives you structured, graph-aware edits instead of ad-hoc JSON file manipulation.
+
+## Run the Server
+
+```bash
+npx @specgraph/mcp --repo-dir /path/to/repo
+```
+
+`--repo-dir` should be the repository root that contains your `specgraph/` directory.
+
+## Configure in an MCP Client
+
+Example MCP config:
+
+```json
+{
+  "mcpServers": {
+    "specgraph": {
+      "command": "npx",
+      "args": ["@specgraph/mcp", "--repo-dir", "."]
+    }
+  }
+}
+```
+
+## LLM Context Files
+
+For agent bootstrapping and retrieval workflows, the site publishes both summary and full-context text files:
+
+- [llms.txt](https://oco-adam.github.io/specgraph/llms.txt) — concise overview
+- [llms-full.txt](https://oco-adam.github.io/specgraph/llms-full.txt) — complete docs bundle
+
+See [LLM Context Files](/docs/reference/llm-context-files) for usage details.
+
+## Tool Surface (`@specgraph/mcp@0.2.x`)
+
+### Shared Definitions
+
+Most tools use these common field definitions:
+
+- `directory` (optional string): spec graph directory relative to `--repo-dir` (defaults to `specgraph`)
+- `node_id`, `feature_id`, `source`, `target`: node IDs with pattern `^[A-Z][A-Z0-9-]{0,79}$`
+- `edge_type`: one of `contains`, `depends_on`, `constrains`, `implements`, `derived_from`, `verified_by`, `supersedes`
+
+`add_node` and `update_node` accept `node` as a typed union:
+
+- `feature` requires `id`, `type`, `title`, `description`
+- `behavior` requires `id`, `type`, `title`, `expectation`, `verification`
+- contract types (`decision`, `domain`, `policy`, `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`) require `id`, `type`, `title`, `statement`, `verification`
+
+Optional node fields include `links`, `metadata`, and type-specific fields (for example `category`, `severity`, `pins`, `artifact`, `constraints`).
+
+### Initialization and Validation
+
+#### `init_specgraph`
+
+Creates `graph.json` and optionally a root feature node.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "specgraph_version": "1.0.0",
+  "root_feature": {
+    "id": "ROOT",
+    "title": "Root Feature",
+    "description": "Top-level feature for this spec graph."
+  }
+}
+```
+
+#### `validate_specgraph`
+
+Validates graph + nodes against schemas and structural rules.
+
+Input:
+
+```json
+{
+  "directory": "specgraph"
+}
+```
+
+Checks include:
+
+- missing targets
+- self-references
+- `depends_on` cycles
+
+### Query Tools
+
+#### `list_nodes`
+
+Lists node summaries (`id`, `type`, `title`, `status`) plus count.
+
+Input:
+
+```json
+{
+  "directory": "specgraph"
+}
+```
+
+#### `get_node`
+
+Returns the full JSON object for one node.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "node_id": "AUTH-01"
+}
+```
+
+#### `get_feature_subgraph`
+
+Returns a feature node plus all reachable `contains` descendants.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "feature_id": "AUTH"
+}
+```
+
+#### `list_edges`
+
+Lists all graph edges as `{source, target, edge_type}`.
+
+Input:
+
+```json
+{
+  "directory": "specgraph"
+}
+```
+
+#### `search_nodes`
+
+Fuzzy-searches on `id`, `title`, `description`, `expectation`, `statement`, and string verifications.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "query": "token refresh"
+}
+```
+
+### Write Tools
+
+All writes are validated against canonical Spec Graph JSON Schemas before persistence.
+
+#### `add_node`
+
+Adds a new node. Fails if ID already exists.
+
+Input example:
+
+```json
+{
+  "directory": "specgraph",
+  "node": {
+    "id": "AUTH-01",
+    "type": "behavior",
+    "title": "Reject invalid credentials",
+    "expectation": "When credentials are invalid, login is rejected with a generic error.",
+    "verification": "npm test -- --grep AUTH-01"
+  }
+}
+```
+
+#### `update_node`
+
+Replaces an existing node.
+
+Important: this is full replacement, not partial patch. Send the complete node object, including all required fields for that node type.
+
+Input example:
+
+```json
+{
+  "directory": "specgraph",
+  "node": {
+    "id": "AUTH-01",
+    "type": "behavior",
+    "title": "Reject invalid credentials",
+    "expectation": "When credentials are invalid, login is rejected with a generic error and no user detail leakage.",
+    "verification": "npm test -- --grep AUTH-01",
+    "constraints": ["Response does not reveal whether username exists"]
+  }
+}
+```
+
+#### `remove_node`
+
+Removes a node and scrubs inbound references from other node link arrays.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "node_id": "AUTH-01"
+}
+```
+
+#### `add_edge`
+
+Adds one typed edge from `source` to `target`.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "source": "AUTH",
+  "target": "AUTH-01",
+  "edge_type": "contains"
+}
+```
+
+#### `remove_edge`
+
+Removes one typed edge from `source` to `target`.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "source": "AUTH",
+  "target": "AUTH-01",
+  "edge_type": "contains"
+}
+```
+
+### Backward Compatibility Note
+
+As of `0.2.x`, the server exposes explicit tools listed above.
+
+- removed: `query_specgraph` (operation-dispatch wrapper)
+- removed: `write_specgraph` (operation-dispatch wrapper)
+
+## Recommended Workflow
+
+1. Ask your agent to initialize or update the graph through MCP tools.
+2. Ask your agent to run `validate_specgraph` after each graph change.
+3. Keep manual JSON edits for debugging/learning, not primary authoring.
+
+## Schema Version and Overrides
+
+By default, the MCP package uses bundled canonical schemas.  
+For advanced cases, it supports environment overrides:
+
+- `SPECGRAPH_MCP_SCHEMA_DIR`
+- `SPECGRAPH_MCP_SCHEMA_BASE_URL`
+- `SPECGRAPH_MCP_GRAPH_SCHEMA`
+- `SPECGRAPH_MCP_NODE_SCHEMA`
+
+---
+
 # Getting Started
 
 This guide walks you through creating your first spec graph from scratch.
+
+:::important AI-Agent-First Workflow
+Spec Graphs are intended to be authored and consumed by AI agents. Manual editing is still valuable for learning the mechanics and debugging, but the recommended operational path is to use an agent via the [MCP server guide](/docs/guides/mcp-server).
+:::
+
+## Recommended Path (Production)
+
+Use an AI agent with the Spec Graph MCP server:
+
+1. Configure your MCP client to run `npx @specgraph/mcp --repo-dir .`
+2. Ask the agent to call `init_specgraph`
+3. Ask the agent to add/update nodes with `add_node` and `update_node`
+4. Ask the agent to run `validate_specgraph` after each change
+
+Then use the manual steps below to understand exactly what the agent is generating.
 
 ## Prerequisites
 
@@ -2835,6 +3185,7 @@ This is a **behavior-only** graph — the simplest valid spec graph. It specifie
 - **Add domain nodes** when business terms need explicit definition. See [Domain Nodes](/docs/node-types/domain).
 - **Add policy nodes** when non-functional requirements must be measured. See [Policy Nodes](/docs/node-types/policy).
 - Read [When to Add Nodes](/docs/authoring/when-to-add-nodes) for guidance on growing your graph.
+- Read the [MCP Server guide](/docs/guides/mcp-server) for the recommended agent-driven workflow.
 - See the [auth example](/docs/reference/examples) for a full-featured spec graph.
 
 ---
@@ -2842,6 +3193,9 @@ This is a **behavior-only** graph — the simplest valid spec graph. It specifie
 # Progressive Adoption
 
 The Spec Graph is designed for incremental adoption. You don't need every node type from day one — start with behaviors and add dimensions as the [minimality test](/docs/theory/minimality) demands.
+
+Use this guide to decide **what** to add to the graph.  
+For **how** to operate on the graph in day-to-day work, use the agent-driven [MCP Server workflow](/docs/guides/mcp-server).
 
 ## The Adoption Path
 
@@ -3413,13 +3767,36 @@ taskboard/
 | **Scaffold** | The second manifestation phase: create architectural infrastructure from decision and domain nodes. |
 | **Implement** | The third manifestation phase: build each behavior with full graph context. |
 | **Context Assembly** | The process of gathering all related nodes for a behavior by following edges. |
-| **Forward Edge** | An edge stored in the source node's links field. The canonical representation. |
+| **Forward Edge** | An edge stored in the source node's links field. The canonical storage representation (not a traversal restriction). |
 | **Inverse Edge** | An edge computed by tooling from forward edges. Never stored. |
 | **Progressive Adoption** | The practice of starting with behavior nodes and adding other types as needed. |
 | **The ONE Rule** | Atomicity rule for behaviors: ONE trigger, ONE behavior, ONE outcome. |
 | **Minimality Test** | "If I removed this node, could a competent agent make a choice I wouldn't want?" |
 | **Shadow Spec** | The scattered, mutable, implicit collection of documents and knowledge that fills gaps left by a behavior-only spec. |
 | **Severity** | For policy nodes: `hard` (blocks manifestation) or `soft` (quality target). |
+
+---
+
+# LLM Context Files
+
+Spec Graph publishes two text files specifically for AI agent context loading.
+
+## Available Files
+
+- [llms.txt](https://oco-adam.github.io/specgraph/llms.txt) — concise summary of the framework, key concepts, and canonical links
+- [llms-full.txt](https://oco-adam.github.io/specgraph/llms-full.txt) — full documentation bundle concatenated into one file
+
+## When to Use Which
+
+- Use `llms.txt` for lightweight orientation and quick context bootstrap
+- Use `llms-full.txt` when an agent needs complete project documentation in a single artifact
+
+## Source of Truth
+
+- `llms.txt` is maintained at `website/static/llms.txt`
+- `llms-full.txt` is generated from docs via `node generate_llms_full.js`
+
+On deploy, `llms-full.txt` is copied into `website/static/llms-full.txt`, which makes it available at `/llms-full.txt` on GitHub Pages.
 
 ---
 

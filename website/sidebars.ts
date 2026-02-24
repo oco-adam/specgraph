@@ -86,6 +86,7 @@ const sidebars: SidebarsConfig = {
         'reference/json-schemas',
         'reference/examples',
         'reference/glossary',
+        'reference/llm-context-files',
         'reference/comparison',
       ],
     },

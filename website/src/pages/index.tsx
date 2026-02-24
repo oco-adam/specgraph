@@ -120,6 +120,9 @@ function HeroSection() {
         <Link className="sg-btn-ghost" to="/docs/guides/getting-started">
           Quick Start Guide
         </Link>
+        <Link className="sg-btn-ghost" to="/docs/reference/llm-context-files">
+          LLM Context Files
+        </Link>
       </div>
     </section>
   );
