@@ -118,6 +118,9 @@ could choose incompatible approaches — capture it as a decision node:
   ],
   "links": {
     "constrains": ["REG-01"]
+  },
+  "metadata": {
+    "rationale": "Eventual consistency is required to keep write latency bounded under peak registration traffic."
   }
 }
 ```
@@ -213,7 +216,7 @@ Verification criteria produce **pass/fail** results. Prefer executable checks:
 
 ## Using Metadata
 
-The `metadata` field is for **non-normative context** — information that helps humans understand the node but is never a requirement:
+The `metadata` field is for **non-executable context** — information that helps humans and agents understand a node's background:
 
 ```json
 "metadata": {
@@ -224,7 +227,9 @@ The `metadata` field is for **non-normative context** — information that helps
 }
 ```
 
-**Key rule:** if something in metadata would change implementation if removed, it belongs in `statement` or `constraints`, not metadata.
+In most node types, metadata is optional. Some type-specific rules may require metadata fields (for example, `decision` nodes require `metadata.rationale`).
+
+**Key rule:** if something in metadata should be enforced as behavior, it belongs in `statement` or `constraints`, not metadata.
 
 ## Status Is Workflow-Derived
 

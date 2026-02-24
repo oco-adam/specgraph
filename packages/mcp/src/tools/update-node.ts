@@ -15,7 +15,7 @@ export function registerUpdateNodeTool(server: McpServer, context: ToolContext):
       inputSchema: {
         directory: Directory,
         node: NodeInput.describe(
-          'Complete replacement node object. ALL required fields must be present. Read the existing node with get_node, apply edits, and pass the full object.'
+          'Complete replacement node object. ALL required fields must be present (including decision category + metadata.rationale and policy severity where applicable). Read the existing node with get_node, apply edits, and pass the full object.'
         )
       }
     },

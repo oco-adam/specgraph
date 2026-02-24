@@ -1,26 +1,25 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import * as z from 'zod/v4';
 import { DEFAULT_DIRECTORY } from '../constants.js';
 import { loadGraph } from '../graph/loader.js';
-import { searchNodes } from '../graph/query.js';
+import { listDependencies } from '../graph/query.js';
 import type { ToolContext } from './context.js';
 import { toolError, toolSuccess } from './result.js';
-import { Directory } from './schemas.js';
+import { Directory, NodeId } from './schemas.js';
 
-export function registerSearchNodesTool(server: McpServer, context: ToolContext): void {
+export function registerListDependenciesTool(server: McpServer, context: ToolContext): void {
   server.registerTool(
-    'search_nodes',
+    'list_dependencies',
     {
-      description: 'Search nodes by fuzzy matching on id, title, core text fields, and metadata context such as rationale.',
+      description: 'List direct depends_on dependencies for a node.',
       inputSchema: {
         directory: Directory,
-        query: z.string().min(1).describe('Search term to match against node fields.')
+        node_id: NodeId.describe('ID of the node to inspect. Example: AUTH-01')
       }
     },
-    async ({ directory, query }) => {
+    async ({ directory, node_id }) => {
       try {
         const graph = await loadGraph(context.repoDir, directory ?? DEFAULT_DIRECTORY);
-        return toolSuccess(searchNodes(graph, query));
+        return toolSuccess(listDependencies(graph, node_id));
       } catch (error) {
         return toolError(error);
       }

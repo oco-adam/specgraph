@@ -59,6 +59,6 @@ Narrative documentation is valuable for explanation, but it is not authoritative
 The framework strictly distinguishes:
 
 - **Normative**: `expectation`, `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
-- **Informative**: `metadata.rationale`, `metadata.notes` — context and explanation, never requirements
+- **Informative/Contextual**: `metadata.rationale`, `metadata.notes` — non-executable context; specific node types may require certain metadata fields
 
 This prevents "helpful notes" from becoming implicit requirements that break predictable manifestation.

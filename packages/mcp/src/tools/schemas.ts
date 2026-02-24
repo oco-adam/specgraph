@@ -78,11 +78,40 @@ export const Metadata = z
     rationale: z.string().optional(),
     notes: z.string().optional(),
     owner: z.string().optional(),
-    tags: z.array(z.string()).optional()
+    tags: z.array(z.string()).optional(),
+    rejected_alternatives: z
+      .array(
+        z
+          .object({
+            title: z.string().min(3),
+            reason: z.string().min(10)
+          })
+          .strict()
+      )
+      .optional()
   })
   .passthrough()
   .optional()
-  .describe('Non-normative context (rationale, notes, owner, tags).');
+  .describe('Non-executable context (rationale, notes, owner, tags). Some fields may be required by node type.');
+
+const DecisionMetadata = z
+  .object({
+    rationale: z.string().min(10),
+    notes: z.string().optional(),
+    owner: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    rejected_alternatives: z
+      .array(
+        z
+          .object({
+            title: z.string().min(3),
+            reason: z.string().min(10)
+          })
+          .strict()
+      )
+      .optional()
+  })
+  .passthrough();
 
 const VerificationObject = z.discriminatedUnion('kind', [
   VerificationEntryBase.extend({
@@ -179,7 +208,8 @@ export const DecisionNodeInput = z
   .object({
     ...ContractNodeBase,
     type: z.literal('decision'),
-    category: z.enum(DECISION_CATEGORIES).optional()
+    category: z.enum(DECISION_CATEGORIES),
+    metadata: DecisionMetadata
   })
   .strict();
 
@@ -194,7 +224,7 @@ export const PolicyNodeInput = z
   .object({
     ...ContractNodeBase,
     type: z.literal('policy'),
-    severity: z.enum(POLICY_SEVERITIES).optional()
+    severity: z.enum(POLICY_SEVERITIES)
   })
   .strict();
 

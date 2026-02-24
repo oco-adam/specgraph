@@ -15,7 +15,7 @@ export function registerAddNodeTool(server: McpServer, context: ToolContext): vo
       inputSchema: {
         directory: Directory,
         node: NodeInput.describe(
-          'Full node object to add. Required fields depend on type: feature needs {id, type, title, description}, behavior needs {id, type, title, expectation, verification}, contract types need {id, type, title, statement, verification}.'
+          'Full node object to add. Required fields depend on type: feature needs {id, type, title, description}, behavior needs {id, type, title, expectation, verification}, contract types need {id, type, title, statement, verification}; decision additionally requires {category, metadata.rationale}; policy additionally requires {severity}.'
         )
       }
     },

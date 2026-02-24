@@ -53,7 +53,7 @@ For agent bootstrapping and retrieval workflows, the site publishes both summary
 
 See [LLM Context Files](/docs/reference/llm-context-files) for usage details.
 
-## Tool Surface (`@specgraph/mcp@0.2.x`)
+## Tool Surface (`@specgraph/mcp@0.3.x`)
 
 ### Shared Definitions
 
@@ -68,6 +68,8 @@ Most tools use these common field definitions:
 - `feature` requires `id`, `type`, `title`, `description`
 - `behavior` requires `id`, `type`, `title`, `expectation`, `verification`
 - contract types (`decision`, `domain`, `policy`, `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`) require `id`, `type`, `title`, `statement`, `verification`
+- `decision` additionally requires `category` and `metadata.rationale`
+- `policy` additionally requires `severity`
 
 Optional node fields include `links`, `metadata`, and type-specific fields (for example `category`, `severity`, `pins`, `artifact`, `constraints`).
 
@@ -136,6 +138,68 @@ Input:
 }
 ```
 
+#### `get_upstream_context` (recommended)
+
+Returns all upstream nodes that influence a target node, with reason labels.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "node_id": "AUTH-01"
+}
+```
+
+Includes:
+
+- transitive `depends_on` nodes
+- direct and inherited constraining nodes (via `contains` propagation)
+- `contains` ancestors
+- direct `implements`/`verified_by`/`derived_from` references
+- inbound `supersedes` references
+
+Compatibility alias: `get_affecting_nodes`.
+
+#### `list_dependencies`
+
+Lists direct `depends_on` dependencies for a node.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "node_id": "AUTH-01"
+}
+```
+
+#### `list_dependencies_full`
+
+Returns transitive `depends_on` closure, dependency classifications, and dependency-adjacent decision/policy context.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "node_id": "AUTH-01"
+}
+```
+
+#### `get_effective_constraints`
+
+Computes all constraining nodes that apply to a target node, including inherited constraints via `contains` ancestry (not via `depends_on`).
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "node_id": "AUTH-01"
+}
+```
+
 #### `get_feature_subgraph`
 
 Returns a feature node plus all reachable `contains` descendants.
@@ -163,7 +227,7 @@ Input:
 
 #### `search_nodes`
 
-Fuzzy-searches on `id`, `title`, `description`, `expectation`, `statement`, and string verifications.
+Fuzzy-searches on `id`, `title`, core text fields, and metadata context such as rationale.
 
 Input:
 
@@ -264,7 +328,7 @@ Input:
 
 ### Backward Compatibility Note
 
-As of `0.2.x`, the server exposes explicit tools listed above.
+As of `0.3.x`, the server exposes explicit tools listed above.
 
 - removed: `query_specgraph` (operation-dispatch wrapper)
 - removed: `write_specgraph` (operation-dispatch wrapper)

@@ -41,7 +41,7 @@ Policy nodes capture **cross-cutting non-functional requirements** — performan
 |---|---|---|
 | `id` | Yes | Unique identifier (e.g., `POL-PERF-01`) |
 | `type` | Yes | Must be `"policy"` |
-| `severity` | No | `"hard"` (blocks manifestation) or `"soft"` (quality target) |
+| `severity` | Yes | `"hard"` (blocks manifestation) or `"soft"` (quality target) |
 | `title` | Yes | Short name (3–140 chars) |
 | `statement` | Yes | What must be true, with measurable criteria |
 | `constraints` | No | Normative sub-conditions that further narrow this node's statement |
@@ -75,8 +75,6 @@ A soft policy is a **quality target**. Failing it produces a warning, not a bloc
 }
 ```
 
-If `severity` is omitted, tooling should treat the policy as `hard` by default.
-
 ## Policy Categories
 
 Policy nodes cover a wide range of non-functional requirements:
@@ -101,6 +99,8 @@ graph TD
 ```
 
 A single policy can apply to many behaviors across multiple features.
+
+Policies can also be attached at higher-level feature/domain nodes and inherited by contained descendants via transitive propagation through `contains` edges. Prefer the highest applicable attachment point to reduce graph clutter.
 
 ## When to Create Policy Nodes
 

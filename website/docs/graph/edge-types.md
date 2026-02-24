@@ -74,6 +74,15 @@ Narrows the implementation space of the target. A policy node might constrain a 
 }
 ```
 
+#### Constraint propagation through `contains`
+
+To avoid edge explosion, `constrains` is interpreted with transitive propagation:
+
+1. If `A constrains B` and `B contains C`, then `A` implicitly constrains `C` (downward cascade).
+2. Propagation does not flow upward from child to parent.
+3. Propagation does not flow over `depends_on`; dependencies are separate from inheritance.
+4. If a node has multiple `contains` ancestors, inherited constraints are unioned.
+
 ### `implements`
 
 Links a concrete node to the abstract concept it realizes. Typically used by behavior nodes pointing to domain nodes:
