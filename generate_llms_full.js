@@ -11,7 +11,8 @@ const fs = require('fs');
 const path = require('path');
 
 const DOCS_DIR = path.join(__dirname, 'website', 'docs');
-const OUTPUT = path.join(__dirname, 'llms-full.txt');
+const OUTPUT_ROOT = path.join(__dirname, 'llms-full.txt');
+const OUTPUT_STATIC = path.join(__dirname, 'website', 'static', 'llms-full.txt');
 
 // Sidebar order — matches sidebars.ts
 const pages = [
@@ -40,12 +41,14 @@ const pages = [
   'manifestation/orient-scaffold-implement.md',
   'manifestation/context-assembly.md',
   'manifestation/verification.md',
+  'guides/mcp-server.md',
   'guides/getting-started.md',
   'guides/progressive-adoption.md',
   'guides/from-dloop-v1.md',
   'reference/json-schemas.md',
   'reference/examples.md',
   'reference/glossary.md',
+  'reference/llm-context-files.md',
   'reference/comparison.md',
 ];
 
@@ -85,8 +88,10 @@ function main() {
     parts.push('');
   }
 
-  fs.writeFileSync(OUTPUT, parts.join('\n'), 'utf8');
-  console.log(`Generated ${OUTPUT} (${pages.length} pages)`);
+  const output = parts.join('\n');
+  fs.writeFileSync(OUTPUT_ROOT, output, 'utf8');
+  fs.writeFileSync(OUTPUT_STATIC, output, 'utf8');
+  console.log(`Generated ${OUTPUT_ROOT} and ${OUTPUT_STATIC} (${pages.length} pages)`);
 }
 
 main();

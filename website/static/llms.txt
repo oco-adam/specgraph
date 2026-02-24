@@ -6,75 +6,65 @@ Spec Graph is a formal framework for declarative, multi-dimensional software spe
 
 ## Core Concepts
 
-- **Completeness**: The spec determines all decisions the designer cares about
-- **Minimality**: Every node is load-bearing — removing it would cause ambiguity
-- **Deterministic Manifestation**: Same graph → same system (logically equivalent)
-- **Progressive Adoption**: Start with behaviors, add dimensions as needed
+- **Completeness**: the spec determines all decisions the designer cares about
+- **Minimality**: every node is load-bearing; removing it causes manifestation ambiguity
+- **Deterministic Manifestation**: same graph leads to logically equivalent systems
+- **Progressive Adoption**: start with behavior nodes, then add dimensions as needed
 
-## Node Types (5 Core)
+## Node Types
 
-- `feature` — Grouping/namespace (non-normative)
-- `behavior` — Observable system behavior (expectation + invariant + verification)
-- `decision` — Architectural/technical/stack decision (categories: architecture, stack, pattern, interface)
-- `domain` — Business concept, term, or rule
-- `constraint` — Non-functional requirement (severity: hard/soft)
+### Core (5)
 
-## Extension Types
+- `feature` — grouping/namespace (non-normative)
+- `behavior` — observable behavior (`expectation` + `verification`)
+- `decision` — architecture/technology decisions
+- `domain` — business concepts and terms
+- `policy` — non-functional requirements (`hard`/`soft` severity)
 
-design_token, ui_contract, api_contract, data_model, artifact, equivalence_contract, pipeline
+### Extension
+
+- `design_token`
+- `ui_contract`
+- `api_contract`
+- `data_model`
+- `artifact`
+- `equivalence_contract`
+- `pipeline`
 
 ## Edge Types (7, forward-only)
 
-contains, depends_on, constrains, implements, derived_from, verified_by, supersedes
+- `contains`
+- `depends_on`
+- `constrains`
+- `implements`
+- `derived_from`
+- `verified_by`
+- `supersedes`
 
-## Documentation
+## MCP Tools
 
-- Introduction: /docs/introduction
-- Motivation: /docs/introduction/motivation
-- Design Principles: /docs/introduction/design-principles
-- Completeness: /docs/theory/completeness
-- Minimality: /docs/theory/minimality
-- The Completeness Gap: /docs/theory/completeness-gap
-- Equivalence: /docs/theory/equivalence
-- Graph Structure: /docs/graph/structure
-- Node Types Overview: /docs/graph/node-types-overview
-- Edge Types: /docs/graph/edge-types
-- Features & Namespaces: /docs/graph/features-and-namespaces
-- Behavior Nodes: /docs/node-types/behavior
-- Decision Nodes: /docs/node-types/decision
-- Domain Nodes: /docs/node-types/domain
-- Constraint Nodes: /docs/node-types/constraint
-- Feature Nodes: /docs/node-types/feature
-- Extension Types: /docs/node-types/extensions
-- Writing Nodes: /docs/authoring/writing-nodes
-- Atomicity Rules: /docs/authoring/atomicity-rules
-- When to Add Nodes: /docs/authoring/when-to-add-nodes
-- Directory Layout: /docs/authoring/directory-layout
-- Manifestation Overview: /docs/manifestation/overview
-- Orient, Scaffold, Implement: /docs/manifestation/orient-scaffold-implement
-- Context Assembly: /docs/manifestation/context-assembly
-- Verification: /docs/manifestation/verification
-- Getting Started: /docs/guides/getting-started
-- Progressive Adoption: /docs/guides/progressive-adoption
-- From DLOOP v1: /docs/guides/from-dloop-v1
-- JSON Schemas: /docs/reference/json-schemas
-- Examples: /docs/reference/examples
-- Glossary: /docs/reference/glossary
-- Comparison: /docs/reference/comparison
+- `init_specgraph`
+- `validate_specgraph`
+- `list_nodes`
+- `get_node`
+- `get_feature_subgraph`
+- `list_edges`
+- `search_nodes`
+- `add_node`
+- `update_node`
+- `remove_node`
+- `add_edge`
+- `remove_edge`
 
-## JSON Schemas
+## Key Links
 
-- graph.schema.json: /schemas/graph.schema.json
-- node.schema.json: /schemas/node.schema.json
-- graph-index.schema.json: /schemas/graph-index.schema.json
-- manifest-lock.schema.json: /schemas/manifest-lock.schema.json
+- Docs home: `/docs/introduction`
+- MCP guide: `/docs/guides/mcp-server`
+- JSON Schemas: `/docs/reference/json-schemas`
+- Examples: `/docs/reference/examples`
 
-## Examples
+## LLM Context Files
 
-- auth/ — All 5 core types (authentication feature)
-- taskboard/ — Core + design_token extension (Kanban board)
-- minimal/ — Behavior-only (todo list)
-
-## Full Documentation
-
-For the complete documentation as a single file, see: llms-full.txt
+- Summary: `/llms.txt`
+- Full bundle: `/llms-full.txt`
+- Usage notes: `/docs/reference/llm-context-files`
