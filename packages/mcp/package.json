@@ -27,6 +27,11 @@
     "specgraph",
     "model-context-protocol"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oco-adam/specgraph",
+    "directory": "packages/mcp"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=20"
