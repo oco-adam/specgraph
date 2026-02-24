@@ -44,37 +44,221 @@ Example MCP config:
 }
 ```
 
-## Available Tools
+## Tool Surface (`@specgraph/mcp@0.2.x`)
 
-### `init_specgraph`
+### Shared Definitions
 
-Creates `specgraph/graph.json` and optionally a root feature.
+Most tools use these common field definitions:
 
-### `validate_specgraph`
+- `directory` (optional string): spec graph directory relative to `--repo-dir` (defaults to `specgraph`)
+- `node_id`, `feature_id`, `source`, `target`: node IDs with pattern `^[A-Z][A-Z0-9-]{0,79}$`
+- `edge_type`: one of `contains`, `depends_on`, `constrains`, `implements`, `derived_from`, `verified_by`, `supersedes`
 
-Runs schema validation and structural checks:
+`add_node` and `update_node` accept `node` as a typed union:
+
+- `feature` requires `id`, `type`, `title`, `description`
+- `behavior` requires `id`, `type`, `title`, `expectation`, `verification`
+- contract types (`decision`, `domain`, `policy`, `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`) require `id`, `type`, `title`, `statement`, `verification`
+
+Optional node fields include `links`, `metadata`, and type-specific fields (for example `category`, `severity`, `pins`, `artifact`, `constraints`).
+
+### Initialization and Validation
+
+#### `init_specgraph`
+
+Creates `graph.json` and optionally a root feature node.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "specgraph_version": "1.0.0",
+  "root_feature": {
+    "id": "ROOT",
+    "title": "Root Feature",
+    "description": "Top-level feature for this spec graph."
+  }
+}
+```
+
+#### `validate_specgraph`
+
+Validates graph + nodes against schemas and structural rules.
+
+Input:
+
+```json
+{
+  "directory": "specgraph"
+}
+```
+
+Checks include:
 
 - missing targets
 - self-references
 - `depends_on` cycles
 
-### Query tools
+### Query Tools
 
-- `list_nodes`
-- `get_node`
-- `get_feature_subgraph`
-- `list_edges`
-- `search_nodes`
+#### `list_nodes`
 
-### Write tools
+Lists node summaries (`id`, `type`, `title`, `status`) plus count.
 
-- `add_node`
-- `update_node`
-- `remove_node` (with dangling-edge scrubbing)
-- `add_edge`
-- `remove_edge`
+Input:
 
-Writes are validated against the canonical Spec Graph JSON Schemas.
+```json
+{
+  "directory": "specgraph"
+}
+```
+
+#### `get_node`
+
+Returns the full JSON object for one node.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "node_id": "AUTH-01"
+}
+```
+
+#### `get_feature_subgraph`
+
+Returns a feature node plus all reachable `contains` descendants.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "feature_id": "AUTH"
+}
+```
+
+#### `list_edges`
+
+Lists all graph edges as `{source, target, edge_type}`.
+
+Input:
+
+```json
+{
+  "directory": "specgraph"
+}
+```
+
+#### `search_nodes`
+
+Fuzzy-searches on `id`, `title`, `description`, `expectation`, `statement`, and string verifications.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "query": "token refresh"
+}
+```
+
+### Write Tools
+
+All writes are validated against canonical Spec Graph JSON Schemas before persistence.
+
+#### `add_node`
+
+Adds a new node. Fails if ID already exists.
+
+Input example:
+
+```json
+{
+  "directory": "specgraph",
+  "node": {
+    "id": "AUTH-01",
+    "type": "behavior",
+    "title": "Reject invalid credentials",
+    "expectation": "When credentials are invalid, login is rejected with a generic error.",
+    "verification": "npm test -- --grep AUTH-01"
+  }
+}
+```
+
+#### `update_node`
+
+Replaces an existing node.
+
+Important: this is full replacement, not partial patch. Send the complete node object, including all required fields for that node type.
+
+Input example:
+
+```json
+{
+  "directory": "specgraph",
+  "node": {
+    "id": "AUTH-01",
+    "type": "behavior",
+    "title": "Reject invalid credentials",
+    "expectation": "When credentials are invalid, login is rejected with a generic error and no user detail leakage.",
+    "verification": "npm test -- --grep AUTH-01",
+    "constraints": ["Response does not reveal whether username exists"]
+  }
+}
+```
+
+#### `remove_node`
+
+Removes a node and scrubs inbound references from other node link arrays.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "node_id": "AUTH-01"
+}
+```
+
+#### `add_edge`
+
+Adds one typed edge from `source` to `target`.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "source": "AUTH",
+  "target": "AUTH-01",
+  "edge_type": "contains"
+}
+```
+
+#### `remove_edge`
+
+Removes one typed edge from `source` to `target`.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "source": "AUTH",
+  "target": "AUTH-01",
+  "edge_type": "contains"
+}
+```
+
+### Backward Compatibility Note
+
+As of `0.2.x`, the server exposes explicit tools listed above.
+
+- removed: `query_specgraph` (operation-dispatch wrapper)
+- removed: `write_specgraph` (operation-dispatch wrapper)
 
 ## Recommended Workflow
 
