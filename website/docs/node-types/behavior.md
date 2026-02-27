@@ -32,7 +32,7 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
 | `type` | Yes | Must be `"behavior"` |
 | `title` | Yes | Short human-readable name (3–100 chars) |
 | `expectation` | Yes | WHAT the system does (min 10 chars) |
-| `constraints` | No | Normative conditions that must hold for this behavior (default: empty) |
+| `constraints` | No | Normative conditions that must hold for this behavior. Authoring convention: include explicitly; use `[]` when none. |
 | `verification` | Yes | Single pass/fail check (min 5 chars) |
 | `links` | No | Outbound edges to other nodes |
 | `metadata` | No | Non-normative context (rationale, notes, tags) |
@@ -66,7 +66,8 @@ The constraints are not second behaviors — they are side-conditions on the exp
 "Password field must mask input characters" constrains how the login form is displayed,
 not what happens when you submit it.
 
-A behavior with no constraints simply omits the field (or uses an empty array).
+Schema compatibility: a behavior with no constraints may omit the field.
+Authoring convention for agent interoperability: include `constraints` explicitly and use an empty array (`[]`) when none apply.
 There is no need for a `"None"` sentinel.
 
 ### Temporal specificity

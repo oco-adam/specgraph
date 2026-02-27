@@ -13,10 +13,11 @@ Spec Graph is a formal framework for declarative, multi-dimensional software spe
 
 ## Node Types
 
-### Core (5)
+### Core (6)
 
 - `feature` — grouping/namespace (non-normative)
-- `behavior` — observable behavior (`expectation` + `verification`)
+- `layer` — grouping/namespace for shared horizontal capabilities (non-normative)
+- `behavior` — observable behavior (`expectation` + `constraints[]` + `verification`)
 - `decision` — architecture/technology decisions
 - `domain` — business concepts and terms
 - `policy` — non-functional requirements (`hard`/`soft` severity)
@@ -40,6 +41,11 @@ Spec Graph is a formal framework for declarative, multi-dimensional software spe
 - `derived_from`
 - `verified_by`
 - `supersedes`
+
+## Authoring Convention
+
+- For behavior nodes, include the `constraints` field explicitly.
+- If there are no node-local constraints, set `"constraints": []` instead of omitting the field.
 
 ## MCP Tools
 

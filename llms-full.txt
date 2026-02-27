@@ -913,7 +913,7 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
 | `type` | Yes | Must be `"behavior"` |
 | `title` | Yes | Short human-readable name (3–100 chars) |
 | `expectation` | Yes | WHAT the system does (min 10 chars) |
-| `constraints` | No | Normative conditions that must hold for this behavior (default: empty) |
+| `constraints` | No | Normative conditions that must hold for this behavior. Authoring convention: include explicitly; use `[]` when none. |
 | `verification` | Yes | Single pass/fail check (min 5 chars) |
 | `links` | No | Outbound edges to other nodes |
 | `metadata` | No | Non-normative context (rationale, notes, tags) |
@@ -947,7 +947,8 @@ The constraints are not second behaviors — they are side-conditions on the exp
 "Password field must mask input characters" constrains how the login form is displayed,
 not what happens when you submit it.
 
-A behavior with no constraints simply omits the field (or uses an empty array).
+Schema compatibility: a behavior with no constraints may omit the field.
+Authoring convention for agent interoperability: include `constraints` explicitly and use an empty array (`[]`) when none apply.
 There is no need for a `"None"` sentinel.
 
 ### Temporal specificity
@@ -2857,6 +2858,7 @@ Most tools use these common field definitions:
 
 - `feature` and `layer` require `id`, `type`, `title`, `description`
 - `behavior` requires `id`, `type`, `title`, `expectation`, `verification`
+- behavior authoring convention: include `constraints` explicitly; use `[]` if none apply (schema still allows omission)
 - contract types (`decision`, `domain`, `policy`, `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`) require `id`, `type`, `title`, `statement`, `verification`
 - `decision` additionally requires `category` and `metadata.rationale`
 - `policy` additionally requires `severity`
@@ -3065,6 +3067,7 @@ Input example:
     "type": "behavior",
     "title": "Reject invalid credentials",
     "expectation": "When credentials are invalid, login is rejected with a generic error.",
+    "constraints": ["Response does not reveal whether username exists"],
     "verification": "npm test -- --grep AUTH-01"
   }
 }
@@ -3662,6 +3665,8 @@ Required: `id`, `type` (= `"layer"`), `title`, `description`
 Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `verification`
 
 Optional: `constraints` (array)
+
+Authoring convention: include `constraints` explicitly on behavior nodes and use `[]` when none apply. Omission remains schema-valid for backward compatibility.
 
 ### Contract Nodes
 

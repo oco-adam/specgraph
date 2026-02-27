@@ -67,6 +67,7 @@ Most tools use these common field definitions:
 
 - `feature` and `layer` require `id`, `type`, `title`, `description`
 - `behavior` requires `id`, `type`, `title`, `expectation`, `verification`
+- behavior authoring convention: include `constraints` explicitly; use `[]` if none apply (schema still allows omission)
 - contract types (`decision`, `domain`, `policy`, `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`) require `id`, `type`, `title`, `statement`, `verification`
 - `decision` additionally requires `category` and `metadata.rationale`
 - `policy` additionally requires `severity`
@@ -275,6 +276,7 @@ Input example:
     "type": "behavior",
     "title": "Reject invalid credentials",
     "expectation": "When credentials are invalid, login is rejected with a generic error.",
+    "constraints": ["Response does not reveal whether username exists"],
     "verification": "npm test -- --grep AUTH-01"
   }
 }
