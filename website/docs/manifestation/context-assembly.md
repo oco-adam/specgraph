@@ -44,8 +44,9 @@ In practice, depth 2 is usually sufficient. Going deeper can include nodes that 
 Some context comes from **inverse edges** — nodes that point TO this behavior:
 
 - A policy node with `"constrains": ["AUTH-01"]` is relevant context for AUTH-01, even though AUTH-01 doesn't link to it
-- A feature node with `"contains": ["AUTH-01"]` provides namespace context
-- A policy or decision that constrains an ancestor feature/domain of AUTH-01 is inherited by AUTH-01 via `contains` propagation
+- A grouping node (`feature` or `layer`) with `"contains": ["AUTH-01"]` provides namespace context
+- A policy or decision that constrains an ancestor feature/layer/domain of AUTH-01 is inherited by AUTH-01 via `contains` propagation
+- Layer-originated guidance can also be inherited when AUTH-01 (or its parent grouping node) transitively depends on a layer
 
 Tooling computes inverse edges from the stored forward edges and includes them in context assembly.
 
@@ -84,7 +85,7 @@ Constraints: Password field must mask input characters.
 npm test -- --grep AUTH-01
 ```
 
-This document is what the implementing agent "sees" when building AUTH-01. Everything is reachable from the behavior node via edges.
+This document is what the implementing agent "sees" when building AUTH-01. It includes direct edges, inverse edges, and effective propagated guidance.
 
 ## Why Context Assembly Matters
 

@@ -37,6 +37,14 @@ For any proposed node:
 
 **Key signal:** you find yourself writing the same guidance in multiple PR reviews, agent instructions, or CLAUDE.md files. If you're repeating it, it should be a node.
 
+### Add Layer Nodes When...
+
+- Two or more features depend on the same infrastructure capability
+- Shared architectural guidance is being duplicated across feature namespaces
+- Cross-feature platform concerns (security baseline, data access layer, observability) need explicit grouping
+
+**Key signal:** the same infrastructure decisions/policies are repeated across multiple vertical slices. Promote them into a `layer` and have features depend on it.
+
 ### Add Domain Nodes When...
 
 - A business term is ambiguous without explicit definition

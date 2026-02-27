@@ -1494,7 +1494,7 @@ Feature IDs are short uppercase identifiers:
 | Task Board | `TASKBOARD` |
 | Billing & Payments | `BILLING` |
 | Design System | `DESIGNSYSTEM` |
-| Platform | `PLATFORM` |
+| Notifications | `NOTIFICATIONS` |
 
 Feature IDs should be recognizable and concise — they serve as the namespace prefix for child node IDs.
 
@@ -1737,7 +1737,7 @@ This guide covers the practical mechanics of writing good spec graph nodes.
 
 ## The Universal Structure
 
-All normative nodes (everything except features) follow a pattern:
+All normative nodes (everything except grouping nodes: `feature` and `layer`) follow a pattern:
 
 1. **Declare** what must be true (`statement` or `expectation`)
 2. **Constrain** what limits apply (`constraints`)
@@ -2109,6 +2109,14 @@ For any proposed node:
 | Modules need a stable interface contract | `interface` |
 
 **Key signal:** you find yourself writing the same guidance in multiple PR reviews, agent instructions, or CLAUDE.md files. If you're repeating it, it should be a node.
+
+### Add Layer Nodes When...
+
+- Two or more features depend on the same infrastructure capability
+- Shared architectural guidance is being duplicated across feature namespaces
+- Cross-feature platform concerns (security baseline, data access layer, observability) need explicit grouping
+
+**Key signal:** the same infrastructure decisions/policies are repeated across multiple vertical slices. Promote them into a `layer` and have features depend on it.
 
 ### Add Domain Nodes When...
 
@@ -2550,8 +2558,9 @@ In practice, depth 2 is usually sufficient. Going deeper can include nodes that 
 Some context comes from **inverse edges** — nodes that point TO this behavior:
 
 - A policy node with `"constrains": ["AUTH-01"]` is relevant context for AUTH-01, even though AUTH-01 doesn't link to it
-- A feature node with `"contains": ["AUTH-01"]` provides namespace context
-- A policy or decision that constrains an ancestor feature/domain of AUTH-01 is inherited by AUTH-01 via `contains` propagation
+- A grouping node (`feature` or `layer`) with `"contains": ["AUTH-01"]` provides namespace context
+- A policy or decision that constrains an ancestor feature/layer/domain of AUTH-01 is inherited by AUTH-01 via `contains` propagation
+- Layer-originated guidance can also be inherited when AUTH-01 (or its parent grouping node) transitively depends on a layer
 
 Tooling computes inverse edges from the stored forward edges and includes them in context assembly.
 
@@ -2590,7 +2599,7 @@ Constraints: Password field must mask input characters.
 npm test -- --grep AUTH-01
 ```
 
-This document is what the implementing agent "sees" when building AUTH-01. Everything is reachable from the behavior node via edges.
+This document is what the implementing agent "sees" when building AUTH-01. It includes direct edges, inverse edges, and effective propagated guidance.
 
 ## Why Context Assembly Matters
 
@@ -3329,6 +3338,7 @@ specgraph/
   graph.json
   nodes/
     features/AUTH.json
+    layers/PLATFORM.json        # optional, when shared infra exists
     behaviors/AUTH-01.json
     behaviors/AUTH-02.json
 ```
@@ -3356,7 +3366,21 @@ specgraph/
 
 **What you get:** structural and technological equivalence added to behavioral equivalence.
 
-### Level 3: + Domain Nodes
+### Level 3: + Layer Nodes
+
+When multiple features share foundational infrastructure guidance, add a layer node.
+
+```
+  nodes/
+    ...
+    layers/PLATFORM.json        ← NEW
+```
+
+**Trigger:** "Multiple feature slices depend on the same platform/security/data decisions."
+
+**What you get:** explicit horizontal architecture and reusable shared guidance.
+
+### Level 4: + Domain Nodes
 
 When business terms are ambiguous or domain rules are being violated, add domain nodes.
 
@@ -3370,7 +3394,7 @@ When business terms are ambiguous or domain rules are being violated, add domain
 
 **What you get:** domain equivalence — same data model and business rules.
 
-### Level 4: + Policy Nodes
+### Level 5: + Policy Nodes
 
 When non-functional requirements need measurement, add policy nodes.
 
@@ -3384,7 +3408,7 @@ When non-functional requirements need measurement, add policy nodes.
 
 **What you get:** policy equivalence — same non-functional characteristics.
 
-### Level 5: + Extension Types
+### Level 6: + Extension Types
 
 When core types don't provide enough precision for a specific dimension:
 
@@ -3405,13 +3429,14 @@ Each level is triggered by a **manifestation failure** — a case where the curr
 |---|---|
 | Two implementations have incompatible architectures | Decision nodes (architecture) |
 | Wrong technology or library was used | Decision nodes (stack) |
+| Multiple features require the same infrastructure context | Layer nodes |
 | Agent misunderstood a business term | Domain nodes |
 | Performance or security requirement was violated | Policy nodes |
 | Visual design is inconsistent | Design token extensions |
 
 ## You Don't Need Every Level
 
-Many projects will never reach Level 5. A behavior + decision graph (Level 2) may be sufficient for most internal tools. The key insight is:
+Many projects will never reach Level 6. A behavior + decision graph (Level 2) may be sufficient for most internal tools. The key insight is:
 
 > **Only add nodes that prevent actual manifestation problems.**
 
@@ -3423,10 +3448,11 @@ If your project has no formal spec at all:
 
 1. **Audit existing behavior** — what does the system currently do?
 2. **Write behavior nodes** — one per observable action
-3. **Group into features** — create feature nodes
-4. **Build the index** — create `graph.json`
-5. **Validate** — run the schema validator
-6. **Iterate** — add decision/domain/policy nodes as needed
+3. **Group vertical slices** — create feature nodes
+4. **Extract shared horizontal capabilities** — create layer nodes only when multiple features depend on them
+5. **Build the index** — create `graph.json`
+6. **Validate** — run the schema validator
+7. **Iterate** — add decision/layer/domain/policy nodes as needed
 
 The initial behavior audit is the most time-consuming step. Once you have behaviors, the graph grows incrementally.
 
@@ -3513,6 +3539,12 @@ Convert each v1 feature into a feature node:
 }
 ```
 
+Optional horizontal extraction after baseline migration:
+
+- Keep product slices as `feature` nodes
+- Move shared infrastructure groupings into `layer` nodes
+- Add `feature -> depends_on -> layer` edges where appropriate
+
 ### Step 3: Create the Graph Index
 
 ```json
@@ -3560,9 +3592,9 @@ This allows teams to migrate incrementally without breaking existing tooling tha
 
 ## Key Differences to Watch
 
-### Edges Replace Feature Nesting
+### Edges Replace Feature/Layer Nesting
 
-In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is expressed via the `contains` edge in the feature node. A node could conceptually belong to multiple features.
+In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is expressed via the `contains` edge in a grouping node (`feature` or `layer`). A node can conceptually belong to multiple groupings.
 
 ### Verification Is Richer
 
