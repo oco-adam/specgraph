@@ -2,6 +2,23 @@
 
 All notable changes to `@specgraph/mcp` are documented in this file.
 
+## 0.4.0 - 2026-02-27
+
+### Added
+
+- Added `layer` as a first-class grouping node type in MCP node input schemas and bundled JSON Schema validation.
+- Added `get_group_subgraph` for group traversal across both `feature` and `layer` nodes.
+- Added structural validation for layer propagation edge cases:
+  - detect ambiguous layer-propagation outcomes
+  - reject invalid `depends_on` inversion where a `layer` depends on a `feature`
+
+### Changed
+
+- `list_dependencies_full` now separates informational dependency context from normative, layer-propagated effective guidance.
+- `get_effective_constraints` now resolves transitive layer-originated propagation over `depends_on` in addition to direct and inherited `constrains`.
+- `get_feature_subgraph` is retained as a backward-compatible alias; `get_group_subgraph` is the preferred tool for grouping traversal.
+- Behavior authoring schemas/documentation now clarify that `constraints` should be explicit (use `[]` when none apply).
+
 ## 0.3.0 - 2026-02-24
 
 ### Added
