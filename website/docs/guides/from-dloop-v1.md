@@ -84,6 +84,12 @@ Convert each v1 feature into a feature node:
 }
 ```
 
+Optional horizontal extraction after baseline migration:
+
+- Keep product slices as `feature` nodes
+- Move shared infrastructure groupings into `layer` nodes
+- Add `feature -> depends_on -> layer` edges where appropriate
+
 ### Step 3: Create the Graph Index
 
 ```json
@@ -131,9 +137,9 @@ This allows teams to migrate incrementally without breaking existing tooling tha
 
 ## Key Differences to Watch
 
-### Edges Replace Feature Nesting
+### Edges Replace Feature/Layer Nesting
 
-In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is expressed via the `contains` edge in the feature node. A node could conceptually belong to multiple features.
+In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is expressed via the `contains` edge in a grouping node (`feature` or `layer`). A node can conceptually belong to multiple groupings.
 
 ### Verification Is Richer
 

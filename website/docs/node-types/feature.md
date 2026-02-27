@@ -66,7 +66,7 @@ Feature IDs are short uppercase identifiers:
 | Task Board | `TASKBOARD` |
 | Billing & Payments | `BILLING` |
 | Design System | `DESIGNSYSTEM` |
-| Platform | `PLATFORM` |
+| Notifications | `NOTIFICATIONS` |
 
 Feature IDs should be recognizable and concise — they serve as the namespace prefix for child node IDs.
 

@@ -21,6 +21,7 @@ specgraph/
   graph.json
   nodes/
     features/AUTH.json
+    layers/PLATFORM.json        # optional, when shared infra exists
     behaviors/AUTH-01.json
     behaviors/AUTH-02.json
 ```
@@ -48,7 +49,21 @@ specgraph/
 
 **What you get:** structural and technological equivalence added to behavioral equivalence.
 
-### Level 3: + Domain Nodes
+### Level 3: + Layer Nodes
+
+When multiple features share foundational infrastructure guidance, add a layer node.
+
+```
+  nodes/
+    ...
+    layers/PLATFORM.json        ← NEW
+```
+
+**Trigger:** "Multiple feature slices depend on the same platform/security/data decisions."
+
+**What you get:** explicit horizontal architecture and reusable shared guidance.
+
+### Level 4: + Domain Nodes
 
 When business terms are ambiguous or domain rules are being violated, add domain nodes.
 
@@ -62,7 +77,7 @@ When business terms are ambiguous or domain rules are being violated, add domain
 
 **What you get:** domain equivalence — same data model and business rules.
 
-### Level 4: + Policy Nodes
+### Level 5: + Policy Nodes
 
 When non-functional requirements need measurement, add policy nodes.
 
@@ -76,7 +91,7 @@ When non-functional requirements need measurement, add policy nodes.
 
 **What you get:** policy equivalence — same non-functional characteristics.
 
-### Level 5: + Extension Types
+### Level 6: + Extension Types
 
 When core types don't provide enough precision for a specific dimension:
 
@@ -97,13 +112,14 @@ Each level is triggered by a **manifestation failure** — a case where the curr
 |---|---|
 | Two implementations have incompatible architectures | Decision nodes (architecture) |
 | Wrong technology or library was used | Decision nodes (stack) |
+| Multiple features require the same infrastructure context | Layer nodes |
 | Agent misunderstood a business term | Domain nodes |
 | Performance or security requirement was violated | Policy nodes |
 | Visual design is inconsistent | Design token extensions |
 
 ## You Don't Need Every Level
 
-Many projects will never reach Level 5. A behavior + decision graph (Level 2) may be sufficient for most internal tools. The key insight is:
+Many projects will never reach Level 6. A behavior + decision graph (Level 2) may be sufficient for most internal tools. The key insight is:
 
 > **Only add nodes that prevent actual manifestation problems.**
 
@@ -115,9 +131,10 @@ If your project has no formal spec at all:
 
 1. **Audit existing behavior** — what does the system currently do?
 2. **Write behavior nodes** — one per observable action
-3. **Group into features** — create feature nodes
-4. **Build the index** — create `graph.json`
-5. **Validate** — run the schema validator
-6. **Iterate** — add decision/domain/policy nodes as needed
+3. **Group vertical slices** — create feature nodes
+4. **Extract shared horizontal capabilities** — create layer nodes only when multiple features depend on them
+5. **Build the index** — create `graph.json`
+6. **Validate** — run the schema validator
+7. **Iterate** — add decision/layer/domain/policy nodes as needed
 
 The initial behavior audit is the most time-consuming step. Once you have behaviors, the graph grows incrementally.

@@ -9,7 +9,7 @@ This guide covers the practical mechanics of writing good spec graph nodes.
 
 ## The Universal Structure
 
-All normative nodes (everything except features) follow a pattern:
+All normative nodes (everything except grouping nodes: `feature` and `layer`) follow a pattern:
 
 1. **Declare** what must be true (`statement` or `expectation`)
 2. **Constrain** what limits apply (`constraints`)
