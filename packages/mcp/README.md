@@ -19,5 +19,6 @@ npx @specgraph/mcp --repo-dir /path/to/repo
 
 - `get_upstream_context` (alias: `get_affecting_nodes`): all upstream nodes that influence a target node, with reason labels.
 - `list_dependencies`: direct `depends_on` dependencies.
-- `list_dependencies_full`: transitive dependency closure plus decision/policy context.
-- `get_effective_constraints`: direct + inherited constraining nodes via `contains` propagation.
+- `list_dependencies_full`: transitive dependency closure with normative layer-propagated guidance and informational-only dependency context.
+- `get_effective_constraints`: direct + inherited constraining nodes plus transitive layer-originated propagation.
+- `get_group_subgraph`: grouping-node (`feature` or `layer`) subgraph traversal.

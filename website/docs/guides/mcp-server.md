@@ -60,12 +60,12 @@ See [LLM Context Files](/docs/reference/llm-context-files) for usage details.
 Most tools use these common field definitions:
 
 - `directory` (optional string): spec graph directory relative to `--repo-dir` (defaults to `specgraph`)
-- `node_id`, `feature_id`, `source`, `target`: node IDs with pattern `^[A-Z][A-Z0-9-]{0,79}$`
+- `node_id`, `feature_id`, `group_id`, `source`, `target`: node IDs with pattern `^[A-Z][A-Z0-9-]{0,79}$`
 - `edge_type`: one of `contains`, `depends_on`, `constrains`, `implements`, `derived_from`, `verified_by`, `supersedes`
 
 `add_node` and `update_node` accept `node` as a typed union:
 
-- `feature` requires `id`, `type`, `title`, `description`
+- `feature` and `layer` require `id`, `type`, `title`, `description`
 - `behavior` requires `id`, `type`, `title`, `expectation`, `verification`
 - contract types (`decision`, `domain`, `policy`, `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`) require `id`, `type`, `title`, `statement`, `verification`
 - `decision` additionally requires `category` and `metadata.rationale`
@@ -110,6 +110,8 @@ Checks include:
 - missing targets
 - self-references
 - `depends_on` cycles
+- dependency inversion guard (`layer -> depends_on -> feature` is invalid)
+- propagated layer decision ambiguity detection
 
 ### Query Tools
 
@@ -176,7 +178,7 @@ Input:
 
 #### `list_dependencies_full`
 
-Returns transitive `depends_on` closure, dependency classifications, and dependency-adjacent decision/policy context.
+Returns transitive `depends_on` closure with explicit normative layer-propagated guidance and informational-only non-layer dependency context.
 
 Input:
 
@@ -189,7 +191,11 @@ Input:
 
 #### `get_effective_constraints`
 
-Computes all constraining nodes that apply to a target node, including inherited constraints via `contains` ancestry (not via `depends_on`).
+Computes effective normative guidance for a target node:
+
+- direct/inherited `constrains` via `contains` ancestry
+- transitive layer-originated propagation over `depends_on`
+- propagated decision ambiguity reporting
 
 Input:
 
@@ -200,9 +206,22 @@ Input:
 }
 ```
 
+#### `get_group_subgraph`
+
+Returns a grouping node (`feature` or `layer`) plus all reachable `contains` descendants.
+
+Input:
+
+```json
+{
+  "directory": "specgraph",
+  "group_id": "PLATFORM"
+}
+```
+
 #### `get_feature_subgraph`
 
-Returns a feature node plus all reachable `contains` descendants.
+Backward-compatible feature-only alias for group subgraph retrieval.
 
 Input:
 

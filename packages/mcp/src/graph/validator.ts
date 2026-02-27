@@ -1,7 +1,8 @@
 import path from 'node:path';
 import { DEFAULT_DIRECTORY, EDGE_TYPES } from '../constants.js';
 import { readJson, resolveInside } from '../json.js';
-import type { GraphIndex, SchemaIssue, SpecNode, StructuralIssue, ValidationResult } from '../types.js';
+import type { GraphIndex, LoadedGraph, SchemaIssue, SpecNode, StructuralIssue, ValidationResult } from '../types.js';
+import { findLayerPropagationAmbiguities } from './query.js';
 import { formatAjvErrors, getSchemaValidators } from './schema.js';
 
 export async function validateSpecgraph(
@@ -195,6 +196,23 @@ function validateStructural(nodesById: Map<string, SpecNode>): StructuralIssue[]
 
       if (edgeType === 'depends_on') {
         dependsOnGraph.set(sourceId, targets);
+
+        if (node.type === 'layer') {
+          for (const targetId of targets) {
+            const targetNode = nodesById.get(targetId);
+            if (!targetNode) {
+              continue;
+            }
+
+            if (targetNode.type === 'feature') {
+              issues.push({
+                node_id: sourceId,
+                severity: 'error',
+                message: `Invalid dependency inversion: layer '${sourceId}' cannot depend_on feature '${targetId}'`
+              });
+            }
+          }
+        }
       }
     }
   }
@@ -205,6 +223,15 @@ function validateStructural(nodesById: Map<string, SpecNode>): StructuralIssue[]
       node_id: cycle[0],
       severity: 'error',
       message: `depends_on cycle detected: ${cycle.join(' -> ')}`
+    });
+  }
+
+  const graphForPropagation = { nodesById } as LoadedGraph;
+  for (const ambiguity of findLayerPropagationAmbiguities(graphForPropagation)) {
+    issues.push({
+      node_id: ambiguity.target_id,
+      severity: 'error',
+      message: ambiguity.message
     });
   }
 

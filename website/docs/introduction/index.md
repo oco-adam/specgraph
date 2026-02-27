@@ -25,7 +25,7 @@ A Spec Graph is a directed, typed graph where:
 
 - **Nodes** are atomic specification entries — each one captures a single decision, behavior, concept, or constraint
 - **Edges** express typed relationships between nodes — dependency, constraint, implementation, containment
-- **Features** are namespaces that group related nodes across types
+- **Grouping nodes** (`feature`, `layer`) are namespaces for vertical slices and shared horizontal capabilities
 
 ```mermaid
 graph TD

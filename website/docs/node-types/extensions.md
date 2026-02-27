@@ -1,5 +1,5 @@
 ---
-sidebar_position: 6
+sidebar_position: 7
 title: Extension Types
 ---
 
@@ -152,13 +152,13 @@ Extensions follow the same minimality test as core types:
 
 > "If I removed this, could a competent implementing agent make a choice I wouldn't want?"
 
-Start with core types. Add extensions when you discover that core types don't provide enough precision for a specific dimension. For most projects, the five core types are sufficient.
+Start with core types. Add extensions when you discover that core types don't provide enough precision for a specific dimension. For most projects, the six core types are sufficient.
 
 ### Progressive Addition
 
 A typical extension adoption path:
 
-1. **Start** with core types only (behavior, decision, domain, policy, feature)
+1. **Start** with core types only (`feature`, `layer`, `behavior`, `decision`, `domain`, `policy`)
 2. **Add `design_token`** when visual inconsistency between features becomes a problem
 3. **Add `api_contract`** when service boundaries need formal specification
 4. **Add `data_model`** when database schema decisions are load-bearing

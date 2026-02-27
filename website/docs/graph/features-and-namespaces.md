@@ -5,11 +5,14 @@ title: Features & Namespaces
 
 # Features & Namespaces
 
-Features are the organizational layer of the Spec Graph. They group related nodes across all types into coherent namespaces.
+Spec Graph has two non-normative grouping node types:
 
-## What Features Are
+- `feature`: vertical product slices
+- `layer`: horizontal shared infrastructure
 
-A feature node is a **non-normative grouping** — it organizes nodes but does not itself make any claim about the system. Features answer the question: "What logical area of the system does this spec belong to?"
+## Feature Nodes (Vertical)
+
+A feature organizes behavior, decisions, domains, and policies for one product area.
 
 ```json
 {
@@ -18,92 +21,50 @@ A feature node is a **non-normative grouping** — it organizes nodes but does n
   "title": "User Authentication",
   "description": "Login, session management, and logout flows",
   "links": {
-    "contains": ["AUTH-01", "AUTH-02", "AUTH-03", "DEC-AUTH-01", "DOM-USER-01", "POL-PERF-01"]
+    "contains": ["AUTH-01", "AUTH-02", "DOM-USER-01"],
+    "depends_on": ["PLATFORM"]
   }
 }
 ```
 
-## Features Group Across Types
+## Layer Nodes (Horizontal)
 
-Unlike DLOOP v1 where features contained only behaviors, Spec Graph features contain **all node types** that belong to that area of the system:
-
-```mermaid
-graph TD
-    AUTH[AUTH Feature] -->|contains| B1[AUTH-01<br/>behavior]
-    AUTH -->|contains| B2[AUTH-02<br/>behavior]
-    AUTH -->|contains| D1[DEC-AUTH-01<br/>decision]
-    AUTH -->|contains| D2[DEC-AUTH-02<br/>decision]
-    AUTH -->|contains| DOM[DOM-USER-01<br/>domain]
-    AUTH -->|contains| POL[POL-PERF-01<br/>policy]
-```
-
-This means when you look at the AUTH feature, you see **everything** related to authentication: what the user does, how it's built, what "user" means, and what performance limits apply.
-
-## Cross-Cutting Nodes
-
-Some nodes naturally belong to multiple features or to no feature in particular. For example:
-
-- A performance constraint that applies to all pages
-- A domain concept used by multiple features
-- A technology decision that affects the entire system
-
-These cross-cutting nodes can be organized in a few ways:
-
-### Shared Feature
-
-Create a feature for cross-cutting concerns:
+A layer groups cross-feature platform capability.
 
 ```json
 {
   "id": "PLATFORM",
-  "type": "feature",
-  "title": "Platform",
-  "description": "Cross-cutting infrastructure, policies, and decisions",
+  "type": "layer",
+  "title": "Core Platform",
+  "description": "Shared infrastructure and security/performance controls",
   "links": {
-    "contains": ["POL-PERF-01", "DEC-PLATFORM-01", "DOM-TENANT-01"]
+    "contains": ["DEC-PLAT-01", "POL-PLAT-SEC-01"]
   }
 }
 ```
 
-### Multiple Containment
+## Directional Rule
 
-A node can appear in multiple features' `contains` lists. This is valid — it means the node is relevant to both features:
+Layers are foundational. They cannot depend on product features.
 
-```json
-// In AUTH feature
-"links": { "contains": ["DOM-USER-01", ...] }
+- Allowed: `feature -> depends_on -> layer`
+- Allowed: `layer -> depends_on -> layer`
+- Forbidden: `layer -> depends_on -> feature`
 
-// In BILLING feature
-"links": { "contains": ["DOM-USER-01", ...] }
+## Cross-Feature Reuse
+
+Use layers when multiple features share the same infrastructure context.
+
+```mermaid
+graph TD
+    AUTH[AUTH feature] -->|depends_on| PLATFORM[PLATFORM layer]
+    BILLING[BILLING feature] -->|depends_on| AUTH
+    PLATFORM -->|contains| DEC[DEC-PLAT-01]
+    PLATFORM -->|contains| POL[POL-PLAT-SEC-01]
 ```
 
-## Feature ID Conventions
+In this pattern, billing transitively inherits platform guidance through `BILLING -> AUTH -> PLATFORM`.
 
-Feature IDs use short, uppercase names:
+## Containment Is Membership
 
-| Feature | ID |
-|---|---|
-| User Authentication | `AUTH` |
-| Task Board | `TASKBOARD` |
-| Billing & Payments | `BILLING` |
-| Design System | `DESIGNSYSTEM` |
-| Platform/Infrastructure | `PLATFORM` |
-
-## Features and the Directory Layout
-
-Features map naturally to the file system. Node files are organized by type, and the feature relationship is expressed through edges:
-
-```
-specgraph/
-  nodes/
-    features/
-      AUTH.json
-      TASKBOARD.json
-    behaviors/
-      AUTH-01.json       # belongs to AUTH
-      TASKBOARD-01.json  # belongs to TASKBOARD
-    decisions/
-      DEC-AUTH-01.json   # belongs to AUTH
-```
-
-The `contains` edge in the feature node is what defines membership — the file location is a convention, not a constraint.
+`contains` defines grouping membership. File location is a convention, not a semantic rule.

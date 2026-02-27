@@ -3,6 +3,7 @@ import { DEFAULT_DIRECTORY, EDGE_TYPES } from '../constants.js';
 
 const NODE_TYPES = [
   'feature',
+  'layer',
   'behavior',
   'decision',
   'domain',
@@ -160,18 +161,29 @@ const ArtifactInfoInput = z
   })
   .strict();
 
+const GroupingNodeBase = {
+  $schema: z.string().optional(),
+  id: z
+    .string()
+    .regex(/^[A-Z][A-Z0-9-]{0,19}$/)
+    .describe('Grouping node ID. Uppercase letters, digits, hyphens.'),
+  title: z.string().min(3).max(100).describe('Human-readable grouping node name.'),
+  description: z.string().min(1).describe('What this grouping namespace covers.'),
+  links: Links,
+  metadata: Metadata
+};
+
 export const FeatureNodeInput = z
   .object({
-    $schema: z.string().optional(),
-    id: z
-      .string()
-      .regex(/^[A-Z][A-Z0-9-]{0,19}$/)
-      .describe('Feature ID. Uppercase letters, digits, hyphens.'),
-    type: z.literal('feature'),
-    title: z.string().min(3).max(100).describe('Human-readable feature name.'),
-    description: z.string().min(1).describe('What this feature namespace covers.'),
-    links: Links,
-    metadata: Metadata
+    ...GroupingNodeBase,
+    type: z.literal('feature')
+  })
+  .strict();
+
+export const LayerNodeInput = z
+  .object({
+    ...GroupingNodeBase,
+    type: z.literal('layer')
   })
   .strict();
 
@@ -281,6 +293,7 @@ export const PipelineNodeInput = z
 export const NodeInput = z
   .discriminatedUnion('type', [
     FeatureNodeInput,
+    LayerNodeInput,
     BehaviorNodeInput,
     DecisionNodeInput,
     DomainNodeInput,

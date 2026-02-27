@@ -100,7 +100,7 @@ graph TD
 
 A single policy can apply to many behaviors across multiple features.
 
-Policies can also be attached at higher-level feature/domain nodes and inherited by contained descendants via transitive propagation through `contains` edges. Prefer the highest applicable attachment point to reduce graph clutter.
+Policies can also be attached at higher-level feature/layer/domain nodes and inherited by contained descendants via transitive propagation through `contains` edges. Prefer the highest applicable attachment point to reduce graph clutter.
 
 ## When to Create Policy Nodes
 

@@ -5,7 +5,9 @@ title: Feature Nodes
 
 # Feature Nodes
 
-Feature nodes are **non-normative grouping nodes** that organize the graph into logical areas. They are the simplest node type — they have no `statement`, `verification`, or `constraints`.
+Feature nodes are **non-normative grouping nodes** that organize the graph into vertical product slices. They are the simplest node type — they have no `statement`, `verification`, or `constraints`.
+
+Use [Layer Nodes](/docs/node-types/layer) for shared horizontal infrastructure.
 
 ## Schema
 
@@ -67,3 +69,5 @@ Feature IDs are short uppercase identifiers:
 | Platform | `PLATFORM` |
 
 Feature IDs should be recognizable and concise — they serve as the namespace prefix for child node IDs.
+
+For shared infrastructure names like `PLATFORM` or `DATA`, prefer `type: "layer"` instead of `type: "feature"`.

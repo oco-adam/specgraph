@@ -10,7 +10,8 @@ export function registerGetFeatureSubgraphTool(server: McpServer, context: ToolC
   server.registerTool(
     'get_feature_subgraph',
     {
-      description: 'Get a feature node and all nodes it contains (via "contains" edges).',
+      description:
+        'Backward-compatible alias for feature-only group subgraph retrieval. Use get_group_subgraph for feature/layer support.',
       inputSchema: {
         directory: Directory,
         feature_id: NodeId.describe('ID of the feature node. Example: AUTH')

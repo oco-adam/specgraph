@@ -1,0 +1,22 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "DEC-PLAT-01",
+  "type": "decision",
+  "category": "architecture",
+  "title": "Shared Service Gateway",
+  "statement": "Cross-feature services must be accessed through a shared gateway abstraction.",
+  "constraints": [
+    "Gateway APIs must enforce typed request and response contracts.",
+    "Direct network calls from feature handlers are prohibited."
+  ],
+  "verification": [
+    "npm run lint",
+    "npm test -- --grep DEC-PLAT-01"
+  ],
+  "links": {
+    "constrains": ["PLATFORM"]
+  },
+  "metadata": {
+    "rationale": "A shared gateway reduces duplicated integration code and centralizes resilience controls."
+  }
+}

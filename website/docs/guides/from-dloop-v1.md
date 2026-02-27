@@ -11,7 +11,7 @@ If you have an existing DLOOP v1 project with a `SPEC.json`, this guide explains
 
 | Aspect | DLOOP v1 | Spec Graph |
 |---|---|---|
-| Node types | `behavior` only | 5 core + extensions |
+| Node types | `behavior` only | 6 core + extensions |
 | Structure | Flat array nested under features | Graph with typed edges |
 | Storage | Single `SPEC.json` file | File-per-node directory |
 | Relationships | Implicit (via feature grouping) | Explicit (typed edges) |

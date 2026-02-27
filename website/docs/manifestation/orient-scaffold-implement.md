@@ -11,7 +11,7 @@ The manifestation process follows three conceptual phases, each consuming a diff
 
 **Purpose:** Build a complete understanding of the system before writing any code.
 
-**Reads:** All node types — domain, decision, policy, behavior, feature
+**Reads:** All node types — domain, decision, policy, behavior, feature, layer
 
 **Produces:** Mental model of the system
 

@@ -6,6 +6,7 @@ import { registerAddNodeTool } from './tools/add-node.js';
 import { registerGetUpstreamContextTool } from './tools/get-affecting-nodes.js';
 import { registerGetEffectiveConstraintsTool } from './tools/get-effective-constraints.js';
 import { registerGetFeatureSubgraphTool } from './tools/get-feature-subgraph.js';
+import { registerGetGroupSubgraphTool } from './tools/get-group-subgraph.js';
 import { registerGetNodeTool } from './tools/get-node.js';
 import { registerInitTool } from './tools/init.js';
 import { registerListDependenciesFullTool } from './tools/list-dependencies-full.js';
@@ -46,6 +47,7 @@ export function createSpecgraphMcpServer(options: ServerOptions): McpServer {
   registerListDependenciesTool(server, context);
   registerListDependenciesFullTool(server, context);
   registerGetEffectiveConstraintsTool(server, context);
+  registerGetGroupSubgraphTool(server, context);
   registerGetFeatureSubgraphTool(server, context);
   registerListEdgesTool(server, context);
   registerSearchNodesTool(server, context);

@@ -2,9 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
   "title": "Spec Graph Node",
-  "description": "Schema for a single Spec Graph node file. Supports core types (feature, behavior, decision, domain, policy) and extension types. Edges are expressed as outbound links.",
+  "description": "Schema for a single Spec Graph node file. Supports core types (feature, layer, behavior, decision, domain, policy) and extension types. Edges are expressed as outbound links.",
   "oneOf": [
     { "$ref": "#/$defs/featureNode" },
+    { "$ref": "#/$defs/layerNode" },
     { "$ref": "#/$defs/behaviorNode" },
     { "$ref": "#/$defs/contractNode" }
   ],
@@ -50,7 +51,7 @@
         "contains": {
           "type": "array",
           "items": { "$ref": "#/$defs/nodeId" },
-          "description": "Grouping relationship (typically feature -> children)."
+          "description": "Grouping relationship (typically feature/layer -> children)."
         },
         "depends_on": {
           "type": "array",
@@ -187,6 +188,24 @@
         "metadata": { "$ref": "#/$defs/metadata" }
       }
     },
+    "layerNode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "title", "description"],
+      "properties": {
+        "$schema": { "type": "string" },
+        "id": {
+          "type": "string",
+          "description": "Layer ID. Uppercase letters, digits, hyphens.",
+          "pattern": "^[A-Z][A-Z0-9-]{0,19}$"
+        },
+        "type": { "const": "layer" },
+        "title": { "type": "string", "minLength": 3, "maxLength": 100 },
+        "description": { "type": "string", "minLength": 1 },
+        "links": { "$ref": "#/$defs/links" },
+        "metadata": { "$ref": "#/$defs/metadata" }
+      }
+    },
     "behaviorNode": {
       "type": "object",
       "additionalProperties": false,
@@ -218,7 +237,7 @@
     },
     "contractNode": {
       "type": "object",
-      "description": "Unified shape for all non-feature, non-behavior node types. Includes core types (decision, domain, policy) and extension types.",
+      "description": "Unified shape for all non-grouping, non-behavior node types. Includes core types (decision, domain, policy) and extension types.",
       "additionalProperties": false,
       "required": ["id", "type", "title", "statement", "verification"],
       "properties": {

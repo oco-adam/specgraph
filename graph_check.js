@@ -98,6 +98,235 @@ function detectDependsOnCycle(idToDeps) {
   return null;
 }
 
+function buildContainsIndexes(idToNode) {
+  const containsByParent = new Map();
+  const parentsByChild = new Map();
+
+  for (const [nodeId, node] of idToNode.entries()) {
+    const contains = Array.isArray(node?.links?.contains)
+      ? Array.from(
+          new Set(node.links.contains.filter((targetId) => typeof targetId === 'string' && targetId.length > 0))
+        )
+      : [];
+
+    if (contains.length > 0) {
+      containsByParent.set(nodeId, contains);
+    }
+
+    for (const childId of contains) {
+      const parents = parentsByChild.get(childId) || [];
+      parents.push(nodeId);
+      parentsByChild.set(childId, parents);
+    }
+  }
+
+  return { containsByParent, parentsByChild };
+}
+
+function collectContainsAncestors(nodeId, parentsByChild) {
+  const ancestry = new Set([nodeId]);
+  const queue = [nodeId];
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    for (const parentId of parentsByChild.get(current) || []) {
+      if (ancestry.has(parentId)) continue;
+      ancestry.add(parentId);
+      queue.push(parentId);
+    }
+  }
+
+  return ancestry;
+}
+
+function collectContainsClosure(rootId, containsByParent) {
+  const closure = new Set([rootId]);
+  const queue = [rootId];
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    for (const childId of containsByParent.get(current) || []) {
+      if (closure.has(childId)) continue;
+      closure.add(childId);
+      queue.push(childId);
+    }
+  }
+
+  return closure;
+}
+
+function resolveLayerDependencies(nodeId, idToNode, parentsByChild) {
+  const distanceByNode = new Map([[nodeId, 0]]);
+  const queue = [{ id: nodeId, depth: 0 }];
+  const layers = new Map();
+
+  while (queue.length > 0) {
+    const current = queue.shift();
+    const currentNode = idToNode.get(current.id);
+    if (!currentNode) continue;
+
+    if (current.id !== nodeId && currentNode.type === 'layer') {
+      const existing = layers.get(current.id);
+      if (!existing || current.depth < existing) {
+        layers.set(current.id, current.depth);
+      }
+    }
+
+    const neighbors = new Set();
+    if (Array.isArray(currentNode?.links?.depends_on)) {
+      for (const depId of currentNode.links.depends_on) {
+        if (typeof depId === 'string' && depId.length > 0) neighbors.add(depId);
+      }
+    }
+
+    for (const parentId of parentsByChild.get(current.id) || []) {
+      const parent = idToNode.get(parentId);
+      if (parent && (parent.type === 'feature' || parent.type === 'layer')) {
+        neighbors.add(parentId);
+      }
+    }
+
+    for (const neighborId of neighbors) {
+      const nextDepth = current.depth + 1;
+      const existingDepth = distanceByNode.get(neighborId);
+      if (existingDepth !== undefined && existingDepth <= nextDepth) {
+        continue;
+      }
+
+      distanceByNode.set(neighborId, nextDepth);
+      queue.push({ id: neighborId, depth: nextDepth });
+    }
+  }
+
+  return layers;
+}
+
+function resolveDirectConstrainingDecisionIds(targetId, idToNode, parentsByChild) {
+  const ancestry = collectContainsAncestors(targetId, parentsByChild);
+  const decisionIds = new Set();
+
+  for (const [sourceId, sourceNode] of idToNode.entries()) {
+    if (sourceNode.type !== 'decision') continue;
+    const targets = Array.isArray(sourceNode?.links?.constrains)
+      ? sourceNode.links.constrains
+      : [];
+    if (
+      targets.some(
+        (targetIdCandidate) => typeof targetIdCandidate === 'string' && ancestry.has(targetIdCandidate)
+      )
+    ) {
+      decisionIds.add(sourceId);
+    }
+  }
+
+  return decisionIds;
+}
+
+function resolveLayerPropagatedDecisionIds(layerId, idToNode, containsByParent, parentsByChild) {
+  const closure = collectContainsClosure(layerId, containsByParent);
+  const decisionIds = new Set();
+
+  for (const closureNodeId of closure) {
+    const closureNode = idToNode.get(closureNodeId);
+    if (closureNode?.type === 'decision') {
+      decisionIds.add(closureNodeId);
+    }
+
+    const constraining = resolveDirectConstrainingDecisionIds(closureNodeId, idToNode, parentsByChild);
+    for (const decisionId of constraining) {
+      decisionIds.add(decisionId);
+    }
+  }
+
+  return decisionIds;
+}
+
+function pruneSupersededDecisionIds(decisionIds, idToNode) {
+  const active = new Set(decisionIds);
+  const superseded = new Set();
+  const closureCache = new Map();
+
+  function supersedesClosure(sourceId) {
+    if (closureCache.has(sourceId)) return closureCache.get(sourceId);
+
+    const closure = new Set();
+    const visited = new Set([sourceId]);
+    const queue = [sourceId];
+
+    while (queue.length > 0) {
+      const current = queue.shift();
+      const node = idToNode.get(current);
+      const targets = Array.isArray(node?.links?.supersedes) ? node.links.supersedes : [];
+
+      for (const targetId of targets) {
+        if (typeof targetId !== 'string' || visited.has(targetId)) continue;
+        visited.add(targetId);
+        closure.add(targetId);
+        queue.push(targetId);
+      }
+    }
+
+    closureCache.set(sourceId, closure);
+    return closure;
+  }
+
+  for (const sourceId of active) {
+    const closure = supersedesClosure(sourceId);
+    for (const targetId of closure) {
+      if (targetId !== sourceId && active.has(targetId)) {
+        superseded.add(targetId);
+      }
+    }
+  }
+
+  for (const targetId of superseded) {
+    active.delete(targetId);
+  }
+
+  return active;
+}
+
+function findLayerPropagationAmbiguityErrors(idToNode) {
+  const errors = [];
+  const { containsByParent, parentsByChild } = buildContainsIndexes(idToNode);
+
+  for (const nodeId of idToNode.keys()) {
+    const layerDeps = resolveLayerDependencies(nodeId, idToNode, parentsByChild);
+    if (layerDeps.size === 0) continue;
+
+    const propagatedDecisionIds = new Set();
+    for (const layerId of layerDeps.keys()) {
+      const layerDecisionIds = resolveLayerPropagatedDecisionIds(layerId, idToNode, containsByParent, parentsByChild);
+      for (const decisionId of layerDecisionIds) {
+        propagatedDecisionIds.add(decisionId);
+      }
+    }
+
+    const activeDecisionIds = pruneSupersededDecisionIds(propagatedDecisionIds, idToNode);
+    const byCategory = new Map();
+
+    for (const decisionId of activeDecisionIds) {
+      const decisionNode = idToNode.get(decisionId);
+      if (!decisionNode || decisionNode.type !== 'decision') continue;
+      const category = typeof decisionNode.category === 'string' ? decisionNode.category : null;
+      if (!category) continue;
+      const bucket = byCategory.get(category) || [];
+      bucket.push(decisionId);
+      byCategory.set(category, bucket);
+    }
+
+    for (const [category, decisionIds] of byCategory.entries()) {
+      const uniq = Array.from(new Set(decisionIds)).sort();
+      if (uniq.length <= 1) continue;
+      errors.push(
+        `Ambiguous propagated decisions for '${nodeId}' in category '${category}': disambiguate with supersedes and/or dependency structure`
+      );
+    }
+  }
+
+  return errors;
+}
+
 function isObject(value) {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -231,6 +460,17 @@ function checkGraph(graphPath, opts) {
 
       if (edgeType === 'depends_on') {
         idToDeps.set(fromId, targets.slice());
+
+        if (node.type === 'layer') {
+          for (const toId of targets) {
+            const targetNode = idToNode.get(toId);
+            if (targetNode && targetNode.type === 'feature') {
+              errors.push(
+                `Invalid dependency inversion: layer '${fromId}' cannot depend_on feature '${toId}'`
+              );
+            }
+          }
+        }
       }
     }
   }
@@ -239,6 +479,10 @@ function checkGraph(graphPath, opts) {
   const cycle = detectDependsOnCycle(idToDeps);
   if (cycle) {
     errors.push(`depends_on cycle detected: ${cycle.join(' -> ')}`);
+  }
+
+  for (const ambiguityError of findLayerPropagationAmbiguityErrors(idToNode)) {
+    errors.push(ambiguityError);
   }
 
   // derived_from pin checks (best-effort; strict mode tightens).
@@ -366,4 +610,3 @@ function main() {
 }
 
 main();
-

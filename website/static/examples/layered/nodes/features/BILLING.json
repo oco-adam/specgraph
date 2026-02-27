@@ -1,0 +1,11 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "BILLING",
+  "type": "feature",
+  "title": "Billing",
+  "description": "Invoice and payment behavior for paid accounts.",
+  "links": {
+    "contains": ["BILLING-01"],
+    "depends_on": ["AUTH"]
+  }
+}

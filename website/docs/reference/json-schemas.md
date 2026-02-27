@@ -46,11 +46,15 @@ Each entry in `nodes` has:
 
 ## node.schema.json
 
-Validates individual node files. Uses `oneOf` to distinguish three shapes:
+Validates individual node files. Uses `oneOf` to distinguish four shapes:
 
 ### Feature Nodes
 
 Required: `id`, `type` (= `"feature"`), `title`, `description`
+
+### Layer Nodes
+
+Required: `id`, `type` (= `"layer"`), `title`, `description`
 
 ### Behavior Nodes
 
@@ -121,7 +125,7 @@ Feature IDs must match: `^[A-Z][A-Z0-9-]{0,19}$`
 
 ### Node Types
 
-Core: `feature`, `behavior`, `decision`, `domain`, `policy`
+Core: `feature`, `layer`, `behavior`, `decision`, `domain`, `policy`
 
 Extensions: `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`
 
