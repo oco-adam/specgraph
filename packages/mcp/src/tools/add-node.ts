@@ -15,7 +15,7 @@ export function registerAddNodeTool(server: McpServer, context: ToolContext): vo
       inputSchema: {
         directory: Directory,
         node: NodeInput.describe(
-          'Full node object to add. Required fields depend on type: feature/layer need {id, type, title, description}, behavior needs {id, type, title, expectation, verification}, contract types need {id, type, title, statement, verification}; decision additionally requires {category, metadata.rationale}; policy additionally requires {severity}.'
+          'Full node object to add. Required fields depend on type: feature/layer need {id, type, title, description}, behavior needs {id, type, title, expectation, verification}, contract types need {id, type, title, statement, verification}; decision additionally requires {category, metadata.rationale}; policy additionally requires {severity}. Behavior authoring convention: include constraints explicitly and use [] when none apply.'
         )
       }
     },

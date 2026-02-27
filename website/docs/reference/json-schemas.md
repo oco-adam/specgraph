@@ -62,6 +62,8 @@ Required: `id`, `type` (= `"behavior"`), `title`, `expectation`, `verification`
 
 Optional: `constraints` (array)
 
+Authoring convention: include `constraints` explicitly on behavior nodes and use `[]` when none apply. Omission remains schema-valid for backward compatibility.
+
 ### Contract Nodes
 
 All other types (decision, domain, policy, and extensions).

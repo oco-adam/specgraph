@@ -197,7 +197,10 @@ export const BehaviorNodeInput = z
       .string()
       .min(10)
       .describe('WHAT the system does. Atomic: ONE trigger, ONE behavior, ONE outcome.'),
-    constraints: z.array(z.string().min(1)).optional(),
+    constraints: z
+      .array(z.string().min(1))
+      .optional()
+      .describe('Normative conditions for this behavior. Include explicitly; use [] when none apply.'),
     verification: z.string().min(5).describe('Single pass/fail check. Prefer executable commands.'),
     links: Links,
     metadata: Metadata
