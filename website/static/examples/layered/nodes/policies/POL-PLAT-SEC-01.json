@@ -1,0 +1,24 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "POL-PLAT-SEC-01",
+  "type": "policy",
+  "severity": "hard",
+  "title": "Security Headers Baseline",
+  "statement": "All externally reachable responses must include the platform security header baseline.",
+  "constraints": [
+    "Responses must include strict transport and frame-ancestors policies.",
+    "Violations block release in production environments."
+  ],
+  "verification": [
+    {
+      "kind": "command",
+      "command": "npm run test:security-headers"
+    }
+  ],
+  "links": {
+    "constrains": ["PLATFORM"]
+  },
+  "metadata": {
+    "rationale": "Centralized baseline headers reduce cross-feature security drift and audit variance."
+  }
+}

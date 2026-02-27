@@ -13,7 +13,7 @@ The Spec Graph defines seven typed edge kinds. Each relationship is authored onc
 
 | Edge Type | Meaning | Example |
 |---|---|---|
-| `contains` | Grouping/namespace relationship | Feature contains its child nodes |
+| `contains` | Grouping/namespace relationship | Feature or layer contains its child nodes |
 | `depends_on` | Must be satisfied before this node | A behavior depends on a decision being in place |
 | `constrains` | Narrows implementation choices for the target | A policy limits how a behavior can be implemented |
 | `implements` | This node realizes part of the target | A behavior implements a domain concept |
@@ -46,7 +46,7 @@ This means: "AUTH-01 implements DOM-USER-01" and "AUTH-01 depends on DEC-AUTH-01
 
 ### `contains`
 
-Used by feature nodes to group their children. This is the primary organizational edge.
+Used by grouping nodes (`feature`, `layer`) to group their children. This is the primary organizational edge.
 
 ```json
 // In AUTH.json (feature)
@@ -60,6 +60,12 @@ Used by feature nodes to group their children. This is the primary organizationa
 Establishes ordering requirements. If A depends on B, then B must be manifested (or at least understood) before A.
 
 **Critical rule: `depends_on` must be acyclic.** Cycles in dependency edges are a validation error.
+
+Layer-specific safety rule:
+
+- `layer -> depends_on -> feature` is invalid
+- `feature -> depends_on -> layer` is valid
+- `layer -> depends_on -> layer` is valid
 
 This acyclicity requirement is specific to `depends_on` because manifestation order must be topologically sortable. Other edge types can be cyclic when that matches the domain model.
 
@@ -80,7 +86,7 @@ To avoid edge explosion, `constrains` is interpreted with transitive propagation
 
 1. If `A constrains B` and `B contains C`, then `A` implicitly constrains `C` (downward cascade).
 2. Propagation does not flow upward from child to parent.
-3. Propagation does not flow over `depends_on`; dependencies are separate from inheritance.
+3. Direct `constrains` propagation does not flow over `depends_on`; dependency-based propagation is a separate layer-specific rule.
 4. If a node has multiple `contains` ancestors, inherited constraints are unioned.
 
 ### `implements`
@@ -162,14 +168,13 @@ graph TD
 
 A performance policy applies to multiple behaviors across features.
 
-### Feature → Children
+### Grouping Node → Children
 
 ```mermaid
 graph TD
     F[AUTH<br/>feature] -->|contains| B1[AUTH-01]
-    F -->|contains| B2[AUTH-02]
-    F -->|contains| D[DEC-AUTH-01]
-    F -->|contains| DOM[DOM-USER-01]
+    L[PLATFORM<br/>layer] -->|contains| D[DEC-PLAT-01]
+    L -->|contains| P[POL-PLAT-SEC-01]
 ```
 
-A feature groups all related nodes regardless of type.
+Features and layers both group related nodes regardless of type.

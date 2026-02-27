@@ -1,0 +1,10 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "PLATFORM",
+  "type": "layer",
+  "title": "Core Platform",
+  "description": "Shared infrastructure contracts and platform-level policies.",
+  "links": {
+    "contains": ["DEC-PLAT-01", "POL-PLAT-SEC-01"]
+  }
+}

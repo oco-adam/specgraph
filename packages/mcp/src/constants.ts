@@ -10,6 +10,7 @@ export const EDGE_TYPES = [
 
 export const NODE_TYPE_DIRS: Record<string, string> = {
   feature: 'features',
+  layer: 'layers',
   behavior: 'behaviors',
   decision: 'decisions',
   domain: 'domains',

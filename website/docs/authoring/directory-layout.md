@@ -16,7 +16,9 @@ specgraph/
     features/
       AUTH.json
       TASKBOARD.json
+    layers/
       PLATFORM.json
+      DATA.json
     behaviors/
       AUTH-01.json
       AUTH-02.json
@@ -42,6 +44,7 @@ Node files are named after their ID:
 | Node ID | File Path |
 |---|---|
 | `AUTH` | `nodes/features/AUTH.json` |
+| `PLATFORM` | `nodes/layers/PLATFORM.json` |
 | `AUTH-01` | `nodes/behaviors/AUTH-01.json` |
 | `DEC-AUTH-01` | `nodes/decisions/DEC-AUTH-01.json` |
 | `DOM-USER-01` | `nodes/domains/DOM-USER-01.json` |
@@ -70,6 +73,7 @@ nodes/
   "specgraphVersion": "1.0.0",
   "nodes": [
     { "id": "AUTH", "path": "nodes/features/AUTH.json" },
+    { "id": "PLATFORM", "path": "nodes/layers/PLATFORM.json" },
     { "id": "AUTH-01", "path": "nodes/behaviors/AUTH-01.json" },
     { "id": "DEC-AUTH-01", "path": "nodes/decisions/DEC-AUTH-01.json" }
   ]

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/graph.schema.json",
+  "specgraphVersion": "1.0.0",
+  "nodes": [
+    { "id": "AUTH", "path": "nodes/features/AUTH.json", "expectedType": "feature" },
+    { "id": "BILLING", "path": "nodes/features/BILLING.json", "expectedType": "feature" },
+    { "id": "PLATFORM", "path": "nodes/layers/PLATFORM.json", "expectedType": "layer" },
+    { "id": "AUTH-01", "path": "nodes/behaviors/AUTH-01.json", "expectedType": "behavior" },
+    { "id": "BILLING-01", "path": "nodes/behaviors/BILLING-01.json", "expectedType": "behavior" },
+    { "id": "DEC-PLAT-01", "path": "nodes/decisions/DEC-PLAT-01.json", "expectedType": "decision" },
+    { "id": "POL-PLAT-SEC-01", "path": "nodes/policies/POL-PLAT-SEC-01.json", "expectedType": "policy" }
+  ]
+}

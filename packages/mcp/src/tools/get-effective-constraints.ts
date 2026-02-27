@@ -11,7 +11,7 @@ export function registerGetEffectiveConstraintsTool(server: McpServer, context: 
     'get_effective_constraints',
     {
       description:
-        'Compute all constraining nodes that apply to a node, including inherited constraints via contains ancestry. Does not propagate via depends_on.',
+        'Compute effective normative guidance for a node, including direct/inherited constrains semantics plus layer-originated transitive propagation over depends_on.',
       inputSchema: {
         directory: Directory,
         node_id: NodeId.describe('ID of the node whose effective constraints should be resolved. Example: AUTH-01')

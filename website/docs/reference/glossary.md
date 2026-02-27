@@ -10,7 +10,8 @@ title: Glossary
 | **Spec Graph** | A directed, typed graph of specification nodes that completely describes a software system across multiple dimensions. |
 | **Node** | A single specification entry with a type, ID, and content. The atomic unit of the spec graph. |
 | **Edge** | A typed, directed relationship between two nodes. Stored as outbound links inside the source node. |
-| **Feature** | A non-normative grouping node that organizes related nodes into a namespace. |
+| **Feature** | A non-normative grouping node for vertical product slices. |
+| **Layer** | A non-normative grouping node for shared horizontal infrastructure capability. |
 | **Manifestation** | The process of producing a running system from a spec graph. Encompasses planning, coding, building, testing, and deploying. |
 | **Completeness** | The property that manifestation is predictable across all specified dimensions — any two manifestations from the same graph are equivalent. |
 | **Minimality** | The property that no node can be removed without breaking completeness. Every node is load-bearing. |
@@ -20,7 +21,7 @@ title: Glossary
 | **Equivalence Contract** | An optional extension node that formally declares what "same system" means for this graph. |
 | **Implementing Agent** | The agent (human or AI) that processes the spec graph to produce a running system. |
 | **Capable Agent** | An implementing agent that can parse, traverse, apply, respect, and verify the spec graph. |
-| **Contract Node** | The unified shape shared by all non-feature, non-behavior node types (decision, domain, policy, extensions). |
+| **Contract Node** | The unified shape shared by all non-grouping, non-behavior node types (decision, domain, policy, extensions). |
 | **Decision Node** | A node capturing an architectural, technical, or stack decision that narrows the solution space. |
 | **Domain Node** | A node defining a business concept, term, or rule — the ubiquitous language of the system. |
 | **Policy Node** | A node specifying a cross-cutting non-functional requirement (performance, security, accessibility, cost, reliability). Uses `severity` (hard/soft) and `constrains` edges. Not to be confused with the `constraints` field. |

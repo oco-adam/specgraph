@@ -1,0 +1,9 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "BILLING-01",
+  "type": "behavior",
+  "title": "Create Invoice",
+  "expectation": "When an account owner confirms checkout, an invoice record is created and displayed in billing history.",
+  "constraints": ["Invoice creation must be idempotent for repeated webhook delivery."],
+  "verification": "npm test -- --grep BILLING-01"
+}

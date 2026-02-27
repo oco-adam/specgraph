@@ -13,7 +13,7 @@ A Spec Graph consists of three elements:
 
 1. **Nodes** — individual specification entries, each with a type that determines its schema
 2. **Edges** — typed, directed relationships between nodes (stored inside nodes as outbound links)
-3. **Features** — namespace nodes that group related nodes across types
+3. **Grouping nodes** — `feature` and `layer` nodes that organize related nodes across types
 
 ## Storage Model
 
@@ -23,7 +23,8 @@ The graph is stored as a directory of JSON files:
 specgraph/
   graph.json                    # Index: version, node references
   nodes/
-    features/AUTH.json          # Feature grouping node
+    features/AUTH.json          # Feature grouping node (vertical)
+    layers/PLATFORM.json        # Layer grouping node (horizontal)
     behaviors/AUTH-01.json      # Behavior node
     decisions/DEC-AUTH-01.json  # Decision node
     domains/DOM-USER-01.json   # Domain node

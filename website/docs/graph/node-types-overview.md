@@ -5,56 +5,35 @@ title: Node Types Overview
 
 # Node Types Overview
 
-The Spec Graph uses a **tiered type system**: five core types that every graph can use, plus extension types for richer modelling.
+Spec Graph uses a **tiered type system**: six core types plus optional extension types.
+
+Core taxonomy in v2:
+
+- 2 grouping types: `feature`, `layer`
+- 4 normative core types: `behavior`, `decision`, `domain`, `policy`
 
 ## Core Types
 
-These five types are sufficient for most spec graphs:
-
 | Type | Purpose | Key Question |
 |---|---|---|
-| **`feature`** | Grouping and namespace | How are specs organized? |
+| **`feature`** | Vertical grouping and namespace | Which product slice does this spec belong to? |
+| **`layer`** | Horizontal shared grouping | Which shared platform capability does this belong to? |
 | **`behavior`** | Observable system behavior | What does the user see and do? |
 | **`decision`** | Architectural, technical, or stack decision | How should it be built, and with what? |
-| **`domain`** | Business concept, term, or rule | What do the domain terms mean? |
+| **`domain`** | Business concept, term, or rule | What do domain terms mean? |
 | **`policy`** | Non-functional requirement | What limits must be met? |
 
 ### Node Shapes
 
-The core types use two distinct shapes:
+**Grouping nodes** (`feature`, `layer`) use a simple shape with `title`, `description`, and optional `links`.
 
-**Behavior nodes** carry `expectation` and `constraints` as their primary fields — these are the canonical fields for describing observable behavior:
+**Behavior nodes** carry `expectation` and optional `constraints`.
 
-```json
-{
-  "id": "AUTH-01",
-  "type": "behavior",
-  "title": "Login Form Display",
-  "expectation": "Login page renders email and password input fields with a submit button",
-  "constraints": ["Password field must mask input characters"],
-  "verification": "npm test -- --grep AUTH-01"
-}
-```
-
-**All other non-feature types** (decision, domain, policy, and extensions) share a uniform **contract shape**:
-
-```json
-{
-  "id": "DEC-AUTH-01",
-  "type": "decision",
-  "category": "architecture",
-  "title": "Abstract Auth Provider Interface",
-  "statement": "All auth operations go through an AuthProvider interface.",
-  "constraints": ["Interface must define authenticate(), validateSession(), revokeSession()"],
-  "verification": ["npx tsc --noEmit", "npm test -- --grep DEC-AUTH-01"]
-}
-```
-
-**Feature nodes** are the simplest — they have `title`, `description`, plus `links` to group their children.
+**Contract nodes** (decision, domain, policy, extensions) share a uniform shape with `statement` + `verification`.
 
 ## Extension Types
 
-For graphs that need finer-grained modelling, extension types are available:
+For finer-grained modeling, extension types are available:
 
 | Extension Type | Purpose |
 |---|---|
@@ -66,11 +45,9 @@ For graphs that need finer-grained modelling, extension types are available:
 | `equivalence_contract` | Formal definition of "same system" |
 | `pipeline` | Manifestation pipeline steps and gates |
 
-Extension types use the same contract shape as decision/domain/policy nodes. They add no new fields — the `type` value is what distinguishes them.
+## Decision Categories
 
-## The Decision Type
-
-The `decision` type deserves special attention because it **merges** what earlier research called "technical" and "stack" into a single type with a `category` field:
+Decision nodes use `category` to capture where the decision sits:
 
 | Category | What It Captures | Example |
 |---|---|---|
@@ -78,21 +55,5 @@ The `decision` type deserves special attention because it **merges** what earlie
 | `stack` | Technology choices and usage constraints | "Use Clerk for authentication" |
 | `pattern` | Implementation patterns | "Use optimistic updates for drag-and-drop" |
 | `interface` | Public API contracts between modules | "Auth module exports authenticate() and revokeSession()" |
-
-This merging reflects the reality that architectural decisions and technology choices exist on a continuum — the distinction was blurry in practice.
-
-## Type Summary
-
-```
-┌──────────────┬─────────────────────┬──────────────────────────────────┐
-│ Type         │ Key Field           │ Answers                          │
-├──────────────┼─────────────────────┼──────────────────────────────────┤
-│ feature      │ description         │ How are specs grouped?           │
-│ behavior     │ expectation         │ What does the user see/do?       │
-│ decision     │ statement + category│ How should it be built?          │
-│ domain       │ statement           │ What do domain concepts mean?    │
-│ policy       │ statement + severity│ What limits must be met?         │
-└──────────────┴─────────────────────┴──────────────────────────────────┘
-```
 
 For detailed documentation on each type, see the [Node Types](/docs/node-types/behavior) section.
