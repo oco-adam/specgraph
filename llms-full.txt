@@ -1,6 +1,6 @@
 # Spec Graph — Complete Documentation
 
-> The minimal specification framework for predictable system manifestation.
+> A declarative specification model for predictable agent-driven system manifestation.
 
 > Generated: 2026-03-04
 
@@ -72,7 +72,7 @@ If you want to jump straight in:
 
 ## Background
 
-The Spec Graph builds on lessons from [DLOOP v1](https://github.com/omnifiedLtd/selfimloop), a declarative agentic development framework that used behavior-only specifications. DLOOP v1 demonstrated the value of atomic, declarative specs driving automated development — but limiting specs to behavior alone left too many decisions unspecified. The Spec Graph is a clean-sheet redesign that addresses this completeness gap.
+Behavior-only specs are a strong starting point, but by themselves they usually leave key decisions unspecified (architecture, domain boundaries, non-functional constraints, and technology contracts). Spec Graph closes that gap by modeling those dimensions directly in the graph so manifestations are repeatable across implementing agents.
 
 ---
 
@@ -129,7 +129,7 @@ The Spec Graph framework is guided by six principles. These are not aspirational
 
 ## 1. Atomicity Everywhere
 
-DLOOP v1's ONE rule — ONE trigger, ONE behavior, ONE outcome — was a good idea. The Spec Graph generalises it:
+A strong atomicity rule is essential in graph authoring. In Spec Graph:
 
 > **Every node expresses one decision, one contract, or one constraint.**
 
@@ -141,7 +141,7 @@ Atomicity creates **review pressure** (each node is small enough to reason about
 
 If it cannot be verified, it is not a complete spec.
 
-Every node that makes a normative claim — a behavior, a policy, a decision — must include verification criteria that produce a pass/fail result. Verification can be:
+Every node that makes a [normative](/docs/reference/normative) claim — a behavior, a policy, a decision — must include verification criteria that produce a pass/fail result. Verification can be:
 
 - **Executable**: test commands, linters, policy checks
 - **Static**: type checking, AST rules, dependency constraints
@@ -178,8 +178,8 @@ Narrative documentation is valuable for explanation, but it is not authoritative
 
 The framework strictly distinguishes:
 
-- **Normative**: `expectation`, `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
-- **Informative/Contextual**: `metadata.rationale`, `metadata.notes` — non-executable context; specific node types may require certain metadata fields
+- **[Normative](/docs/reference/normative)**: `expectation`, `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
+- **[Informative](/docs/reference/normative#informative-content)**: `metadata.rationale`, `metadata.notes` — non-executable context; specific node types may require certain metadata fields
 
 This prevents "helpful notes" from becoming implicit requirements that break predictable manifestation.
 
@@ -515,7 +515,7 @@ Each node is a self-contained JSON file. Edges are expressed as outbound links i
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
   "constraints": ["Password field must mask input characters"],
-  "verification": "npm test -- --grep AUTH-01",
+  "verification": "pytest tests/auth/test_login_form.py -k AUTH_01",
   "links": {
     "implements": ["DOM-USER-01"],
     "depends_on": ["DEC-AUTH-01"]
@@ -588,7 +588,7 @@ Spec Graph uses a **tiered type system**: seven core types plus optional extensi
 Core taxonomy in v2:
 
 - 2 grouping types: `feature`, `layer`
-- 5 normative core types: `foundation`, `behavior`, `decision`, `domain`, `policy`
+- 5 [normative](/docs/reference/normative) core types: `foundation`, `behavior`, `decision`, `domain`, `policy`
 
 ## Core Types
 
@@ -819,7 +819,7 @@ Features and layers both group related nodes regardless of type.
 
 # Features & Namespaces
 
-Spec Graph has two non-normative grouping node types:
+Spec Graph has two [non-normative](/docs/reference/normative#non-normative-content) grouping node types:
 
 - `feature`: vertical product slices
 - `layer`: horizontal shared infrastructure
@@ -898,7 +898,7 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
   "constraints": ["Password field must mask input characters"],
-  "verification": "npm test -- --grep AUTH-01",
+  "verification": "pytest tests/auth/test_login_form.py -k AUTH_01",
   "links": {
     "implements": ["DOM-USER-01"],
     "depends_on": ["DEC-AUTH-01"]
@@ -914,14 +914,14 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
 | `type` | Yes | Must be `"behavior"` |
 | `title` | Yes | Short human-readable name (3–100 chars) |
 | `expectation` | Yes | WHAT the system does (min 10 chars) |
-| `constraints` | No | Normative conditions that must hold for this behavior. Authoring convention: include explicitly; use `[]` when none. |
+| `constraints` | No | [Normative](/docs/reference/normative) conditions that must hold for this behavior. Authoring convention: include explicitly; use `[]` when none. |
 | `verification` | Yes | Single pass/fail check (min 5 chars) |
 | `links` | No | Outbound edges to other nodes |
-| `metadata` | No | Non-normative context (rationale, notes, tags) |
+| `metadata` | No | [Non-normative](/docs/reference/normative#non-normative-content) context (rationale, notes, tags) |
 
 ## The ONE Rule
 
-Behavior nodes follow the **ONE rule** from DLOOP v1:
+Behavior nodes follow the ONE behavior rule:
 
 > **ONE trigger → ONE behavior → ONE outcome**
 
@@ -954,7 +954,7 @@ There is no need for a `"None"` sentinel.
 
 ### Temporal specificity
 
-Constraints are normative — an implementor must respect them. But not all conditions
+Constraints are [normative](/docs/reference/normative) — an implementor must respect them. But not all conditions
 hold at all times. The condition's own language carries its temporal semantics:
 
 | Condition | Temporal profile |
@@ -963,7 +963,7 @@ hold at all times. The condition's own language carries its temporal semantics:
 | "Email must be eventually unique" | **Eventual** — converges after the operation; brief violations during convergence are acceptable |
 | "Confirmation email is sent within 30 seconds" | **Bounded** — must complete within a time window |
 
-All three are normative and testable. The enforcement model is encoded in the
+All three are [normative](/docs/reference/normative) and testable. The enforcement model is encoded in the
 condition text, not in the field name or type.
 
 #### Example: immediate and eventual constraints on the same behavior
@@ -982,7 +982,7 @@ condition text, not in the field name or type.
 }
 ```
 
-Three constraints with three different temporal profiles — all normative, all testable,
+Three constraints with three different temporal profiles — all [normative](/docs/reference/normative), all testable,
 none contradicted by the field name.
 
 If the choice of enforcement model (strong vs. eventual consistency, database vs.
@@ -997,7 +997,7 @@ The spec graph uses related but distinct concepts:
 
 | Concept | What it is | Scope |
 |---------|-----------|-------|
-| `constraints` field | Array of normative conditions on a single node | Narrows THIS node's `expectation` or `statement` |
+| `constraints` field | Array of [normative](/docs/reference/normative) conditions on a single node | Narrows THIS node's `expectation` or `statement` |
 | Policy node (`type: "policy"`) | A standalone node for cross-cutting NFRs | Affects OTHER nodes via `constrains` edges; has `severity` (hard/soft) |
 | `constrains` edge | A graph relationship | Declares that the source node narrows implementation choices for the target |
 
@@ -1013,7 +1013,7 @@ The spec graph uses related but distinct concepts:
 Each behavior has a single verification string — typically an executable test command:
 
 ```json
-"verification": "npm test -- --grep AUTH-01"
+"verification": "pytest tests/auth/test_login_form.py -k AUTH_01"
 ```
 
 For behaviors that are harder to test programmatically, the verification can be a description of a manual check:
@@ -1064,8 +1064,8 @@ Decision nodes capture **any architectural, technical, or stack decision that na
     "No authentication call may bypass the AuthProvider interface"
   ],
   "verification": [
-    "npx tsc --noEmit",
-    "npm test -- --grep DEC-AUTH-01"
+    "cargo test auth::provider::contract -- --exact",
+    "go test ./internal/auth/provider -run TestAuthProviderContract"
   ],
   "links": {
     "constrains": ["AUTH-01", "AUTH-04", "AUTH-05"]
@@ -1091,7 +1091,7 @@ Decision nodes capture **any architectural, technical, or stack decision that na
 | `category` | Yes | One of: `architecture`, `stack`, `pattern`, `interface` |
 | `title` | Yes | Short name (3–140 chars) |
 | `statement` | Yes | The declarative truth that must hold |
-| `constraints` | No | Normative conditions that further narrow this decision's statement |
+| `constraints` | No | [Normative](/docs/reference/normative) conditions that further narrow this decision's statement |
 | `verification` | Yes | Array of pass/fail checks (min 1) |
 | `links` | No | Outbound edges |
 | `metadata` | Yes | Context object for decision history; must include `metadata.rationale` (min 10 chars) |
@@ -1218,7 +1218,8 @@ Domain nodes capture **business concepts, terms, and rules** — the ubiquitous 
   ],
   "verification": [
     "Database schema enforces email uniqueness",
-    "npm test -- --grep DOM-USER-01"
+    "go test ./internal/domain/... -run TestUserAccountRules",
+    "pytest tests/domain/test_user_account.py -k DOM_USER_01"
   ],
   "metadata": {
     "rationale": "Establishes shared vocabulary for 'user' across the system."
@@ -1237,7 +1238,7 @@ Domain nodes capture **business concepts, terms, and rules** — the ubiquitous 
 | `constraints` | No | Business rules governing this concept |
 | `verification` | Yes | How to verify the domain model is correct (min 1) |
 | `links` | No | Outbound edges |
-| `metadata` | No | Non-normative context |
+| `metadata` | No | [Non-normative](/docs/reference/normative#non-normative-content) context |
 
 ## The Statement Field
 
@@ -1267,7 +1268,7 @@ The `constraints` array captures the business rules governing this concept:
 ]
 ```
 
-Each entry is a normative condition that implementations must respect.
+Each entry is a [normative](/docs/reference/normative) condition that implementations must respect.
 
 ## When to Create Domain Nodes
 
@@ -1349,10 +1350,10 @@ Policy nodes capture **cross-cutting non-functional requirements** — performan
 | `severity` | Yes | `"hard"` (blocks manifestation) or `"soft"` (quality target) |
 | `title` | Yes | Short name (3–140 chars) |
 | `statement` | Yes | What must be true, with measurable criteria |
-| `constraints` | No | Normative sub-conditions that further narrow this node's statement |
+| `constraints` | No | [Normative](/docs/reference/normative) sub-conditions that further narrow this node's statement |
 | `verification` | Yes | How to measure compliance (min 1) |
 | `links` | No | Outbound edges (typically `constrains`) |
-| `metadata` | No | Non-normative context |
+| `metadata` | No | [Non-normative](/docs/reference/normative#non-normative-content) context |
 
 ## Severity
 
@@ -1435,7 +1436,7 @@ Policy IDs follow the pattern `POL-CATEGORY-##` or `POL-FEATURE-CATEGORY-##`:
 
 # Feature Nodes
 
-Feature nodes are **non-normative grouping nodes** that organize the graph into vertical product slices. They are the simplest node type — they have no `statement`, `verification`, or `constraints`.
+Feature nodes are **[non-normative](/docs/reference/normative#non-normative-content) grouping nodes** that organize the graph into vertical product slices. They are the simplest node type — they have no `statement`, `verification`, or `constraints`.
 
 Use [Layer Nodes](/docs/node-types/layer) for shared horizontal infrastructure.
 
@@ -1462,7 +1463,7 @@ Use [Layer Nodes](/docs/node-types/layer) for shared horizontal infrastructure.
 | `title` | Yes | Human-readable name (3–100 chars) |
 | `description` | Yes | What this feature area covers |
 | `links` | No | Outbound edges (typically `contains`) |
-| `metadata` | No | Non-normative context |
+| `metadata` | No | [Non-normative](/docs/reference/normative#non-normative-content) context |
 
 ## Non-Normative
 
@@ -1506,7 +1507,7 @@ For shared infrastructure names like `PLATFORM` or `DATA`, prefer `type: "layer"
 
 # Layer Nodes
 
-Layer nodes are **non-normative grouping nodes** for shared horizontal infrastructure. They complement feature nodes.
+Layer nodes are **[non-normative](/docs/reference/normative#non-normative-content) grouping nodes** for shared horizontal infrastructure. They complement feature nodes.
 
 - `feature`: groups vertical product slices
 - `layer`: groups shared platform/infrastructure capability
@@ -1534,7 +1535,7 @@ Layer nodes are **non-normative grouping nodes** for shared horizontal infrastru
 | `title` | Yes | Human-readable name (3–100 chars) |
 | `description` | Yes | What shared capability this layer covers |
 | `links` | No | Outbound edges (typically `contains`, optionally `depends_on`) |
-| `metadata` | No | Non-normative context |
+| `metadata` | No | [Non-normative](/docs/reference/normative#non-normative-content) context |
 
 ## Dependency Rule
 
@@ -1908,9 +1909,9 @@ An equivalence contract formally declares what "same system" means for this grap
     "Lighthouse FCP < 1.5s, LCP < 2.5s"
   ],
   "verification": [
-    { "kind": "command", "command": "npm test" },
-    { "kind": "command", "command": "npm run test:integration" },
-    { "kind": "command", "command": "npx lighthouse --preset=perf http://localhost:3000" }
+    { "kind": "command", "command": "go test ./... -run TestSystemEquivalence" },
+    { "kind": "command", "command": "python -m pytest tests/integration/test_equivalence.py" },
+    { "kind": "command", "command": "pnpm exec lighthouse --preset=perf http://localhost:3000" }
   ]
 }
 ```
@@ -1941,7 +1942,7 @@ This guide covers the practical mechanics of writing good spec graph nodes.
 
 ## The Universal Structure
 
-All normative nodes (everything except grouping nodes: `feature` and `layer`) follow a pattern:
+All [normative](/docs/reference/normative) nodes (everything except grouping nodes: `feature` and `layer`) follow a pattern:
 
 1. **Declare** what must be true (`statement` or `expectation`)
 2. **Constrain** what limits apply (`constraints`)
@@ -1980,7 +1981,7 @@ State what must be true, not the steps to get there.
 
 ## Writing Good Constraints
 
-Each `constraints` entry is an independent, normative condition that must hold.
+Each `constraints` entry is an independent, [normative](/docs/reference/normative) condition that must hold.
 The condition's own language carries its temporal semantics — "must hold at all
 times" vs "must eventually hold" vs "must hold within N seconds."
 
@@ -2026,7 +2027,7 @@ temporal semantics:
 "Email must be unique within 5s of creation"  — bounded eventual consistency
 ```
 
-All of these are normative — they are not suggestions. An implementor must respect
+All of these are [normative](/docs/reference/normative) — they are not suggestions. An implementor must respect
 the condition, including its temporal qualifier.
 
 ### 2. Enforcement — how it's guaranteed (decision node)
@@ -2076,14 +2077,14 @@ For cross-cutting non-functional requirements, policy nodes have `severity`:
   "statement": "All eventually-consistent operations must converge within 5 seconds under normal load",
   "constraints": ["Measured at p99 under 100 concurrent writes per second"],
   "verification": [
-    { "kind": "command", "command": "npm run test:convergence -- --timeout 5000" }
+    { "kind": "command", "command": "python -m pytest tests/consistency/test_convergence.py --maxfail=1" }
   ],
   "links": { "constrains": ["REG-01"] }
 }
 ```
 
 Severity applies to the policy node as a whole, not to individual `constraints`
-field entries. Field-level `constraints` entries are always normative.
+field entries. Field-level `constraints` entries are always [normative](/docs/reference/normative).
 
 :::info Disambiguation: `constraints` field vs policy nodes vs `constrains` edges
 
@@ -2091,7 +2092,7 @@ The spec graph uses related but distinct concepts:
 
 | Concept | What it is | Scope |
 |---------|-----------|-------|
-| `constraints` field | Array of normative conditions on a single node | Narrows THIS node's `expectation` or `statement` |
+| `constraints` field | Array of [normative](/docs/reference/normative) conditions on a single node | Narrows THIS node's `expectation` or `statement` |
 | Policy node (`type: "policy"`) | A standalone node for cross-cutting NFRs | Affects OTHER nodes via `constrains` edges; has `severity` (hard/soft) |
 | `constrains` edge | A graph relationship | Declares that the source node narrows implementation choices for the target |
 
@@ -2109,13 +2110,13 @@ Verification criteria produce **pass/fail** results. Prefer executable checks:
 ### Executable (Best)
 
 ```json
-"verification": ["npm test -- --grep AUTH-01"]
+"verification": ["pytest tests/auth/test_login_form.py -k AUTH_01"]
 ```
 
 ```json
 "verification": [
-  { "kind": "command", "command": "npx tsc --noEmit" },
-  { "kind": "command", "command": "npm test -- --grep DEC-AUTH-01" }
+  { "kind": "command", "command": "cargo test auth::provider::contract -- --exact" },
+  { "kind": "command", "command": "go test ./internal/auth/provider -run TestAuthProviderContract" }
 ]
 ```
 
@@ -2191,7 +2192,7 @@ If it contains "and" across multiple decisions, split it.
 
 ### Behavior Nodes
 
-The **ONE Rule** from DLOOP v1:
+The ONE behavior rule:
 
 > ONE trigger → ONE behavior → ONE outcome
 
@@ -2811,7 +2812,7 @@ Constraints: Password field must mask input characters.
 - POL-PERF-01: All pages must reach FCP within 1.5s on 4G. (severity: hard)
 
 ## Verification
-npm test -- --grep AUTH-01
+pytest tests/auth/test_login_form.py -k AUTH_01
 ```
 
 This document is what the implementing agent "sees" when building AUTH-01. It includes direct edges, inverse edges, and effective propagated guidance.
@@ -2831,7 +2832,7 @@ If any of these are missed, the implementation may diverge from the designer's i
 
 # Verification
 
-Verification is the **spine of predictability**. Every normative node must be verifiable, and verification is what makes [equivalence](/docs/theory/equivalence) testable.
+Verification is the **spine of predictability**. Every [normative](/docs/reference/normative) node must be verifiable, and verification is what makes [equivalence](/docs/theory/equivalence) testable.
 
 ## Verification at Every Level
 
@@ -2843,12 +2844,12 @@ Each node has its own verification criteria. After implementing a behavior or sc
 
 ```json
 // Behavior node
-"verification": "npm test -- --grep AUTH-01"
+"verification": "pnpm test -- --grep AUTH-01"
 
 // Decision node
 "verification": [
-  "npx tsc --noEmit",
-  "npm test -- --grep DEC-AUTH-01"
+  "cargo test auth::provider::contract -- --exact",
+  "go test ./internal/auth/provider -run TestAuthProviderContract"
 ]
 ```
 
@@ -2861,7 +2862,7 @@ After implementing behaviors, policy nodes that `constrain` those behaviors are 
 "verification": [
   {
     "kind": "command",
-    "command": "npx lighthouse --preset=perf --assert-fcp=1500 http://localhost:3000/login"
+    "command": "python -m pytest tests/policies/test_perf_budget.py -k POL_PERF_01"
   }
 ]
 ```
@@ -2886,10 +2887,10 @@ In practice, manifestation pipelines often include two additional operational st
 Preflight checks answer: "Is this workspace/toolchain healthy enough to start work?"
 
 Examples:
-- Dependencies installed
-- Project builds
-- Required services reachable
-- Working directory is in a safe state
+- `pnpm install --frozen-lockfile`
+- `cargo check --workspace`
+- `go test ./... -run TestSmoke`
+- `python -m pip check`
 
 These are **agent/tooling concerns**, not properties of the manifested system, so they typically live outside the spec graph.
 
@@ -2897,7 +2898,7 @@ These are **agent/tooling concerns**, not properties of the manifested system, s
 
 Quality gates answer: "Does the code meet the project's quality standard before we ship/review it?"
 
-In Spec Graph terms, the **normative** quality bar should be expressed as:
+In Spec Graph terms, the **[normative](/docs/reference/normative)** quality bar should be expressed as:
 - `policy` nodes (with `severity: hard|soft` and explicit `verification` commands), and/or
 - an `equivalence_contract` node that aggregates the definition of "done".
 
@@ -2922,7 +2923,7 @@ The most common type — a shell command that returns exit code 0 on success:
 ```json
 {
   "kind": "command",
-  "command": "npm test -- --grep AUTH-01",
+  "command": "./tools/verify-auth-contract",
   "timeoutSeconds": 60
 }
 ```
@@ -2996,9 +2997,9 @@ Verification flows through the graph:
 
 ```mermaid
 graph TD
-    B[AUTH-01<br/>npm test -- --grep AUTH-01] --> N[Node-level: ✓]
-    P[POL-PERF-01<br/>lighthouse --assert-fcp=1500] --> PL[Policy-level: ✓]
-    D[DEC-AUTH-01<br/>npx tsc --noEmit] --> DL[Decision-level: ✓]
+    B[AUTH-01<br/>pnpm test -- --grep AUTH-01] --> N[Node-level: ✓]
+    P[POL-PERF-01<br/>python -m pytest ...] --> PL[Policy-level: ✓]
+    D[DEC-AUTH-01<br/>go test ./internal/auth/provider ...] --> DL[Decision-level: ✓]
     N --> G[Graph-level: All pass]
     PL --> G
     DL --> G
@@ -3185,7 +3186,7 @@ Input:
 
 #### `list_dependencies_full`
 
-Returns transitive `depends_on` closure with explicit normative layer-propagated guidance and informational-only non-layer dependency context.
+Returns transitive `depends_on` closure with explicit [normative](/docs/reference/normative) layer-propagated guidance and informational-only non-layer dependency context.
 
 Input:
 
@@ -3198,7 +3199,7 @@ Input:
 
 #### `get_effective_constraints`
 
-Computes effective normative guidance for a target node:
+Computes effective [normative](/docs/reference/normative) guidance for a target node:
 
 - direct/inherited `constrains` via `contains` ancestry
 - transitive layer-originated propagation over `depends_on`
@@ -3283,7 +3284,7 @@ Input example:
     "title": "Reject invalid credentials",
     "expectation": "When credentials are invalid, login is rejected with a generic error.",
     "constraints": ["Response does not reveal whether username exists"],
-    "verification": "npm test -- --grep AUTH-01"
+    "verification": "pytest tests/auth/test_reject_invalid_credentials.py -k AUTH_01"
   }
 }
 ```
@@ -3304,7 +3305,7 @@ Input example:
     "type": "behavior",
     "title": "Reject invalid credentials",
     "expectation": "When credentials are invalid, login is rejected with a generic error and no user detail leakage.",
-    "verification": "npm test -- --grep AUTH-01",
+    "verification": "pytest tests/auth/test_reject_invalid_credentials.py -k AUTH_01",
     "constraints": ["Response does not reveal whether username exists"]
   }
 }
@@ -3694,37 +3695,38 @@ The initial behavior audit is the most time-consuming step. Once you have behavi
 
 ---
 
-# Migrating from DLOOP v1
+# Migrating from Behavior-Only Specs
 
-If you have an existing DLOOP v1 project with a `SPEC.json`, this guide explains how to migrate to the Spec Graph format.
+If you already maintain a behavior-only specification (for example, a `SPEC.json` file), this guide shows how to migrate to Spec Graph.
 
 ## What Changes
 
-| Aspect | DLOOP v1 | Spec Graph |
+| Aspect | Behavior-Only Spec | Spec Graph |
 |---|---|---|
-| Node types | `behavior` only | 7 core + extensions |
-| Structure | Flat array nested under features | Graph with typed edges |
-| Storage | Single `SPEC.json` file | File-per-node directory |
-| Relationships | Implicit (via feature grouping) | Explicit (typed edges) |
-| Tech guidance | External (agent instructions, profiles) | Inline (decision nodes) |
-| Domain model | Implicit (in code) | Explicit (domain nodes) |
-| Constraints | External (agent instructions) | Inline (policy nodes) |
-| Edge storage | N/A (no edges) | Node-local (`links` field) |
+| Node types | `behavior` only | core + extension node types |
+| Structure | Flat array, often nested under features | Graph with typed edges |
+| Storage | Single file | File-per-node directory |
+| Relationships | Implicit via grouping | Explicit typed edges |
+| Tech guidance | External docs or agent instructions | Decision nodes |
+| Domain model | Implicit | Domain nodes |
+| Constraints | Implicit or prose | Policy nodes + `constraints` fields |
+| Edge storage | N/A | Node-local (`links`) |
 
 ## What Stays the Same
 
-- **Atomicity**: the ONE rule for behaviors carries forward unchanged
-- **Declarative**: specs describe WHAT, not HOW (behaviors) or declare truths (decisions)
-- **Verifiable**: every node has verification criteria
-- **Repo-first**: the spec graph lives in git as the source of truth
+- **Atomicity**: one behavior node should still capture one observable outcome
+- **Declarative**: specs still describe truth, not implementation steps
+- **Verifiable**: each node still needs pass/fail verification criteria
+- **Repo-first**: the graph still lives in version control as source of truth
 
 ## Migration Steps
 
 ### Step 1: Extract Behaviors
 
-Convert each v1 behavior into a standalone node file:
+Convert each behavior into a standalone node file:
 
-**Before (SPEC.json v1):**
+**Before (behavior-only `SPEC.json`):**
+
 ```json
 {
   "features": [{
@@ -3735,13 +3737,14 @@ Convert each v1 behavior into a standalone node file:
       "name": "Login Form Display",
       "expectation": "Login page renders email and password fields",
       "invariant": "Password field must mask input",
-      "verification": "npm test -- --grep AUTH-01"
+      "verification": "pytest tests/auth/test_login.py -k AUTH_01"
     }]
   }]
 }
 ```
 
-**After (nodes/behaviors/AUTH-01.json):**
+**After (`nodes/behaviors/AUTH-01.json`):**
+
 ```json
 {
   "id": "AUTH-01",
@@ -3749,19 +3752,20 @@ Convert each v1 behavior into a standalone node file:
   "title": "Login Form Display",
   "expectation": "Login page renders email and password fields",
   "constraints": ["Password field must mask input"],
-  "verification": "npm test -- --grep AUTH-01"
+  "verification": "pytest tests/auth/test_login.py -k AUTH_01"
 }
 ```
 
 Changes:
-- `name` → `title`
+
+- `name` -> `title`
 - Added `type: "behavior"`
-- `invariant` (string) → `constraints` (array of strings)
-- Each behavior is now its own file
+- `invariant` (string) -> `constraints` (array of strings)
+- Each behavior becomes its own file
 
-### Step 2: Create Feature Nodes
+### Step 2: Create Grouping Nodes
 
-Convert each v1 feature into a feature node:
+Convert feature-level groupings into explicit `feature` nodes:
 
 ```json
 {
@@ -3779,7 +3783,7 @@ Optional horizontal extraction after baseline migration:
 
 - Keep product slices as `feature` nodes
 - Move shared infrastructure groupings into `layer` nodes
-- Add `feature -> depends_on -> layer` edges where appropriate
+- Add `feature -> depends_on -> layer` edges where needed
 
 ### Step 3: Create the Graph Index
 
@@ -3794,19 +3798,19 @@ Optional horizontal extraction after baseline migration:
 }
 ```
 
-### Step 4: Extract Tech Stack (Optional)
+### Step 4: Extract Design Decisions
 
-What's currently in tech stack profiles, agent instructions, or CLAUDE.md becomes decision nodes:
+What previously lived in implementation notes or agent instructions should become decision nodes:
 
-```
-techStackProfile["nextjs-convex-v1"]  →  DEC-PLATFORM-01 (stack: Next.js)
-                                      →  DEC-PLATFORM-02 (stack: Convex)
-agent instructions "use AuthProvider"  →  DEC-AUTH-01 (architecture)
+```text
+"all auth goes through AuthProvider" -> DEC-AUTH-01
+"use PostgreSQL for primary state" -> DEC-DATA-01
+"use gRPC between services" -> DEC-API-01
 ```
 
 ### Step 5: Add Edges
 
-Connect behaviors to the decision nodes that guide them:
+Connect behaviors to the nodes that guide them:
 
 ```json
 // In AUTH-01.json
@@ -3818,25 +3822,23 @@ Connect behaviors to the decision nodes that guide them:
 
 ### Step 6: Add Domain and Policy Nodes
 
-Based on the minimality test — add them when actual manifestation ambiguity requires it.
+Use the [minimality test](/docs/theory/minimality): add domain/policy nodes where leaving them out would create manifestation ambiguity.
 
-## Coexistence
+## Coexistence During Migration
 
-During migration, the original `SPEC.json` can coexist with the new spec graph directory. You can generate a v1-compatible `SPEC.json` from behavior nodes as a **projection** — a derived artifact.
+During migration, your original behavior-only spec can coexist with the new graph directory. You can project behavior nodes back into a compatibility file when legacy tooling still needs that format.
 
-This allows teams to migrate incrementally without breaking existing tooling that consumes `SPEC.json`.
+This lets teams migrate incrementally without breaking existing workflows.
 
 ## Key Differences to Watch
 
-### Edges Replace Feature/Layer Nesting
+### Edges Replace Structural Nesting
 
-In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is expressed via the `contains` edge in a grouping node (`feature` or `layer`). A node can conceptually belong to multiple groupings.
+In behavior-only formats, belonging is often implied by nesting. In Spec Graph, membership is explicit through `contains` edges.
 
 ### Verification Is Richer
 
-V1 behavior verification was a single string. Spec Graph contract nodes (foundation, decision, domain, policy) support arrays of verification entries, including structured formats (command, http, manual).
-
-Behavior nodes keep the single-string verification for simplicity.
+Behavior nodes keep a single verification string for simplicity. Contract nodes (foundation, decision, domain, policy, and extensions) support verification arrays with structured entries (`command`, `http`, `manual`, `observation`, `policy`).
 
 ---
 
@@ -3911,7 +3913,7 @@ Type-specific requirements:
 
 - `decision` nodes require `category` and `metadata.rationale` (min length 10)
 - `policy` nodes require `severity`
-- `artifact` nodes require an `artifact` object with a normative `sha256` hash (and optional `source`/`format`)
+- `artifact` nodes require an `artifact` object with a [normative](/docs/reference/normative) `sha256` hash (and optional `source`/`format`)
 
 Other optional fields: `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
 
@@ -3939,10 +3941,10 @@ Contract nodes use an array of verification entries. Each entry is either a stri
 
 ```json
 "verification": [
-  "npm test -- --grep DEC-AUTH-01",
+  "pytest tests/architecture/test_auth_provider.py -k DEC_AUTH_01",
   {
     "kind": "command",
-    "command": "npx tsc --noEmit",
+    "command": "cargo test auth::provider::contract -- --exact",
     "timeoutSeconds": 120
   },
   {
@@ -4067,6 +4069,62 @@ graph TD
 
 ---
 
+# Normative
+
+In Spec Graph, **normative** means: a statement that is required for conformance.
+
+If content is normative, an implementing agent or team must treat it as binding:
+
+- it must be implemented
+- it must be respected during manifestation
+- it must pass its verification criteria
+
+## Normative Content
+
+In practice, these fields are normative:
+
+- `expectation` (behavior nodes)
+- `statement` (contract-style nodes)
+- `constraints`
+- `verification`
+
+If two implementations differ on normative content, they are not equivalent under the same spec graph.
+
+## Informative Content
+
+Informative content explains intent and context, but does not impose implementation requirements.
+
+Typical informative fields include:
+
+- `metadata.rationale`
+- `metadata.notes`
+- optional contextual metadata (tags, ownership, references)
+
+Informative content can guide humans and agents, but it is not itself a conformance target.
+
+## Non-Normative Content
+
+Grouping nodes are non-normative organizational structure:
+
+- `feature`
+- `layer`
+
+These nodes shape navigation and scope, not runtime behavior.
+
+## Quick Test
+
+Use this test when deciding if content is normative:
+
+1. If this statement is violated, is the implementation non-conformant?
+2. If yes, it is normative.
+3. If no, it is informative/non-normative.
+
+## Why This Distinction Matters
+
+Clear normative boundaries prevent ambiguity during manifestation. They keep the graph executable as a contract, while still allowing supporting context for collaboration and review.
+
+---
+
 # Glossary
 
 | Term | Definition |
@@ -4074,9 +4132,9 @@ graph TD
 | **Spec Graph** | A directed, typed graph of specification nodes that completely describes a software system across multiple dimensions. |
 | **Node** | A single specification entry with a type, ID, and content. The atomic unit of the spec graph. |
 | **Edge** | A typed, directed relationship between two nodes. Stored as outbound links inside the source node. |
-| **Feature** | A non-normative grouping node for vertical product slices. |
-| **Foundation Node** | A normative node declaring the manifested physical state of repository scaffolding (files, directories, package manifests). Uses self-contained shell commands for verification. Cannot depend on layer, feature, or behavior nodes. |
-| **Layer** | A non-normative grouping node for shared horizontal infrastructure capability. |
+| **Feature** | A [non-normative](/docs/reference/normative#non-normative-content) grouping node for vertical product slices. |
+| **Foundation Node** | A [normative](/docs/reference/normative) node declaring the manifested physical state of repository scaffolding (files, directories, package manifests). Uses self-contained shell commands for verification. Cannot depend on layer, feature, or behavior nodes. |
+| **Layer** | A [non-normative](/docs/reference/normative#non-normative-content) grouping node for shared horizontal infrastructure capability. |
 | **Manifestation** | The process of producing a running system from a spec graph. Encompasses planning, coding, building, testing, and deploying. |
 | **Completeness** | The property that manifestation is predictable across all specified dimensions — any two manifestations from the same graph are equivalent. |
 | **Minimality** | The property that no node can be removed without breaking completeness. Every node is load-bearing. |

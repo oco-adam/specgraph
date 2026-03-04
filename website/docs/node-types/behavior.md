@@ -16,7 +16,7 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
   "title": "Login Form Display",
   "expectation": "Login page renders email and password input fields with a submit button",
   "constraints": ["Password field must mask input characters"],
-  "verification": "npm test -- --grep AUTH-01",
+  "verification": "pytest tests/auth/test_login_form.py -k AUTH_01",
   "links": {
     "implements": ["DOM-USER-01"],
     "depends_on": ["DEC-AUTH-01"]
@@ -32,14 +32,14 @@ Behavior nodes are the foundation of the Spec Graph. They capture **observable s
 | `type` | Yes | Must be `"behavior"` |
 | `title` | Yes | Short human-readable name (3–100 chars) |
 | `expectation` | Yes | WHAT the system does (min 10 chars) |
-| `constraints` | No | Normative conditions that must hold for this behavior. Authoring convention: include explicitly; use `[]` when none. |
+| `constraints` | No | [Normative](/docs/reference/normative) conditions that must hold for this behavior. Authoring convention: include explicitly; use `[]` when none. |
 | `verification` | Yes | Single pass/fail check (min 5 chars) |
 | `links` | No | Outbound edges to other nodes |
-| `metadata` | No | Non-normative context (rationale, notes, tags) |
+| `metadata` | No | [Non-normative](/docs/reference/normative#non-normative-content) context (rationale, notes, tags) |
 
 ## The ONE Rule
 
-Behavior nodes follow the **ONE rule** from DLOOP v1:
+Behavior nodes follow the ONE behavior rule:
 
 > **ONE trigger → ONE behavior → ONE outcome**
 
@@ -72,7 +72,7 @@ There is no need for a `"None"` sentinel.
 
 ### Temporal specificity
 
-Constraints are normative — an implementor must respect them. But not all conditions
+Constraints are [normative](/docs/reference/normative) — an implementor must respect them. But not all conditions
 hold at all times. The condition's own language carries its temporal semantics:
 
 | Condition | Temporal profile |
@@ -81,7 +81,7 @@ hold at all times. The condition's own language carries its temporal semantics:
 | "Email must be eventually unique" | **Eventual** — converges after the operation; brief violations during convergence are acceptable |
 | "Confirmation email is sent within 30 seconds" | **Bounded** — must complete within a time window |
 
-All three are normative and testable. The enforcement model is encoded in the
+All three are [normative](/docs/reference/normative) and testable. The enforcement model is encoded in the
 condition text, not in the field name or type.
 
 #### Example: immediate and eventual constraints on the same behavior
@@ -100,7 +100,7 @@ condition text, not in the field name or type.
 }
 ```
 
-Three constraints with three different temporal profiles — all normative, all testable,
+Three constraints with three different temporal profiles — all [normative](/docs/reference/normative), all testable,
 none contradicted by the field name.
 
 If the choice of enforcement model (strong vs. eventual consistency, database vs.
@@ -115,7 +115,7 @@ The spec graph uses related but distinct concepts:
 
 | Concept | What it is | Scope |
 |---------|-----------|-------|
-| `constraints` field | Array of normative conditions on a single node | Narrows THIS node's `expectation` or `statement` |
+| `constraints` field | Array of [normative](/docs/reference/normative) conditions on a single node | Narrows THIS node's `expectation` or `statement` |
 | Policy node (`type: "policy"`) | A standalone node for cross-cutting NFRs | Affects OTHER nodes via `constrains` edges; has `severity` (hard/soft) |
 | `constrains` edge | A graph relationship | Declares that the source node narrows implementation choices for the target |
 
@@ -131,7 +131,7 @@ The spec graph uses related but distinct concepts:
 Each behavior has a single verification string — typically an executable test command:
 
 ```json
-"verification": "npm test -- --grep AUTH-01"
+"verification": "pytest tests/auth/test_login_form.py -k AUTH_01"
 ```
 
 For behaviors that are harder to test programmatically, the verification can be a description of a manual check:

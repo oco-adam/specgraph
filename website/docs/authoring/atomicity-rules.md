@@ -17,7 +17,7 @@ If it contains "and" across multiple decisions, split it.
 
 ### Behavior Nodes
 
-The **ONE Rule** from DLOOP v1:
+The ONE behavior rule:
 
 > ONE trigger → ONE behavior → ONE outcome
 

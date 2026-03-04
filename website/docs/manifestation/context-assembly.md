@@ -82,7 +82,7 @@ Constraints: Password field must mask input characters.
 - POL-PERF-01: All pages must reach FCP within 1.5s on 4G. (severity: hard)
 
 ## Verification
-npm test -- --grep AUTH-01
+pytest tests/auth/test_login_form.py -k AUTH_01
 ```
 
 This document is what the implementing agent "sees" when building AUTH-01. It includes direct edges, inverse edges, and effective propagated guidance.

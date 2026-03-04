@@ -180,7 +180,7 @@ Input:
 
 #### `list_dependencies_full`
 
-Returns transitive `depends_on` closure with explicit normative layer-propagated guidance and informational-only non-layer dependency context.
+Returns transitive `depends_on` closure with explicit [normative](/docs/reference/normative) layer-propagated guidance and informational-only non-layer dependency context.
 
 Input:
 
@@ -193,7 +193,7 @@ Input:
 
 #### `get_effective_constraints`
 
-Computes effective normative guidance for a target node:
+Computes effective [normative](/docs/reference/normative) guidance for a target node:
 
 - direct/inherited `constrains` via `contains` ancestry
 - transitive layer-originated propagation over `depends_on`
@@ -278,7 +278,7 @@ Input example:
     "title": "Reject invalid credentials",
     "expectation": "When credentials are invalid, login is rejected with a generic error.",
     "constraints": ["Response does not reveal whether username exists"],
-    "verification": "npm test -- --grep AUTH-01"
+    "verification": "pytest tests/auth/test_reject_invalid_credentials.py -k AUTH_01"
   }
 }
 ```
@@ -299,7 +299,7 @@ Input example:
     "type": "behavior",
     "title": "Reject invalid credentials",
     "expectation": "When credentials are invalid, login is rejected with a generic error and no user detail leakage.",
-    "verification": "npm test -- --grep AUTH-01",
+    "verification": "pytest tests/auth/test_reject_invalid_credentials.py -k AUTH_01",
     "constraints": ["Response does not reveal whether username exists"]
   }
 }

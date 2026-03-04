@@ -10,7 +10,7 @@ Spec Graph uses a **tiered type system**: seven core types plus optional extensi
 Core taxonomy in v2:
 
 - 2 grouping types: `feature`, `layer`
-- 5 normative core types: `foundation`, `behavior`, `decision`, `domain`, `policy`
+- 5 [normative](/docs/reference/normative) core types: `foundation`, `behavior`, `decision`, `domain`, `policy`
 
 ## Core Types
 

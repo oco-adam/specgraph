@@ -22,7 +22,8 @@ Domain nodes capture **business concepts, terms, and rules** — the ubiquitous 
   ],
   "verification": [
     "Database schema enforces email uniqueness",
-    "npm test -- --grep DOM-USER-01"
+    "go test ./internal/domain/... -run TestUserAccountRules",
+    "pytest tests/domain/test_user_account.py -k DOM_USER_01"
   ],
   "metadata": {
     "rationale": "Establishes shared vocabulary for 'user' across the system."
@@ -41,7 +42,7 @@ Domain nodes capture **business concepts, terms, and rules** — the ubiquitous 
 | `constraints` | No | Business rules governing this concept |
 | `verification` | Yes | How to verify the domain model is correct (min 1) |
 | `links` | No | Outbound edges |
-| `metadata` | No | Non-normative context |
+| `metadata` | No | [Non-normative](/docs/reference/normative#non-normative-content) context |
 
 ## The Statement Field
 
@@ -71,7 +72,7 @@ The `constraints` array captures the business rules governing this concept:
 ]
 ```
 
-Each entry is a normative condition that implementations must respect.
+Each entry is a [normative](/docs/reference/normative) condition that implementations must respect.
 
 ## When to Create Domain Nodes
 

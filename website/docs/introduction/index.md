@@ -70,4 +70,4 @@ If you want to jump straight in:
 
 ## Background
 
-The Spec Graph builds on lessons from [DLOOP v1](https://github.com/omnifiedLtd/selfimloop), a declarative agentic development framework that used behavior-only specifications. DLOOP v1 demonstrated the value of atomic, declarative specs driving automated development — but limiting specs to behavior alone left too many decisions unspecified. The Spec Graph is a clean-sheet redesign that addresses this completeness gap.
+Behavior-only specs are a strong starting point, but by themselves they usually leave key decisions unspecified (architecture, domain boundaries, non-functional constraints, and technology contracts). Spec Graph closes that gap by modeling those dimensions directly in the graph so manifestations are repeatable across implementing agents.

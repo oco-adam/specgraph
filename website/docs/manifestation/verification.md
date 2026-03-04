@@ -5,7 +5,7 @@ title: Verification
 
 # Verification
 
-Verification is the **spine of predictability**. Every normative node must be verifiable, and verification is what makes [equivalence](/docs/theory/equivalence) testable.
+Verification is the **spine of predictability**. Every [normative](/docs/reference/normative) node must be verifiable, and verification is what makes [equivalence](/docs/theory/equivalence) testable.
 
 ## Verification at Every Level
 
@@ -17,12 +17,12 @@ Each node has its own verification criteria. After implementing a behavior or sc
 
 ```json
 // Behavior node
-"verification": "npm test -- --grep AUTH-01"
+"verification": "pnpm test -- --grep AUTH-01"
 
 // Decision node
 "verification": [
-  "npx tsc --noEmit",
-  "npm test -- --grep DEC-AUTH-01"
+  "cargo test auth::provider::contract -- --exact",
+  "go test ./internal/auth/provider -run TestAuthProviderContract"
 ]
 ```
 
@@ -35,7 +35,7 @@ After implementing behaviors, policy nodes that `constrain` those behaviors are 
 "verification": [
   {
     "kind": "command",
-    "command": "npx lighthouse --preset=perf --assert-fcp=1500 http://localhost:3000/login"
+    "command": "python -m pytest tests/policies/test_perf_budget.py -k POL_PERF_01"
   }
 ]
 ```
@@ -60,10 +60,10 @@ In practice, manifestation pipelines often include two additional operational st
 Preflight checks answer: "Is this workspace/toolchain healthy enough to start work?"
 
 Examples:
-- Dependencies installed
-- Project builds
-- Required services reachable
-- Working directory is in a safe state
+- `pnpm install --frozen-lockfile`
+- `cargo check --workspace`
+- `go test ./... -run TestSmoke`
+- `python -m pip check`
 
 These are **agent/tooling concerns**, not properties of the manifested system, so they typically live outside the spec graph.
 
@@ -71,7 +71,7 @@ These are **agent/tooling concerns**, not properties of the manifested system, s
 
 Quality gates answer: "Does the code meet the project's quality standard before we ship/review it?"
 
-In Spec Graph terms, the **normative** quality bar should be expressed as:
+In Spec Graph terms, the **[normative](/docs/reference/normative)** quality bar should be expressed as:
 - `policy` nodes (with `severity: hard|soft` and explicit `verification` commands), and/or
 - an `equivalence_contract` node that aggregates the definition of "done".
 
@@ -96,7 +96,7 @@ The most common type — a shell command that returns exit code 0 on success:
 ```json
 {
   "kind": "command",
-  "command": "npm test -- --grep AUTH-01",
+  "command": "./tools/verify-auth-contract",
   "timeoutSeconds": 60
 }
 ```
@@ -170,9 +170,9 @@ Verification flows through the graph:
 
 ```mermaid
 graph TD
-    B[AUTH-01<br/>npm test -- --grep AUTH-01] --> N[Node-level: ✓]
-    P[POL-PERF-01<br/>lighthouse --assert-fcp=1500] --> PL[Policy-level: ✓]
-    D[DEC-AUTH-01<br/>npx tsc --noEmit] --> DL[Decision-level: ✓]
+    B[AUTH-01<br/>pnpm test -- --grep AUTH-01] --> N[Node-level: ✓]
+    P[POL-PERF-01<br/>python -m pytest ...] --> PL[Policy-level: ✓]
+    D[DEC-AUTH-01<br/>go test ./internal/auth/provider ...] --> DL[Decision-level: ✓]
     N --> G[Graph-level: All pass]
     PL --> G
     DL --> G

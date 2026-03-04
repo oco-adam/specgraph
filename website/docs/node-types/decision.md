@@ -21,8 +21,8 @@ Decision nodes capture **any architectural, technical, or stack decision that na
     "No authentication call may bypass the AuthProvider interface"
   ],
   "verification": [
-    "npx tsc --noEmit",
-    "npm test -- --grep DEC-AUTH-01"
+    "cargo test auth::provider::contract -- --exact",
+    "go test ./internal/auth/provider -run TestAuthProviderContract"
   ],
   "links": {
     "constrains": ["AUTH-01", "AUTH-04", "AUTH-05"]
@@ -48,7 +48,7 @@ Decision nodes capture **any architectural, technical, or stack decision that na
 | `category` | Yes | One of: `architecture`, `stack`, `pattern`, `interface` |
 | `title` | Yes | Short name (3–140 chars) |
 | `statement` | Yes | The declarative truth that must hold |
-| `constraints` | No | Normative conditions that further narrow this decision's statement |
+| `constraints` | No | [Normative](/docs/reference/normative) conditions that further narrow this decision's statement |
 | `verification` | Yes | Array of pass/fail checks (min 1) |
 | `links` | No | Outbound edges |
 | `metadata` | Yes | Context object for decision history; must include `metadata.rationale` (min 10 chars) |

@@ -10,9 +10,9 @@ title: Glossary
 | **Spec Graph** | A directed, typed graph of specification nodes that completely describes a software system across multiple dimensions. |
 | **Node** | A single specification entry with a type, ID, and content. The atomic unit of the spec graph. |
 | **Edge** | A typed, directed relationship between two nodes. Stored as outbound links inside the source node. |
-| **Feature** | A non-normative grouping node for vertical product slices. |
-| **Foundation Node** | A normative node declaring the manifested physical state of repository scaffolding (files, directories, package manifests). Uses self-contained shell commands for verification. Cannot depend on layer, feature, or behavior nodes. |
-| **Layer** | A non-normative grouping node for shared horizontal infrastructure capability. |
+| **Feature** | A [non-normative](/docs/reference/normative#non-normative-content) grouping node for vertical product slices. |
+| **Foundation Node** | A [normative](/docs/reference/normative) node declaring the manifested physical state of repository scaffolding (files, directories, package manifests). Uses self-contained shell commands for verification. Cannot depend on layer, feature, or behavior nodes. |
+| **Layer** | A [non-normative](/docs/reference/normative#non-normative-content) grouping node for shared horizontal infrastructure capability. |
 | **Manifestation** | The process of producing a running system from a spec graph. Encompasses planning, coding, building, testing, and deploying. |
 | **Completeness** | The property that manifestation is predictable across all specified dimensions — any two manifestations from the same graph are equivalent. |
 | **Minimality** | The property that no node can be removed without breaking completeness. Every node is load-bearing. |

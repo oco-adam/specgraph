@@ -44,10 +44,10 @@ Policy nodes capture **cross-cutting non-functional requirements** — performan
 | `severity` | Yes | `"hard"` (blocks manifestation) or `"soft"` (quality target) |
 | `title` | Yes | Short name (3–140 chars) |
 | `statement` | Yes | What must be true, with measurable criteria |
-| `constraints` | No | Normative sub-conditions that further narrow this node's statement |
+| `constraints` | No | [Normative](/docs/reference/normative) sub-conditions that further narrow this node's statement |
 | `verification` | Yes | How to measure compliance (min 1) |
 | `links` | No | Outbound edges (typically `constrains`) |
-| `metadata` | No | Non-normative context |
+| `metadata` | No | [Non-normative](/docs/reference/normative#non-normative-content) context |
 
 ## Severity
 

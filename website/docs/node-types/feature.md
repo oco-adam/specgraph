@@ -5,7 +5,7 @@ title: Feature Nodes
 
 # Feature Nodes
 
-Feature nodes are **non-normative grouping nodes** that organize the graph into vertical product slices. They are the simplest node type — they have no `statement`, `verification`, or `constraints`.
+Feature nodes are **[non-normative](/docs/reference/normative#non-normative-content) grouping nodes** that organize the graph into vertical product slices. They are the simplest node type — they have no `statement`, `verification`, or `constraints`.
 
 Use [Layer Nodes](/docs/node-types/layer) for shared horizontal infrastructure.
 
@@ -32,7 +32,7 @@ Use [Layer Nodes](/docs/node-types/layer) for shared horizontal infrastructure.
 | `title` | Yes | Human-readable name (3–100 chars) |
 | `description` | Yes | What this feature area covers |
 | `links` | No | Outbound edges (typically `contains`) |
-| `metadata` | No | Non-normative context |
+| `metadata` | No | [Non-normative](/docs/reference/normative#non-normative-content) context |
 
 ## Non-Normative
 
