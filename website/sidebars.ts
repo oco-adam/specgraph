@@ -43,6 +43,7 @@ const sidebars: SidebarsConfig = {
         'node-types/policy',
         'node-types/feature',
         'node-types/layer',
+        'node-types/foundation',
         'node-types/extensions',
       ],
     },

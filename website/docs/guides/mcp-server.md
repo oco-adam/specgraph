@@ -53,7 +53,7 @@ For agent bootstrapping and retrieval workflows, the site publishes both summary
 
 See [LLM Context Files](/docs/reference/llm-context-files) for usage details.
 
-## Tool Surface (`@specgraph/mcp@0.3.x`)
+## Tool Surface (`@specgraph/mcp@0.5.x`)
 
 ### Shared Definitions
 
@@ -68,7 +68,7 @@ Most tools use these common field definitions:
 - `feature` and `layer` require `id`, `type`, `title`, `description`
 - `behavior` requires `id`, `type`, `title`, `expectation`, `verification`
 - behavior authoring convention: include `constraints` explicitly; use `[]` if none apply (schema still allows omission)
-- contract types (`decision`, `domain`, `policy`, `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`) require `id`, `type`, `title`, `statement`, `verification`
+- contract types (`foundation`, `decision`, `domain`, `policy`, `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`) require `id`, `type`, `title`, `statement`, `verification`
 - `decision` additionally requires `category` and `metadata.rationale`
 - `policy` additionally requires `severity`
 
@@ -112,6 +112,7 @@ Checks include:
 - self-references
 - `depends_on` cycles
 - dependency inversion guard (`layer -> depends_on -> feature` is invalid)
+- foundation dependency guard (`foundation -> depends_on -> layer/feature/behavior` is invalid)
 - propagated layer decision ambiguity detection
 
 ### Query Tools

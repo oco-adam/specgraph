@@ -5,6 +5,7 @@
   "title": "Core Platform",
   "description": "Shared infrastructure contracts and platform-level policies.",
   "links": {
-    "contains": ["DEC-PLAT-01", "POL-PLAT-SEC-01"]
+    "contains": ["DEC-PLAT-01", "POL-PLAT-SEC-01"],
+    "depends_on": ["FND-PLAT-01"]
   }
 }

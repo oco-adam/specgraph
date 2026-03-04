@@ -4,6 +4,7 @@ import { DEFAULT_DIRECTORY, EDGE_TYPES } from '../constants.js';
 const NODE_TYPES = [
   'feature',
   'layer',
+  'foundation',
   'behavior',
   'decision',
   'domain',
@@ -235,6 +236,13 @@ export const DomainNodeInput = z
   })
   .strict();
 
+export const FoundationNodeInput = z
+  .object({
+    ...ContractNodeBase,
+    type: z.literal('foundation')
+  })
+  .strict();
+
 export const PolicyNodeInput = z
   .object({
     ...ContractNodeBase,
@@ -301,6 +309,7 @@ export const NodeInput = z
     DecisionNodeInput,
     DomainNodeInput,
     PolicyNodeInput,
+    FoundationNodeInput,
     DesignTokenNodeInput,
     UiContractNodeInput,
     ApiContractNodeInput,

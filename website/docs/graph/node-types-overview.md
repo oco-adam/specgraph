@@ -5,12 +5,12 @@ title: Node Types Overview
 
 # Node Types Overview
 
-Spec Graph uses a **tiered type system**: six core types plus optional extension types.
+Spec Graph uses a **tiered type system**: seven core types plus optional extension types.
 
 Core taxonomy in v2:
 
 - 2 grouping types: `feature`, `layer`
-- 4 normative core types: `behavior`, `decision`, `domain`, `policy`
+- 5 normative core types: `foundation`, `behavior`, `decision`, `domain`, `policy`
 
 ## Core Types
 
@@ -18,6 +18,7 @@ Core taxonomy in v2:
 |---|---|---|
 | **`feature`** | Vertical grouping and namespace | Which product slice does this spec belong to? |
 | **`layer`** | Horizontal shared grouping | Which shared platform capability does this belong to? |
+| **`foundation`** | Concrete repository scaffolding | What physical structure must exist before application logic? |
 | **`behavior`** | Observable system behavior | What does the user see and do? |
 | **`decision`** | Architectural, technical, or stack decision | How should it be built, and with what? |
 | **`domain`** | Business concept, term, or rule | What do domain terms mean? |
@@ -29,7 +30,7 @@ Core taxonomy in v2:
 
 **Behavior nodes** carry `expectation` and optional `constraints`.
 
-**Contract nodes** (decision, domain, policy, extensions) share a uniform shape with `statement` + `verification`.
+**Contract nodes** (foundation, decision, domain, policy, extensions) share a uniform shape with `statement` + `verification`.
 
 ## Extension Types
 

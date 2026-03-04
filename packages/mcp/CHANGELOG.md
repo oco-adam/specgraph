@@ -2,6 +2,22 @@
 
 All notable changes to `@specgraph/mcp` are documented in this file.
 
+## 0.5.0 - 2026-03-04
+
+### Added
+
+- Added `foundation` as a core contract node type in MCP input schemas and bundled JSON Schema validation.
+- Added node directory mapping for `foundation` nodes (`nodes/foundations`).
+- Added structural validation guard for invalid foundation dependencies:
+  - reject `foundation -> depends_on -> layer`
+  - reject `foundation -> depends_on -> feature`
+  - reject `foundation -> depends_on -> behavior`
+- Added write-time dependency direction checks in graph writer operations (`add_node`, `update_node`, `add_edge`) so invalid foundation dependencies are rejected immediately.
+
+### Changed
+
+- Updated `add_node` tool schema documentation to include `foundation` among contract node types.
+
 ## 0.4.0 - 2026-02-27
 
 ### Added

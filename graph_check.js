@@ -471,6 +471,17 @@ function checkGraph(graphPath, opts) {
             }
           }
         }
+
+        if (node.type === 'foundation') {
+          for (const toId of targets) {
+            const targetNode = idToNode.get(toId);
+            if (targetNode && ['layer', 'feature', 'behavior'].includes(targetNode.type)) {
+              errors.push(
+                `Invalid dependency: foundation '${fromId}' cannot depend_on ${targetNode.type} '${toId}'`
+              );
+            }
+          }
+        }
       }
     }
   }

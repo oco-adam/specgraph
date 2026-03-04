@@ -11,7 +11,7 @@ If you have an existing DLOOP v1 project with a `SPEC.json`, this guide explains
 
 | Aspect | DLOOP v1 | Spec Graph |
 |---|---|---|
-| Node types | `behavior` only | 6 core + extensions |
+| Node types | `behavior` only | 7 core + extensions |
 | Structure | Flat array nested under features | Graph with typed edges |
 | Storage | Single `SPEC.json` file | File-per-node directory |
 | Relationships | Implicit (via feature grouping) | Explicit (typed edges) |
@@ -143,6 +143,6 @@ In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is 
 
 ### Verification Is Richer
 
-V1 behavior verification was a single string. Spec Graph contract nodes (decision, domain, policy) support arrays of verification entries, including structured formats (command, http, manual).
+V1 behavior verification was a single string. Spec Graph contract nodes (foundation, decision, domain, policy) support arrays of verification entries, including structured formats (command, http, manual).
 
 Behavior nodes keep the single-string verification for simplicity.

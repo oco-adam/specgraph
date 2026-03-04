@@ -66,7 +66,7 @@ Authoring convention: include `constraints` explicitly on behavior nodes and use
 
 ### Contract Nodes
 
-All other types (decision, domain, policy, and extensions).
+All other types (foundation, decision, domain, policy, and extensions).
 
 Required: `id`, `type`, `title`, `statement`, `verification` (array)
 
@@ -127,7 +127,7 @@ Feature IDs must match: `^[A-Z][A-Z0-9-]{0,19}$`
 
 ### Node Types
 
-Core: `feature`, `layer`, `behavior`, `decision`, `domain`, `policy`
+Core: `feature`, `layer`, `foundation`, `behavior`, `decision`, `domain`, `policy`
 
 Extensions: `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`
 

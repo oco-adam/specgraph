@@ -22,6 +22,7 @@ specgraph/
   nodes/
     features/AUTH.json
     layers/PLATFORM.json        # optional, when shared infra exists
+    foundations/FND-01.json     # optional, for cold-start bootstrapping
     behaviors/AUTH-01.json
     behaviors/AUTH-02.json
 ```
@@ -48,6 +49,20 @@ specgraph/
 **Trigger:** "The last two manifestations used different auth libraries" or "Agent keeps putting auth logic in the wrong place."
 
 **What you get:** structural and technological equivalence added to behavioral equivalence.
+
+### Level 2.5: + Foundation Nodes
+
+When the repository must be bootstrapped from scratch and agents need a concrete physical anchor before implementing decisions, add foundation nodes.
+
+```
+  nodes/
+    ...
+    foundations/FND-01.json       ← NEW
+```
+
+**Trigger:** "The agent hallucinated scaffolding in the wrong language/framework" or "No physical codebase existed for the agent to anchor its decisions to."
+
+**What you get:** a concrete, verified physical baseline. The repository is bootstrapped with the right module system, directory layout, and package manifests.
 
 ### Level 3: + Layer Nodes
 
@@ -111,6 +126,7 @@ Each level is triggered by a **manifestation failure** — a case where the curr
 | Failure | Add |
 |---|---|
 | Two implementations have incompatible architectures | Decision nodes (architecture) |
+| Agent hallucinated scaffolding or wrong ecosystem | Foundation nodes |
 | Wrong technology or library was used | Decision nodes (stack) |
 | Multiple features require the same infrastructure context | Layer nodes |
 | Agent misunderstood a business term | Domain nodes |
@@ -133,8 +149,9 @@ If your project has no formal spec at all:
 2. **Write behavior nodes** — one per observable action
 3. **Group vertical slices** — create feature nodes
 4. **Extract shared horizontal capabilities** — create layer nodes only when multiple features depend on them
-5. **Build the index** — create `graph.json`
-6. **Validate** — run the schema validator
-7. **Iterate** — add decision/layer/domain/policy nodes as needed
+5. **Bootstrap the physical baseline** — if the repo is greenfield, add foundation nodes declaring required scaffolding (module manifests, directory layout)
+6. **Build the index** — create `graph.json`
+7. **Validate** — run the schema validator
+8. **Iterate** — add decision/layer/foundation/domain/policy nodes as needed
 
 The initial behavior audit is the most time-consuming step. Once you have behaviors, the graph grows incrementally.

@@ -33,6 +33,7 @@ const pages = [
   'node-types/policy.md',
   'node-types/feature.md',
   'node-types/layer.md',
+  'node-types/foundation.md',
   'node-types/extensions.md',
   'authoring/writing-nodes.md',
   'authoring/atomicity-rules.md',
