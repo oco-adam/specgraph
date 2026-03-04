@@ -31,7 +31,7 @@ Then use the manual steps below to understand exactly what the agent is generati
 ## Step 1: Create the Directory Structure
 
 ```bash
-mkdir -p specgraph/nodes/features specgraph/nodes/layers specgraph/nodes/behaviors
+mkdir -p specgraph/nodes/features specgraph/nodes/layers specgraph/nodes/foundations specgraph/nodes/behaviors
 ```
 
 ## Step 2: Create Your First Feature
@@ -157,6 +157,7 @@ This is a **behavior-only** graph — the simplest valid spec graph. It specifie
 - **Add domain nodes** when business terms need explicit definition. See [Domain Nodes](/docs/node-types/domain).
 - **Add policy nodes** when non-functional requirements must be measured. See [Policy Nodes](/docs/node-types/policy).
 - **Add layer nodes** when shared infrastructure should be explicit across features. See [Layer Nodes](/docs/node-types/layer).
+- **Add foundation nodes** when the repository needs concrete scaffolding before application logic. See [Foundation Nodes](/docs/node-types/foundation).
 - Read [When to Add Nodes](/docs/authoring/when-to-add-nodes) for guidance on growing your graph.
 - Read the [MCP Server guide](/docs/guides/mcp-server) for the recommended agent-driven workflow.
 - See the [auth example](/docs/reference/examples) for a full-featured spec graph.

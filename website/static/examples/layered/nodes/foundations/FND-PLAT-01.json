@@ -1,0 +1,18 @@
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "FND-PLAT-01",
+  "type": "foundation",
+  "title": "Platform Directory Structure",
+  "statement": "The repository contains a 'src/' directory and a 'package.json' with the project name, providing the baseline scaffolding for the shared gateway platform.",
+  "verification": [
+    "test -d src",
+    "test -f package.json",
+    "grep -q '\"name\"' package.json"
+  ],
+  "links": {
+    "depends_on": ["DEC-PLAT-01"]
+  },
+  "metadata": {
+    "rationale": "Agents need a physical directory and manifest to anchor platform gateway implementation."
+  }
+}

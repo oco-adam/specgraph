@@ -45,6 +45,15 @@ For any proposed node:
 
 **Key signal:** the same infrastructure decisions/policies are repeated across multiple vertical slices. Promote them into a `layer` and have features depend on it.
 
+### Add Foundation Nodes When...
+
+- The repository is empty or greenfield and agents need a physical bootstrapping anchor
+- Module manifests, workspace configurations, or mandatory directory structures must exist before any application code
+- Agents have previously hallucinated scaffolding in the wrong language or ecosystem
+- Multiple decision nodes reference physical structure that doesn't exist yet
+
+**Key signal:** you dispatched a decision node to an empty repo and the agent built the wrong ecosystem scaffolding. The physical baseline needs to be declared, not inferred.
+
 ### Add Domain Nodes When...
 
 - A business term is ambiguous without explicit definition
@@ -82,10 +91,11 @@ A typical project's spec graph grows in this order:
 ```
 1. Early stage:     behavior nodes only
 2. Tech decisions:  + decision nodes (stack category)
-3. Architecture:    + decision nodes (architecture/pattern categories)
-4. Domain model:    + domain nodes
-5. Quality gates:   + policy nodes
-6. Refinement:      + extension types as needed
+3. Bootstrapping:   + foundation nodes (when greenfield)
+4. Architecture:    + decision nodes (architecture/pattern categories)
+5. Domain model:    + domain nodes
+6. Quality gates:   + policy nodes
+7. Refinement:      + extension types as needed
 ```
 
 ## Don't Pre-Populate

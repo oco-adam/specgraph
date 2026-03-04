@@ -213,6 +213,24 @@ function validateStructural(nodesById: Map<string, SpecNode>): StructuralIssue[]
             }
           }
         }
+
+        if (node.type === 'foundation') {
+          const forbiddenTargetTypes = ['layer', 'feature', 'behavior'];
+          for (const targetId of targets) {
+            const targetNode = nodesById.get(targetId);
+            if (!targetNode) {
+              continue;
+            }
+
+            if (forbiddenTargetTypes.includes(targetNode.type)) {
+              issues.push({
+                node_id: sourceId,
+                severity: 'error',
+                message: `Invalid dependency: foundation '${sourceId}' cannot depend_on ${targetNode.type} '${targetId}'`
+              });
+            }
+          }
+        }
       }
     }
   }

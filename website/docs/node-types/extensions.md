@@ -1,11 +1,11 @@
 ---
-sidebar_position: 7
+sidebar_position: 8
 title: Extension Types
 ---
 
 # Extension Types
 
-Extension types provide finer-grained modelling for graphs that need it. They use the same **contract shape** as decision, domain, and policy nodes — the `type` value is what distinguishes them.
+Extension types provide finer-grained modelling for graphs that need it. They use the same **contract shape** as foundation, decision, domain, and policy nodes — the `type` value is what distinguishes them.
 
 ## Available Extensions
 
@@ -152,13 +152,13 @@ Extensions follow the same minimality test as core types:
 
 > "If I removed this, could a competent implementing agent make a choice I wouldn't want?"
 
-Start with core types. Add extensions when you discover that core types don't provide enough precision for a specific dimension. For most projects, the six core types are sufficient.
+Start with core types. Add extensions when you discover that core types don't provide enough precision for a specific dimension. For most projects, the seven core types are sufficient.
 
 ### Progressive Addition
 
 A typical extension adoption path:
 
-1. **Start** with core types only (`feature`, `layer`, `behavior`, `decision`, `domain`, `policy`)
+1. **Start** with core types only (`feature`, `layer`, `foundation`, `behavior`, `decision`, `domain`, `policy`)
 2. **Add `design_token`** when visual inconsistency between features becomes a problem
 3. **Add `api_contract`** when service boundaries need formal specification
 4. **Add `data_model`** when database schema decisions are load-bearing

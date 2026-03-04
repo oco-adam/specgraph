@@ -2,7 +2,7 @@
 
 > The minimal specification framework for predictable system manifestation.
 
-> Generated: 2026-02-27
+> Generated: 2026-03-04
 
 ---
 
@@ -583,12 +583,12 @@ node graph_check.js
 
 # Node Types Overview
 
-Spec Graph uses a **tiered type system**: six core types plus optional extension types.
+Spec Graph uses a **tiered type system**: seven core types plus optional extension types.
 
 Core taxonomy in v2:
 
 - 2 grouping types: `feature`, `layer`
-- 4 normative core types: `behavior`, `decision`, `domain`, `policy`
+- 5 normative core types: `foundation`, `behavior`, `decision`, `domain`, `policy`
 
 ## Core Types
 
@@ -596,6 +596,7 @@ Core taxonomy in v2:
 |---|---|---|
 | **`feature`** | Vertical grouping and namespace | Which product slice does this spec belong to? |
 | **`layer`** | Horizontal shared grouping | Which shared platform capability does this belong to? |
+| **`foundation`** | Concrete repository scaffolding | What physical structure must exist before application logic? |
 | **`behavior`** | Observable system behavior | What does the user see and do? |
 | **`decision`** | Architectural, technical, or stack decision | How should it be built, and with what? |
 | **`domain`** | Business concept, term, or rule | What do domain terms mean? |
@@ -607,7 +608,7 @@ Core taxonomy in v2:
 
 **Behavior nodes** carry `expectation` and optional `constraints`.
 
-**Contract nodes** (decision, domain, policy, extensions) share a uniform shape with `statement` + `verification`.
+**Contract nodes** (foundation, decision, domain, policy, extensions) share a uniform shape with `statement` + `verification`.
 
 ## Extension Types
 
@@ -1569,9 +1570,211 @@ If a decision set is only used by one feature, keep it in that feature instead o
 
 ---
 
+# Foundation Nodes
+
+Foundation nodes describe the persistent, foundational structural realities of a repository. They declare that mandatory scaffolding, package configuration, and baseline file structure are manifested and available before application logic is implemented.
+
+## Schema
+
+```json
+{
+  "$schema": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
+  "id": "FND-GO-MOD",
+  "type": "foundation",
+  "title": "Go Module Manifestation",
+  "statement": "The repository contains a valid Go module identified as 'github.com/oco-adam/todoist-clone', satisfying the Go runtime requirements of the platform.",
+  "verification": [
+    "test -f go.mod",
+    "grep -q 'module github.com/oco-adam/todoist-clone' go.mod"
+  ],
+  "links": {
+    "depends_on": ["DEC-PLAT-01"]
+  },
+  "metadata": {
+    "rationale": "Provides the Go module anchor that all subsequent Go source files and packages depend on."
+  }
+}
+```
+
+## Fields
+
+| Field | Required | Description |
+|---|---|---|
+| `id` | Yes | Unique identifier (pattern: `FND-*`) |
+| `type` | Yes | Must be `"foundation"` |
+| `title` | Yes | Short name (3-140 chars) |
+| `statement` | Yes | Declarative truth about manifested filesystem state. Must not use imperative verbs. |
+| `verification` | Yes | Array of self-contained shell commands (min 1). No project test runners. |
+| `constraints` | No | Additional structural conditions |
+| `links` | No | Outbound edges. `depends_on` targets must be `decision`, `policy`, or `foundation` only. |
+| `metadata` | No | Non-executable context |
+
+## The Cold Start Problem
+
+In a greenfield repository, abstract decisions alone do not provide physical implementation anchors. A decision such as "the backend is written in Go" can still lead an agent to produce incorrect scaffolding if no concrete repository baseline exists.
+
+Foundation nodes close that gap. They declare a concrete baseline state, such as module manifests, workspace configuration, and required directories, so downstream manifestation starts from explicit physical reality instead of inference.
+
+## Verification Command Rules
+
+Foundation verification commands must be self-contained shell checks against repository state.
+
+- Use file/directory/content checks such as `test -f`, `test -d`, and `grep -q`
+- Do not use project test runners (`npm test`, `go test`, `pytest`) for foundation verification
+- For structured verification entries, use `"kind": "command"` exclusively
+
+## Agent Implementation Expectations
+
+Foundation manifestation should be idempotent and convergent:
+
+- The declared filesystem state exists after processing
+- Existing compliant state is preserved
+- Conflicting state is converged to match the declaration
+- Application behavior logic and test suites are not created as part of foundation work
+
+### Orchestrator Dispatch Rules
+
+Resolve foundation nodes before dispatching dependent `layer`, `feature`, or `behavior` nodes.
+
+Recommended ordering:
+
+1. `decision` / `policy` nodes
+2. `foundation` nodes
+3. `layer` / `feature` / `behavior` nodes
+
+## Dependency Rule
+
+- Allowed: `foundation -> depends_on -> decision`
+- Allowed: `foundation -> depends_on -> policy`
+- Allowed: `foundation -> depends_on -> foundation`
+- Forbidden: `foundation -> depends_on -> layer`
+- Forbidden: `foundation -> depends_on -> feature`
+- Forbidden: `foundation -> depends_on -> behavior`
+
+Tooling rejects forbidden dependencies.
+
+## Foundation vs. Decision
+
+| Characteristic | `decision` Node | `foundation` Node |
+|---|---|---|
+| Semantic role | Abstract architectural constraint or rule | Concrete, manifested physical repository state |
+| Example title | "Go Backend" | "Go Module Manifestation" |
+| Example statement | "The backend application must be written in Go." | "The repository contains a valid go.mod file." |
+| Verification style | Constraint checks, linting, architecture checks | Structural shell checks (`test -f`, `grep -q`) |
+| Agent action | Constrains downstream implementation choices | Creates and converges baseline scaffolding |
+
+## When to Use a Foundation Node
+
+Create a foundation node when:
+
+- The repository is empty or greenfield and needs physical bootstrap state
+- A new language ecosystem must be initialized before behavior implementation
+- A monorepo workspace boundary must be declared and verified
+- Mandatory directory or manifest structure must exist before application logic
+
+## ID Conventions
+
+Use `FND-*` or `FND-SCOPE-*` identifiers.
+
+Examples:
+
+- `FND-GO-MOD`
+- `FND-GO-DIRS`
+- `FND-NPM-WORKSPACE`
+
+## Anti-Patterns
+
+- Imperative statements ("Initialize the Go module") instead of declarative state
+- Using project test runners as foundation verification
+- Mixing domain/application logic into foundation statements
+- Depending on `layer`, `feature`, or `behavior` nodes
+- Stating "build success" instead of concrete manifested structure
+
+## Examples
+
+### Example 1: Go Module Initialization
+
+```json
+{
+  "id": "FND-GO-MOD",
+  "type": "foundation",
+  "title": "Go Module Manifestation",
+  "statement": "The repository contains a valid Go module identified as 'github.com/oco-adam/todoist-clone', satisfying the Go runtime requirements of the platform.",
+  "verification": [
+    "test -f go.mod",
+    "grep -q 'module github.com/oco-adam/todoist-clone' go.mod"
+  ],
+  "links": {
+    "depends_on": ["DEC-PLAT-01"]
+  },
+  "metadata": {
+    "rationale": "Provides the Go module anchor that all subsequent Go source files and packages depend on."
+  }
+}
+```
+
+### Example 2: Standard Go Directory Layout
+
+```json
+{
+  "id": "FND-GO-DIRS",
+  "type": "foundation",
+  "title": "Standard Go Directory Layout",
+  "statement": "The repository adheres to the standard Go project layout, providing distinct 'cmd/', 'internal/', and 'pkg/' directories for structural separation of concerns.",
+  "verification": [
+    "test -d cmd",
+    "test -d internal",
+    "test -d pkg"
+  ],
+  "links": {
+    "depends_on": ["FND-GO-MOD", "DEC-ARCH-01"]
+  }
+}
+```
+
+### Example 3: NPM Workspace Configuration
+
+```json
+{
+  "id": "FND-NPM-WORKSPACE",
+  "type": "foundation",
+  "title": "NPM Workspace Initialization",
+  "statement": "The project is structured as an NPM workspace containing a 'packages' directory and a root package.json defining the workspace boundary.",
+  "verification": [
+    "test -f package.json",
+    "test -d packages",
+    "node -e \"const pkg = require('./package.json'); if (!pkg.workspaces || !pkg.workspaces.includes('packages/*')) process.exit(1);\""
+  ],
+  "links": {
+    "depends_on": ["DEC-MONOREPO-01"]
+  }
+}
+```
+
+### Example 4: Python Project Configuration
+
+```json
+{
+  "id": "FND-PY-PROJECT",
+  "type": "foundation",
+  "title": "Python Project Manifestation",
+  "statement": "The repository contains a valid pyproject.toml with the project name 'my-service' and a src/ layout for package sources.",
+  "verification": [
+    "test -f pyproject.toml",
+    "grep -q 'name = \"my-service\"' pyproject.toml",
+    "test -d src/my_service"
+  ],
+  "links": {
+    "depends_on": ["DEC-PLAT-01"]
+  }
+}
+```
+
+---
+
 # Extension Types
 
-Extension types provide finer-grained modelling for graphs that need it. They use the same **contract shape** as decision, domain, and policy nodes — the `type` value is what distinguishes them.
+Extension types provide finer-grained modelling for graphs that need it. They use the same **contract shape** as foundation, decision, domain, and policy nodes — the `type` value is what distinguishes them.
 
 ## Available Extensions
 
@@ -1718,13 +1921,13 @@ Extensions follow the same minimality test as core types:
 
 > "If I removed this, could a competent implementing agent make a choice I wouldn't want?"
 
-Start with core types. Add extensions when you discover that core types don't provide enough precision for a specific dimension. For most projects, the six core types are sufficient.
+Start with core types. Add extensions when you discover that core types don't provide enough precision for a specific dimension. For most projects, the seven core types are sufficient.
 
 ### Progressive Addition
 
 A typical extension adoption path:
 
-1. **Start** with core types only (`feature`, `layer`, `behavior`, `decision`, `domain`, `policy`)
+1. **Start** with core types only (`feature`, `layer`, `foundation`, `behavior`, `decision`, `domain`, `policy`)
 2. **Add `design_token`** when visual inconsistency between features becomes a problem
 3. **Add `api_contract`** when service boundaries need formal specification
 4. **Add `data_model`** when database schema decisions are load-bearing
@@ -2119,6 +2322,15 @@ For any proposed node:
 
 **Key signal:** the same infrastructure decisions/policies are repeated across multiple vertical slices. Promote them into a `layer` and have features depend on it.
 
+### Add Foundation Nodes When...
+
+- The repository is empty or greenfield and agents need a physical bootstrapping anchor
+- Module manifests, workspace configurations, or mandatory directory structures must exist before any application code
+- Agents have previously hallucinated scaffolding in the wrong language or ecosystem
+- Multiple decision nodes reference physical structure that doesn't exist yet
+
+**Key signal:** you dispatched a decision node to an empty repo and the agent built the wrong ecosystem scaffolding. The physical baseline needs to be declared, not inferred.
+
 ### Add Domain Nodes When...
 
 - A business term is ambiguous without explicit definition
@@ -2156,10 +2368,11 @@ A typical project's spec graph grows in this order:
 ```
 1. Early stage:     behavior nodes only
 2. Tech decisions:  + decision nodes (stack category)
-3. Architecture:    + decision nodes (architecture/pattern categories)
-4. Domain model:    + domain nodes
-5. Quality gates:   + policy nodes
-6. Refinement:      + extension types as needed
+3. Bootstrapping:   + foundation nodes (when greenfield)
+4. Architecture:    + decision nodes (architecture/pattern categories)
+5. Domain model:    + domain nodes
+6. Quality gates:   + policy nodes
+7. Refinement:      + extension types as needed
 ```
 
 ## Don't Pre-Populate
@@ -2411,7 +2624,7 @@ The manifestation process follows three conceptual phases, each consuming a diff
 
 **Purpose:** Build a complete understanding of the system before writing any code.
 
-**Reads:** All node types — domain, decision, policy, behavior, feature, layer
+**Reads:** All node types — domain, decision, foundation, policy, behavior, feature, layer
 
 **Produces:** Mental model of the system
 
@@ -2419,9 +2632,10 @@ During orientation, the implementing agent:
 
 1. Reads all **domain** nodes to understand the business vocabulary
 2. Reads all **decision** nodes to understand architectural and technology choices
-3. Reads all **policy** nodes to understand non-functional boundaries
-4. Reads all **behavior** nodes to understand what the system does
-5. Traverses edges to understand how everything relates
+3. Reads all **foundation** nodes to understand what physical scaffolding exists
+4. Reads all **policy** nodes to understand non-functional boundaries
+5. Reads all **behavior** nodes to understand what the system does
+6. Traverses edges to understand how everything relates
 
 This phase is **read-only** — no code is written. The goal is to understand the full system before making any implementation decisions.
 
@@ -2439,7 +2653,7 @@ Orientation prevents these "premature implementation" errors.
 
 **Purpose:** Create the architectural infrastructure that behaviors depend on.
 
-**Reads:** Decision nodes (architecture, stack, pattern, interface), domain nodes
+**Reads:** Foundation nodes, decision nodes (architecture, stack, pattern, interface), domain nodes
 
 **Produces:** Abstractions, interfaces, shared infrastructure, configuration
 
@@ -2844,7 +3058,7 @@ For agent bootstrapping and retrieval workflows, the site publishes both summary
 
 See [LLM Context Files](/docs/reference/llm-context-files) for usage details.
 
-## Tool Surface (`@specgraph/mcp@0.3.x`)
+## Tool Surface (`@specgraph/mcp@0.5.x`)
 
 ### Shared Definitions
 
@@ -2859,7 +3073,7 @@ Most tools use these common field definitions:
 - `feature` and `layer` require `id`, `type`, `title`, `description`
 - `behavior` requires `id`, `type`, `title`, `expectation`, `verification`
 - behavior authoring convention: include `constraints` explicitly; use `[]` if none apply (schema still allows omission)
-- contract types (`decision`, `domain`, `policy`, `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`) require `id`, `type`, `title`, `statement`, `verification`
+- contract types (`foundation`, `decision`, `domain`, `policy`, `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`) require `id`, `type`, `title`, `statement`, `verification`
 - `decision` additionally requires `category` and `metadata.rationale`
 - `policy` additionally requires `severity`
 
@@ -2903,6 +3117,7 @@ Checks include:
 - self-references
 - `depends_on` cycles
 - dependency inversion guard (`layer -> depends_on -> feature` is invalid)
+- foundation dependency guard (`foundation -> depends_on -> layer/feature/behavior` is invalid)
 - propagated layer decision ambiguity detection
 
 ### Query Tools
@@ -3191,7 +3406,7 @@ Then use the manual steps below to understand exactly what the agent is generati
 ## Step 1: Create the Directory Structure
 
 ```bash
-mkdir -p specgraph/nodes/features specgraph/nodes/layers specgraph/nodes/behaviors
+mkdir -p specgraph/nodes/features specgraph/nodes/layers specgraph/nodes/foundations specgraph/nodes/behaviors
 ```
 
 ## Step 2: Create Your First Feature
@@ -3317,6 +3532,7 @@ This is a **behavior-only** graph — the simplest valid spec graph. It specifie
 - **Add domain nodes** when business terms need explicit definition. See [Domain Nodes](/docs/node-types/domain).
 - **Add policy nodes** when non-functional requirements must be measured. See [Policy Nodes](/docs/node-types/policy).
 - **Add layer nodes** when shared infrastructure should be explicit across features. See [Layer Nodes](/docs/node-types/layer).
+- **Add foundation nodes** when the repository needs concrete scaffolding before application logic. See [Foundation Nodes](/docs/node-types/foundation).
 - Read [When to Add Nodes](/docs/authoring/when-to-add-nodes) for guidance on growing your graph.
 - Read the [MCP Server guide](/docs/guides/mcp-server) for the recommended agent-driven workflow.
 - See the [auth example](/docs/reference/examples) for a full-featured spec graph.
@@ -3342,6 +3558,7 @@ specgraph/
   nodes/
     features/AUTH.json
     layers/PLATFORM.json        # optional, when shared infra exists
+    foundations/FND-01.json     # optional, for cold-start bootstrapping
     behaviors/AUTH-01.json
     behaviors/AUTH-02.json
 ```
@@ -3368,6 +3585,20 @@ specgraph/
 **Trigger:** "The last two manifestations used different auth libraries" or "Agent keeps putting auth logic in the wrong place."
 
 **What you get:** structural and technological equivalence added to behavioral equivalence.
+
+### Level 2.5: + Foundation Nodes
+
+When the repository must be bootstrapped from scratch and agents need a concrete physical anchor before implementing decisions, add foundation nodes.
+
+```
+  nodes/
+    ...
+    foundations/FND-01.json       ← NEW
+```
+
+**Trigger:** "The agent hallucinated scaffolding in the wrong language/framework" or "No physical codebase existed for the agent to anchor its decisions to."
+
+**What you get:** a concrete, verified physical baseline. The repository is bootstrapped with the right module system, directory layout, and package manifests.
 
 ### Level 3: + Layer Nodes
 
@@ -3431,6 +3662,7 @@ Each level is triggered by a **manifestation failure** — a case where the curr
 | Failure | Add |
 |---|---|
 | Two implementations have incompatible architectures | Decision nodes (architecture) |
+| Agent hallucinated scaffolding or wrong ecosystem | Foundation nodes |
 | Wrong technology or library was used | Decision nodes (stack) |
 | Multiple features require the same infrastructure context | Layer nodes |
 | Agent misunderstood a business term | Domain nodes |
@@ -3453,9 +3685,10 @@ If your project has no formal spec at all:
 2. **Write behavior nodes** — one per observable action
 3. **Group vertical slices** — create feature nodes
 4. **Extract shared horizontal capabilities** — create layer nodes only when multiple features depend on them
-5. **Build the index** — create `graph.json`
-6. **Validate** — run the schema validator
-7. **Iterate** — add decision/layer/domain/policy nodes as needed
+5. **Bootstrap the physical baseline** — if the repo is greenfield, add foundation nodes declaring required scaffolding (module manifests, directory layout)
+6. **Build the index** — create `graph.json`
+7. **Validate** — run the schema validator
+8. **Iterate** — add decision/layer/foundation/domain/policy nodes as needed
 
 The initial behavior audit is the most time-consuming step. Once you have behaviors, the graph grows incrementally.
 
@@ -3469,7 +3702,7 @@ If you have an existing DLOOP v1 project with a `SPEC.json`, this guide explains
 
 | Aspect | DLOOP v1 | Spec Graph |
 |---|---|---|
-| Node types | `behavior` only | 6 core + extensions |
+| Node types | `behavior` only | 7 core + extensions |
 | Structure | Flat array nested under features | Graph with typed edges |
 | Storage | Single `SPEC.json` file | File-per-node directory |
 | Relationships | Implicit (via feature grouping) | Explicit (typed edges) |
@@ -3601,7 +3834,7 @@ In v1, behaviors belong to features by nesting. In the Spec Graph, belonging is 
 
 ### Verification Is Richer
 
-V1 behavior verification was a single string. Spec Graph contract nodes (decision, domain, policy) support arrays of verification entries, including structured formats (command, http, manual).
+V1 behavior verification was a single string. Spec Graph contract nodes (foundation, decision, domain, policy) support arrays of verification entries, including structured formats (command, http, manual).
 
 Behavior nodes keep the single-string verification for simplicity.
 
@@ -3670,7 +3903,7 @@ Authoring convention: include `constraints` explicitly on behavior nodes and use
 
 ### Contract Nodes
 
-All other types (decision, domain, policy, and extensions).
+All other types (foundation, decision, domain, policy, and extensions).
 
 Required: `id`, `type`, `title`, `statement`, `verification` (array)
 
@@ -3731,7 +3964,7 @@ Feature IDs must match: `^[A-Z][A-Z0-9-]{0,19}$`
 
 ### Node Types
 
-Core: `feature`, `layer`, `behavior`, `decision`, `domain`, `policy`
+Core: `feature`, `layer`, `foundation`, `behavior`, `decision`, `domain`, `policy`
 
 Extensions: `design_token`, `ui_contract`, `api_contract`, `data_model`, `artifact`, `equivalence_contract`, `pipeline`
 
@@ -3842,6 +4075,7 @@ graph TD
 | **Node** | A single specification entry with a type, ID, and content. The atomic unit of the spec graph. |
 | **Edge** | A typed, directed relationship between two nodes. Stored as outbound links inside the source node. |
 | **Feature** | A non-normative grouping node for vertical product slices. |
+| **Foundation Node** | A normative node declaring the manifested physical state of repository scaffolding (files, directories, package manifests). Uses self-contained shell commands for verification. Cannot depend on layer, feature, or behavior nodes. |
 | **Layer** | A non-normative grouping node for shared horizontal infrastructure capability. |
 | **Manifestation** | The process of producing a running system from a spec graph. Encompasses planning, coding, building, testing, and deploying. |
 | **Completeness** | The property that manifestation is predictable across all specified dimensions — any two manifestations from the same graph are equivalent. |
@@ -3852,7 +4086,7 @@ graph TD
 | **Equivalence Contract** | An optional extension node that formally declares what "same system" means for this graph. |
 | **Implementing Agent** | The agent (human or AI) that processes the spec graph to produce a running system. |
 | **Capable Agent** | An implementing agent that can parse, traverse, apply, respect, and verify the spec graph. |
-| **Contract Node** | The unified shape shared by all non-grouping, non-behavior node types (decision, domain, policy, extensions). |
+| **Contract Node** | The unified shape shared by all non-grouping, non-behavior node types (foundation, decision, domain, policy, extensions). |
 | **Decision Node** | A node capturing an architectural, technical, or stack decision that narrows the solution space. |
 | **Domain Node** | A node defining a business concept, term, or rule — the ubiquitous language of the system. |
 | **Policy Node** | A node specifying a cross-cutting non-functional requirement (performance, security, accessibility, cost, reliability). Uses `severity` (hard/soft) and `constrains` edges. Not to be confused with the `constraints` field. |

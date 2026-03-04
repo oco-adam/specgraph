@@ -5,6 +5,7 @@
     { "id": "AUTH", "path": "nodes/features/AUTH.json", "expectedType": "feature" },
     { "id": "BILLING", "path": "nodes/features/BILLING.json", "expectedType": "feature" },
     { "id": "PLATFORM", "path": "nodes/layers/PLATFORM.json", "expectedType": "layer" },
+    { "id": "FND-PLAT-01", "path": "nodes/foundations/FND-PLAT-01.json", "expectedType": "foundation" },
     { "id": "AUTH-01", "path": "nodes/behaviors/AUTH-01.json", "expectedType": "behavior" },
     { "id": "BILLING-01", "path": "nodes/behaviors/BILLING-01.json", "expectedType": "behavior" },
     { "id": "DEC-PLAT-01", "path": "nodes/decisions/DEC-PLAT-01.json", "expectedType": "decision" },

@@ -30,6 +30,7 @@ export async function addNode(
   }
 
   await validateNodeOrThrow(node);
+  assertDependsOnTargetsAllowed(node, graph.nodesById);
 
   const relPath = nodePathFor(node.id, node.type);
   if (graph.index.nodes.some((ref) => ref.path === relPath)) {
@@ -74,6 +75,7 @@ export async function updateNode(
   }
 
   await validateNodeOrThrow(node);
+  assertDependsOnTargetsAllowed(node, graph.nodesById);
 
   const oldAbsPath = resolveInside(graph.graphDir, ref.path);
   const newRelPath = nodePathFor(node.id, node.type);
@@ -196,6 +198,14 @@ export async function addEdge(
 
   if (!graph.nodesById.has(target)) {
     throw new Error(`Target node not found: ${target}`);
+  }
+  const targetNode = graph.nodesById.get(target);
+  if (!targetNode) {
+    throw new Error(`Target node not found: ${target}`);
+  }
+
+  if (edgeType === 'depends_on') {
+    assertDependsOnDirection(sourceNode, targetNode);
   }
 
   const links = normalizeLinks(sourceNode);
@@ -461,6 +471,43 @@ function normalizeLinks(node: SpecNode): Record<string, string[]> {
   }
 
   return node.links as Record<string, string[]>;
+}
+
+function assertDependsOnTargetsAllowed(sourceNode: SpecNode, nodesById: Map<string, SpecNode>): void {
+  const dependsOn = sourceNode.links?.depends_on;
+  if (!Array.isArray(dependsOn)) {
+    return;
+  }
+
+  for (const targetId of dependsOn) {
+    if (typeof targetId !== 'string' || targetId.length === 0) {
+      continue;
+    }
+
+    const targetNode = nodesById.get(targetId);
+    if (!targetNode) {
+      continue;
+    }
+
+    assertDependsOnDirection(sourceNode, targetNode);
+  }
+}
+
+function assertDependsOnDirection(sourceNode: SpecNode, targetNode: SpecNode): void {
+  if (sourceNode.type === 'layer' && targetNode.type === 'feature') {
+    throw new Error(
+      `Invalid dependency inversion: layer '${sourceNode.id}' cannot depend_on feature '${targetNode.id}'`
+    );
+  }
+
+  if (
+    sourceNode.type === 'foundation' &&
+    ['layer', 'feature', 'behavior'].includes(targetNode.type)
+  ) {
+    throw new Error(
+      `Invalid dependency: foundation '${sourceNode.id}' cannot depend_on ${targetNode.type} '${targetNode.id}'`
+    );
+  }
 }
 
 function withNodeSchema(node: SpecNode): SpecNode {

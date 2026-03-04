@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://oco-adam.github.io/specgraph/schemas/node.schema.json",
   "title": "Spec Graph Node",
-  "description": "Schema for a single Spec Graph node file. Supports core types (feature, layer, behavior, decision, domain, policy) and extension types. Edges are expressed as outbound links.",
+  "description": "Schema for a single Spec Graph node file. Supports core types (feature, layer, foundation, behavior, decision, domain, policy) and extension types. Edges are expressed as outbound links.",
   "oneOf": [
     { "$ref": "#/$defs/featureNode" },
     { "$ref": "#/$defs/layerNode" },
@@ -237,7 +237,7 @@
     },
     "contractNode": {
       "type": "object",
-      "description": "Unified shape for all non-grouping, non-behavior node types. Includes core types (decision, domain, policy) and extension types.",
+      "description": "Unified shape for all non-grouping, non-behavior node types. Includes core types (foundation, decision, domain, policy) and extension types.",
       "additionalProperties": false,
       "required": ["id", "type", "title", "statement", "verification"],
       "properties": {
@@ -247,6 +247,7 @@
           "type": "string",
           "enum": [
             "decision",
+            "foundation",
             "domain",
             "policy",
             "design_token",
