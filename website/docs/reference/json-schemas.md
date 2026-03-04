@@ -74,7 +74,7 @@ Type-specific requirements:
 
 - `decision` nodes require `category` and `metadata.rationale` (min length 10)
 - `policy` nodes require `severity`
-- `artifact` nodes require an `artifact` object with a normative `sha256` hash (and optional `source`/`format`)
+- `artifact` nodes require an `artifact` object with a [normative](/docs/reference/normative) `sha256` hash (and optional `source`/`format`)
 
 Other optional fields: `constraints` (array), `links`, `metadata`, `pins` (for derived nodes)
 
@@ -102,10 +102,10 @@ Contract nodes use an array of verification entries. Each entry is either a stri
 
 ```json
 "verification": [
-  "npm test -- --grep DEC-AUTH-01",
+  "pytest tests/architecture/test_auth_provider.py -k DEC_AUTH_01",
   {
     "kind": "command",
-    "command": "npx tsc --noEmit",
+    "command": "cargo test auth::provider::contract -- --exact",
     "timeoutSeconds": 120
   },
   {

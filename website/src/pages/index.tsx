@@ -76,7 +76,7 @@ const features = [
     colorClass: 'sg-feature-card__icon--purple',
     title: 'Predictable',
     description:
-      'Two agents given the same spec graph produce logically equivalent systems. The completeness gap is closed.',
+      'Two agents given the same spec graph should converge on logically equivalent systems across behavior, architecture, and constraints.',
   },
 ];
 
@@ -111,7 +111,7 @@ function HeroSection() {
         <span className="sg-home-hero__gradient-text">Spec Graph</span>
       </h1>
       <p className="sg-home-hero__tagline">
-        The minimal specification framework for predictable, automated, agent-driven software development.
+        A new paradigm for truly declarative, agentic software development.
       </p>
       <div className="sg-home-hero__actions">
         <Link className="sg-btn-primary" to="/docs/introduction">
@@ -225,9 +225,9 @@ function NodeTypesSection() {
 function CtaSection() {
   return (
     <section className="sg-cta">
-      <h2 className="sg-cta__title">Ready to close the completeness gap?</h2>
+      <h2 className="sg-cta__title">Build with declarative agentic specs</h2>
       <p className="sg-cta__text">
-        Start specifying your system with Spec Graph and enable truly predictable agent-driven manifestation.
+        Specify behavior, decisions, domain, and policy in one graph so capable agents can manifest systems predictably.
       </p>
       <div className="sg-home-hero__actions">
         <Link className="sg-btn-primary" to="/docs/guides/getting-started">
@@ -245,7 +245,7 @@ function CtaSection() {
 
 export default function Home(): React.JSX.Element {
   return (
-    <Layout description="The minimal specification framework for predictable system manifestation">
+    <Layout description="A declarative specification model for predictable agent-driven system manifestation">
       <HeroSection />
       <main>
         <FeaturesSection />

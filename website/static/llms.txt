@@ -1,6 +1,6 @@
 # Spec Graph — LLM Summary
 
-> The minimal specification framework for predictable system manifestation.
+> A declarative specification model for predictable agent-driven system manifestation.
 
 Spec Graph is a formal framework for declarative, multi-dimensional software specifications. It extends behavior-only specs into a typed graph that captures everything required to predictably manifest a system: behavior, architecture, design, technology, domain concepts, and constraints.
 
@@ -10,13 +10,15 @@ Spec Graph is a formal framework for declarative, multi-dimensional software spe
 - **Minimality**: every node is load-bearing; removing it causes manifestation ambiguity
 - **Deterministic Manifestation**: same graph leads to logically equivalent systems
 - **Progressive Adoption**: start with behavior nodes, then add dimensions as needed
+- **Normative vs Informative**: `statement`/`expectation`/`constraints`/`verification` are binding; metadata is contextual
 
 ## Node Types
 
-### Core (6)
+### Core (7)
 
 - `feature` — grouping/namespace (non-normative)
 - `layer` — grouping/namespace for shared horizontal capabilities (non-normative)
+- `foundation` — repository scaffolding contracts
 - `behavior` — observable behavior (`expectation` + `constraints[]` + `verification`)
 - `decision` — architecture/technology decisions
 - `domain` — business concepts and terms
@@ -67,6 +69,7 @@ Spec Graph is a formal framework for declarative, multi-dimensional software spe
 - Docs home: `/docs/introduction`
 - MCP guide: `/docs/guides/mcp-server`
 - JSON Schemas: `/docs/reference/json-schemas`
+- Normative definition: `/docs/reference/normative`
 - Examples: `/docs/reference/examples`
 
 ## LLM Context Files

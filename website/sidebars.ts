@@ -77,7 +77,7 @@ const sidebars: SidebarsConfig = {
         'guides/mcp-server',
         'guides/getting-started',
         'guides/progressive-adoption',
-        'guides/from-dloop-v1',
+        'guides/from-behavior-only-specs',
       ],
     },
     {
@@ -87,6 +87,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'reference/json-schemas',
         'reference/examples',
+        'reference/normative',
         'reference/glossary',
         'reference/llm-context-files',
         'reference/comparison',

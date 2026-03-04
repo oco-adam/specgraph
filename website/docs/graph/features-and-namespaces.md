@@ -5,7 +5,7 @@ title: Features & Namespaces
 
 # Features & Namespaces
 
-Spec Graph has two non-normative grouping node types:
+Spec Graph has two [non-normative](/docs/reference/normative#non-normative-content) grouping node types:
 
 - `feature`: vertical product slices
 - `layer`: horizontal shared infrastructure

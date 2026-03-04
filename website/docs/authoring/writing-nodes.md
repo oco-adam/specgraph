@@ -9,7 +9,7 @@ This guide covers the practical mechanics of writing good spec graph nodes.
 
 ## The Universal Structure
 
-All normative nodes (everything except grouping nodes: `feature` and `layer`) follow a pattern:
+All [normative](/docs/reference/normative) nodes (everything except grouping nodes: `feature` and `layer`) follow a pattern:
 
 1. **Declare** what must be true (`statement` or `expectation`)
 2. **Constrain** what limits apply (`constraints`)
@@ -48,7 +48,7 @@ State what must be true, not the steps to get there.
 
 ## Writing Good Constraints
 
-Each `constraints` entry is an independent, normative condition that must hold.
+Each `constraints` entry is an independent, [normative](/docs/reference/normative) condition that must hold.
 The condition's own language carries its temporal semantics — "must hold at all
 times" vs "must eventually hold" vs "must hold within N seconds."
 
@@ -94,7 +94,7 @@ temporal semantics:
 "Email must be unique within 5s of creation"  — bounded eventual consistency
 ```
 
-All of these are normative — they are not suggestions. An implementor must respect
+All of these are [normative](/docs/reference/normative) — they are not suggestions. An implementor must respect
 the condition, including its temporal qualifier.
 
 ### 2. Enforcement — how it's guaranteed (decision node)
@@ -144,14 +144,14 @@ For cross-cutting non-functional requirements, policy nodes have `severity`:
   "statement": "All eventually-consistent operations must converge within 5 seconds under normal load",
   "constraints": ["Measured at p99 under 100 concurrent writes per second"],
   "verification": [
-    { "kind": "command", "command": "npm run test:convergence -- --timeout 5000" }
+    { "kind": "command", "command": "python -m pytest tests/consistency/test_convergence.py --maxfail=1" }
   ],
   "links": { "constrains": ["REG-01"] }
 }
 ```
 
 Severity applies to the policy node as a whole, not to individual `constraints`
-field entries. Field-level `constraints` entries are always normative.
+field entries. Field-level `constraints` entries are always [normative](/docs/reference/normative).
 
 :::info Disambiguation: `constraints` field vs policy nodes vs `constrains` edges
 
@@ -159,7 +159,7 @@ The spec graph uses related but distinct concepts:
 
 | Concept | What it is | Scope |
 |---------|-----------|-------|
-| `constraints` field | Array of normative conditions on a single node | Narrows THIS node's `expectation` or `statement` |
+| `constraints` field | Array of [normative](/docs/reference/normative) conditions on a single node | Narrows THIS node's `expectation` or `statement` |
 | Policy node (`type: "policy"`) | A standalone node for cross-cutting NFRs | Affects OTHER nodes via `constrains` edges; has `severity` (hard/soft) |
 | `constrains` edge | A graph relationship | Declares that the source node narrows implementation choices for the target |
 
@@ -177,13 +177,13 @@ Verification criteria produce **pass/fail** results. Prefer executable checks:
 ### Executable (Best)
 
 ```json
-"verification": ["npm test -- --grep AUTH-01"]
+"verification": ["pytest tests/auth/test_login_form.py -k AUTH_01"]
 ```
 
 ```json
 "verification": [
-  { "kind": "command", "command": "npx tsc --noEmit" },
-  { "kind": "command", "command": "npm test -- --grep DEC-AUTH-01" }
+  { "kind": "command", "command": "cargo test auth::provider::contract -- --exact" },
+  { "kind": "command", "command": "go test ./internal/auth/provider -run TestAuthProviderContract" }
 ]
 ```
 

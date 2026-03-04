@@ -9,7 +9,7 @@ The Spec Graph framework is guided by six principles. These are not aspirational
 
 ## 1. Atomicity Everywhere
 
-DLOOP v1's ONE rule — ONE trigger, ONE behavior, ONE outcome — was a good idea. The Spec Graph generalises it:
+A strong atomicity rule is essential in graph authoring. In Spec Graph:
 
 > **Every node expresses one decision, one contract, or one constraint.**
 
@@ -21,7 +21,7 @@ Atomicity creates **review pressure** (each node is small enough to reason about
 
 If it cannot be verified, it is not a complete spec.
 
-Every node that makes a normative claim — a behavior, a policy, a decision — must include verification criteria that produce a pass/fail result. Verification can be:
+Every node that makes a [normative](/docs/reference/normative) claim — a behavior, a policy, a decision — must include verification criteria that produce a pass/fail result. Verification can be:
 
 - **Executable**: test commands, linters, policy checks
 - **Static**: type checking, AST rules, dependency constraints
@@ -58,7 +58,7 @@ Narrative documentation is valuable for explanation, but it is not authoritative
 
 The framework strictly distinguishes:
 
-- **Normative**: `expectation`, `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
-- **Informative/Contextual**: `metadata.rationale`, `metadata.notes` — non-executable context; specific node types may require certain metadata fields
+- **[Normative](/docs/reference/normative)**: `expectation`, `statement`, `constraints`, `verification` — MUST be true, MUST be implemented, MUST pass
+- **[Informative](/docs/reference/normative#informative-content)**: `metadata.rationale`, `metadata.notes` — non-executable context; specific node types may require certain metadata fields
 
 This prevents "helpful notes" from becoming implicit requirements that break predictable manifestation.

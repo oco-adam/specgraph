@@ -139,9 +139,9 @@ An equivalence contract formally declares what "same system" means for this grap
     "Lighthouse FCP < 1.5s, LCP < 2.5s"
   ],
   "verification": [
-    { "kind": "command", "command": "npm test" },
-    { "kind": "command", "command": "npm run test:integration" },
-    { "kind": "command", "command": "npx lighthouse --preset=perf http://localhost:3000" }
+    { "kind": "command", "command": "go test ./... -run TestSystemEquivalence" },
+    { "kind": "command", "command": "python -m pytest tests/integration/test_equivalence.py" },
+    { "kind": "command", "command": "pnpm exec lighthouse --preset=perf http://localhost:3000" }
   ]
 }
 ```

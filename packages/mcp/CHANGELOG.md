@@ -2,6 +2,13 @@
 
 All notable changes to `@specgraph/mcp` are documented in this file.
 
+## 0.5.1 - 2026-03-04
+
+### Changed
+
+- Added a dedicated documentation reference defining normative vs informative/non-normative content, with cross-links from normative terminology usage across docs.
+- Rebalanced verification examples in documentation to include JavaScript, Rust, Go, and Python usage instead of a JavaScript-heavy mix.
+
 ## 0.5.0 - 2026-03-04
 
 ### Added

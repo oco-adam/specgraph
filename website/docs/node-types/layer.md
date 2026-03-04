@@ -5,7 +5,7 @@ title: Layer Nodes
 
 # Layer Nodes
 
-Layer nodes are **non-normative grouping nodes** for shared horizontal infrastructure. They complement feature nodes.
+Layer nodes are **[non-normative](/docs/reference/normative#non-normative-content) grouping nodes** for shared horizontal infrastructure. They complement feature nodes.
 
 - `feature`: groups vertical product slices
 - `layer`: groups shared platform/infrastructure capability
@@ -33,7 +33,7 @@ Layer nodes are **non-normative grouping nodes** for shared horizontal infrastru
 | `title` | Yes | Human-readable name (3–100 chars) |
 | `description` | Yes | What shared capability this layer covers |
 | `links` | No | Outbound edges (typically `contains`, optionally `depends_on`) |
-| `metadata` | No | Non-normative context |
+| `metadata` | No | [Non-normative](/docs/reference/normative#non-normative-content) context |
 
 ## Dependency Rule
 
